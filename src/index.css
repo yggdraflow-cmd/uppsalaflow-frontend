@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --color-beauty-50: #fff1f7;
+  --color-beauty-100: #ffe4f0;
+  --color-beauty-200: #fecddf;
+  --color-beauty-300: #fda4c9;
+  --color-beauty-400: #fb71ad;
+  --color-beauty-500: #f13d8f;
+  --color-beauty-600: #d91f72;
+  --color-beauty-700: #b3155b;
+  --color-beauty-800: #95144d;
+  --color-beauty-900: #7c1743;
+}
+
+:root {
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: #18181b;
+  background: #fff7fb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
