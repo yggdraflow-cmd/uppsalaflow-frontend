@@ -10,16 +10,21 @@ import type { AuthResponse } from "../types/auth";
 
 export function RegisterPage() {
   const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [error, setError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    setError("");
 
     try {
+      setIsSaving(true);
+      setError("");
+
       const response = await api.post<AuthResponse>("/auth/register", {
         name,
         email,
@@ -27,9 +32,12 @@ export function RegisterPage() {
       });
 
       saveAuth(response.data.token, response.data.user);
+
       navigate("/dashboard");
     } catch {
       setError("Não foi possível criar a conta.");
+    } finally {
+      setIsSaving(false);
     }
   }
 
@@ -63,8 +71,8 @@ export function RegisterPage() {
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 
-          <Button type="submit" className="w-full">
-            Criar conta
+          <Button type="submit" disabled={isSaving} className="w-full">
+            {isSaving ? "Criando..." : "Criar conta"}
           </Button>
         </form>
 
