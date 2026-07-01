@@ -6,10 +6,20 @@ import { api } from "../services/api";
 import type { Business } from "../types/business";
 import type { Client } from "../types/client";
 
+function formatDateInput(date?: string | null) {
+  if (!date) {
+    return "";
+  }
+
+  return new Date(date).toISOString().split("T")[0];
+}
+
 export function ClientsPage() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [selectedBusinessId, setSelectedBusinessId] = useState("");
   const [clients, setClients] = useState<Client[]>([]);
+
+  const [editingClientId, setEditingClientId] = useState("");
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -75,6 +85,26 @@ export function ClientsPage() {
     loadClients();
   }, [selectedBusinessId]);
 
+  function resetForm() {
+    setEditingClientId("");
+    setName("");
+    setPhone("");
+    setEmail("");
+    setBirthDate("");
+    setNotes("");
+  }
+
+  function handleEdit(client: Client) {
+    setEditingClientId(client.id);
+    setName(client.name);
+    setPhone(client.phone || "");
+    setEmail(client.email || "");
+    setBirthDate(formatDateInput(client.birthDate));
+    setNotes(client.notes || "");
+    setMessage("");
+    setError("");
+  }
+
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
@@ -88,25 +118,42 @@ export function ClientsPage() {
       setMessage("");
       setError("");
 
-      const response = await api.post<Client>("/clients", {
-        businessId: selectedBusinessId,
+      const payload = {
         name,
         phone: phone || undefined,
         email: email || undefined,
         birthDate: birthDate ? new Date(birthDate).toISOString() : undefined,
         notes: notes || undefined,
+      };
+
+      if (editingClientId) {
+        const response = await api.put<Client>(
+          `/clients/${editingClientId}`,
+          payload
+        );
+
+        setClients((currentClients) =>
+          currentClients.map((client) =>
+            client.id === editingClientId ? response.data : client
+          )
+        );
+
+        setMessage("Cliente atualizado com sucesso.");
+        resetForm();
+        return;
+      }
+
+      const response = await api.post<Client>("/clients", {
+        businessId: selectedBusinessId,
+        ...payload,
       });
 
       setClients((currentClients) => [response.data, ...currentClients]);
 
       setMessage("Cliente cadastrado com sucesso.");
-      setName("");
-      setPhone("");
-      setEmail("");
-      setBirthDate("");
-      setNotes("");
+      resetForm();
     } catch {
-      setError("Não foi possível cadastrar o cliente.");
+      setError("Não foi possível salvar o cliente.");
     } finally {
       setIsSaving(false);
     }
@@ -123,6 +170,10 @@ export function ClientsPage() {
         currentClients.filter((client) => client.id !== clientId)
       );
 
+      if (editingClientId === clientId) {
+        resetForm();
+      }
+
       setMessage("Cliente removido com sucesso.");
     } catch {
       setError("Não foi possível remover o cliente.");
@@ -135,7 +186,7 @@ export function ClientsPage() {
         <p className="text-sm font-medium text-beauty-700">Cadastro</p>
         <h1 className="text-3xl font-bold text-zinc-950">Clientes</h1>
         <p className="mt-2 text-zinc-600">
-          Cadastre e acompanhe os clientes do negócio selecionado.
+          Cadastre, edite e acompanhe os clientes do negócio selecionado.
         </p>
       </div>
 
@@ -155,7 +206,10 @@ export function ClientsPage() {
 
               <select
                 value={selectedBusinessId}
-                onChange={(event) => setSelectedBusinessId(event.target.value)}
+                onChange={(event) => {
+                  setSelectedBusinessId(event.target.value);
+                  resetForm();
+                }}
                 className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-beauty-500 focus:ring-2 focus:ring-beauty-100"
               >
                 {businesses.map((business) => (
@@ -170,7 +224,7 @@ export function ClientsPage() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
-        <Card title="Cadastrar cliente">
+        <Card title={editingClientId ? "Editar cliente" : "Cadastrar cliente"}>
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               label="Nome"
@@ -217,8 +271,23 @@ export function ClientsPage() {
             </label>
 
             <Button type="submit" disabled={isSaving} className="w-full">
-              {isSaving ? "Salvando..." : "Salvar cliente"}
+              {isSaving
+                ? "Salvando..."
+                : editingClientId
+                  ? "Salvar alterações"
+                  : "Salvar cliente"}
             </Button>
+
+            {editingClientId && (
+              <Button
+                type="button"
+                variant="secondary"
+                className="w-full"
+                onClick={resetForm}
+              >
+                Cancelar edição
+              </Button>
+            )}
           </form>
 
           {message && <p className="mt-4 text-sm text-green-700">{message}</p>}
@@ -256,7 +325,9 @@ export function ClientsPage() {
                       {client.birthDate && (
                         <p className="mt-1 text-sm text-zinc-500">
                           Nascimento:{" "}
-                          {new Date(client.birthDate).toLocaleDateString("pt-BR")}
+                          {new Date(client.birthDate).toLocaleDateString(
+                            "pt-BR"
+                          )}
                         </p>
                       )}
 
@@ -267,13 +338,23 @@ export function ClientsPage() {
                       )}
                     </div>
 
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() => handleDelete(client.id)}
-                    >
-                      Remover
-                    </Button>
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => handleEdit(client)}
+                      >
+                        Editar
+                      </Button>
+
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => handleDelete(client.id)}
+                      >
+                        Remover
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}

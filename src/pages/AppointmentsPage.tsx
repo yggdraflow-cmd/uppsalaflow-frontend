@@ -59,12 +59,20 @@ function formatCurrency(value: string | number) {
   });
 }
 
+function sortAppointmentsByTime(appointments: AppointmentWithRelations[]) {
+  return [...appointments].sort((firstAppointment, secondAppointment) =>
+    firstAppointment.startTime.localeCompare(secondAppointment.startTime)
+  );
+}
+
 export function AppointmentsPage() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
   const [services, setServices] = useState<BeautyService[]>([]);
   const [professionals, setProfessionals] = useState<Professional[]>([]);
-  const [appointments, setAppointments] = useState<AppointmentWithRelations[]>([]);
+  const [appointments, setAppointments] = useState<
+    AppointmentWithRelations[]
+  >([]);
 
   const [selectedBusinessId, setSelectedBusinessId] = useState("");
   const [selectedClientId, setSelectedClientId] = useState("");
@@ -162,14 +170,17 @@ export function AppointmentsPage() {
       try {
         setError("");
 
-        const response = await api.get<AppointmentWithRelations[]>("/appointments", {
-          params: {
-            businessId: selectedBusinessId,
-            date: new Date(`${selectedDate}T00:00:00`).toISOString(),
-          },
-        });
+        const response = await api.get<AppointmentWithRelations[]>(
+          "/appointments",
+          {
+            params: {
+              businessId: selectedBusinessId,
+              date: new Date(`${selectedDate}T00:00:00`).toISOString(),
+            },
+          }
+        );
 
-        setAppointments(response.data);
+        setAppointments(sortAppointmentsByTime(response.data));
       } catch {
         setError("Não foi possível carregar a agenda do dia.");
       }
@@ -187,7 +198,9 @@ export function AppointmentsPage() {
     }
 
     if (!selectedClientId || !selectedServiceId || !selectedProfessionalId) {
-      setError("Cadastre cliente, serviço e profissional antes de criar agendamentos.");
+      setError(
+        "Cadastre cliente, serviço e profissional antes de criar agendamentos."
+      );
       return;
     }
 
@@ -201,22 +214,24 @@ export function AppointmentsPage() {
       setMessage("");
       setError("");
 
-      const response = await api.post<AppointmentWithRelations>("/appointments", {
-        businessId: selectedBusinessId,
-        clientId: selectedClientId,
-        professionalId: selectedProfessionalId,
-        serviceId: selectedServiceId,
-        date: new Date(`${selectedDate}T00:00:00`).toISOString(),
-        startTime,
-        endTime: calculatedEndTime,
-        price: Number(selectedService.price),
-        notes: notes || undefined,
-      });
+      const response = await api.post<AppointmentWithRelations>(
+        "/appointments",
+        {
+          businessId: selectedBusinessId,
+          clientId: selectedClientId,
+          professionalId: selectedProfessionalId,
+          serviceId: selectedServiceId,
+          date: new Date(`${selectedDate}T00:00:00`).toISOString(),
+          startTime,
+          endTime: calculatedEndTime,
+          price: Number(selectedService.price),
+          notes: notes || undefined,
+        }
+      );
 
-      setAppointments((currentAppointments) => [
-        response.data,
-        ...currentAppointments,
-      ]);
+      setAppointments((currentAppointments) =>
+        sortAppointmentsByTime([response.data, ...currentAppointments])
+      );
 
       setMessage("Agendamento criado com sucesso.");
       setNotes("");
@@ -241,8 +256,10 @@ export function AppointmentsPage() {
       );
 
       setAppointments((currentAppointments) =>
-        currentAppointments.map((appointment) =>
-          appointment.id === appointmentId ? response.data : appointment
+        sortAppointmentsByTime(
+          currentAppointments.map((appointment) =>
+            appointment.id === appointmentId ? response.data : appointment
+          )
         )
       );
 
@@ -389,7 +406,9 @@ export function AppointmentsPage() {
               <p className="mt-1">
                 Preço:{" "}
                 <span className="font-semibold text-zinc-950">
-                  {selectedService ? formatCurrency(selectedService.price) : "R$ 0,00"}
+                  {selectedService
+                    ? formatCurrency(selectedService.price)
+                    : "R$ 0,00"}
                 </span>
               </p>
             </div>
@@ -453,7 +472,8 @@ export function AppointmentsPage() {
                       </p>
 
                       <p className="mt-1 text-sm text-zinc-500">
-                        Horário: {appointment.startTime} até {appointment.endTime}
+                        Horário: {appointment.startTime} até{" "}
+                        {appointment.endTime}
                       </p>
 
                       <p className="mt-1 text-sm text-zinc-500">
@@ -467,28 +487,62 @@ export function AppointmentsPage() {
                       )}
                     </div>
 
-                    <label className="block min-w-52">
-                      <span className="mb-1 block text-sm font-medium text-zinc-700">
-                        Status
-                      </span>
+                    <div className="flex min-w-52 flex-col gap-3">
+                      <label className="block">
+                        <span className="mb-1 block text-sm font-medium text-zinc-700">
+                          Status
+                        </span>
 
-                      <select
-                        value={appointment.status}
-                        onChange={(event) =>
-                          handleStatusChange(
-                            appointment.id,
-                            event.target.value as AppointmentStatus
-                          )
-                        }
-                        className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-beauty-500 focus:ring-2 focus:ring-beauty-100"
-                      >
-                        {appointmentStatusOptions.map((status) => (
-                          <option key={status} value={status}>
-                            {appointmentStatusLabels[status]}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
+                        <select
+                          value={appointment.status}
+                          onChange={(event) =>
+                            handleStatusChange(
+                              appointment.id,
+                              event.target.value as AppointmentStatus
+                            )
+                          }
+                          className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-beauty-500 focus:ring-2 focus:ring-beauty-100"
+                        >
+                          {appointmentStatusOptions.map((status) => (
+                            <option key={status} value={status}>
+                              {appointmentStatusLabels[status]}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+
+                      <div className="grid gap-2">
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={() =>
+                            handleStatusChange(appointment.id, "CONFIRMED")
+                          }
+                        >
+                          Confirmar
+                        </Button>
+
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={() =>
+                            handleStatusChange(appointment.id, "FINISHED")
+                          }
+                        >
+                          Finalizar
+                        </Button>
+
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={() =>
+                            handleStatusChange(appointment.id, "CANCELED")
+                          }
+                        >
+                          Cancelar
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}

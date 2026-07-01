@@ -11,6 +11,8 @@ export function ProfessionalsPage() {
   const [selectedBusinessId, setSelectedBusinessId] = useState("");
   const [professionals, setProfessionals] = useState<Professional[]>([]);
 
+  const [editingProfessionalId, setEditingProfessionalId] = useState("");
+
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -64,6 +66,22 @@ export function ProfessionalsPage() {
     loadProfessionals();
   }, [selectedBusinessId]);
 
+  function resetForm() {
+    setEditingProfessionalId("");
+    setName("");
+    setPhone("");
+    setEmail("");
+  }
+
+  function handleEdit(professional: Professional) {
+    setEditingProfessionalId(professional.id);
+    setName(professional.name);
+    setPhone(professional.phone || "");
+    setEmail(professional.email || "");
+    setMessage("");
+    setError("");
+  }
+
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
@@ -77,11 +95,34 @@ export function ProfessionalsPage() {
       setMessage("");
       setError("");
 
-      const response = await api.post<Professional>("/professionals", {
-        businessId: selectedBusinessId,
+      const payload = {
         name,
         phone: phone || undefined,
         email: email || undefined,
+      };
+
+      if (editingProfessionalId) {
+        const response = await api.put<Professional>(
+          `/professionals/${editingProfessionalId}`,
+          payload
+        );
+
+        setProfessionals((currentProfessionals) =>
+          currentProfessionals.map((professional) =>
+            professional.id === editingProfessionalId
+              ? response.data
+              : professional
+          )
+        );
+
+        setMessage("Profissional atualizado com sucesso.");
+        resetForm();
+        return;
+      }
+
+      const response = await api.post<Professional>("/professionals", {
+        businessId: selectedBusinessId,
+        ...payload,
       });
 
       setProfessionals((currentProfessionals) => [
@@ -90,11 +131,9 @@ export function ProfessionalsPage() {
       ]);
 
       setMessage("Profissional cadastrado com sucesso.");
-      setName("");
-      setPhone("");
-      setEmail("");
+      resetForm();
     } catch {
-      setError("Não foi possível cadastrar o profissional.");
+      setError("Não foi possível salvar o profissional.");
     } finally {
       setIsSaving(false);
     }
@@ -113,6 +152,10 @@ export function ProfessionalsPage() {
         )
       );
 
+      if (editingProfessionalId === professionalId) {
+        resetForm();
+      }
+
       setMessage("Profissional removido com sucesso.");
     } catch {
       setError("Não foi possível remover o profissional.");
@@ -125,7 +168,8 @@ export function ProfessionalsPage() {
         <p className="text-sm font-medium text-beauty-700">Equipe</p>
         <h1 className="text-3xl font-bold text-zinc-950">Profissionais</h1>
         <p className="mt-2 text-zinc-600">
-          Cadastre os profissionais que realizam os atendimentos do negócio.
+          Cadastre, edite e organize os profissionais que realizam os
+          atendimentos do negócio.
         </p>
       </div>
 
@@ -143,7 +187,10 @@ export function ProfessionalsPage() {
 
               <select
                 value={selectedBusinessId}
-                onChange={(event) => setSelectedBusinessId(event.target.value)}
+                onChange={(event) => {
+                  setSelectedBusinessId(event.target.value);
+                  resetForm();
+                }}
                 className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-beauty-500 focus:ring-2 focus:ring-beauty-100"
               >
                 {businesses.map((business) => (
@@ -158,7 +205,13 @@ export function ProfessionalsPage() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
-        <Card title="Cadastrar profissional">
+        <Card
+          title={
+            editingProfessionalId
+              ? "Editar profissional"
+              : "Cadastrar profissional"
+          }
+        >
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               label="Nome"
@@ -184,8 +237,23 @@ export function ProfessionalsPage() {
             />
 
             <Button type="submit" disabled={isSaving} className="w-full">
-              {isSaving ? "Salvando..." : "Salvar profissional"}
+              {isSaving
+                ? "Salvando..."
+                : editingProfessionalId
+                  ? "Salvar alterações"
+                  : "Salvar profissional"}
             </Button>
+
+            {editingProfessionalId && (
+              <Button
+                type="button"
+                variant="secondary"
+                className="w-full"
+                onClick={resetForm}
+              >
+                Cancelar edição
+              </Button>
+            )}
           </form>
 
           {message && <p className="mt-4 text-sm text-green-700">{message}</p>}
@@ -225,13 +293,23 @@ export function ProfessionalsPage() {
                       </p>
                     </div>
 
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() => handleDelete(professional.id)}
-                    >
-                      Remover
-                    </Button>
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => handleEdit(professional)}
+                      >
+                        Editar
+                      </Button>
+
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => handleDelete(professional.id)}
+                      >
+                        Remover
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
