@@ -9,7 +9,7 @@ export function PublicBookingPage() {
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-beauty-50 via-white to-zinc-100 px-4">
       <div className="w-full max-w-2xl">
         <p className="text-sm font-bold uppercase tracking-[0.25em] text-beauty-600">
-          BeautyFlow
+          Uppsalaflow
         </p>
         <h1 className="mt-3 text-3xl font-bold text-zinc-950">
           Agendamento online

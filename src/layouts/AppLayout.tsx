@@ -30,7 +30,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       <aside className="fixed left-0 top-0 hidden h-screen w-64 border-r border-zinc-200 bg-white p-5 lg:block">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-beauty-600">
-            BeautyFlow
+            Uppsalaflow
           </p>
           <p className="mt-2 text-sm text-zinc-500">
             {user?.name || "Usuário"}

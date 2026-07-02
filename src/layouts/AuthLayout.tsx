@@ -10,7 +10,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-beauty-600">
-            BeautyFlow
+            Uppsalaflow
           </p>
           <h1 className="mt-3 text-3xl font-bold text-zinc-950">
             Gestão simples para negócios de beleza
