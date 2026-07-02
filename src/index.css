@@ -1,44 +1,134 @@
 @import "tailwindcss";
 
-@theme {
-  --color-beauty-50: #fff1f7;
-  --color-beauty-100: #ffe4f0;
-  --color-beauty-200: #fecddf;
-  --color-beauty-300: #fda4c9;
-  --color-beauty-400: #fb71ad;
-  --color-beauty-500: #f13d8f;
-  --color-beauty-600: #d91f72;
-  --color-beauty-700: #b3155b;
-  --color-beauty-800: #95144d;
-  --color-beauty-900: #7c1743;
-}
-
 :root {
-  font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  color: #18181b;
-  background: #fff7fb;
+  color-scheme: light;
 }
 
-* {
-  box-sizing: border-box;
+html {
+  scroll-behavior: smooth;
 }
 
 body {
+  min-height: 100vh;
   margin: 0;
-  min-width: 320px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), transparent 34%),
+    linear-gradient(135deg, #eef5f7 0%, #e8f0f3 42%, #dfe9ee 100%);
+  color: #132033;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
   min-height: 100vh;
 }
 
-button,
 input,
+select,
 textarea,
-select {
+button {
   font: inherit;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+::selection {
+  background: rgba(249, 115, 22, 0.22);
+  color: #111827;
+}
+
+.app-shell,
+.auth-shell {
+  min-height: 100vh;
+}
+
+.upp-card {
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.48);
+  backdrop-filter: blur(26px);
+  box-shadow:
+    0 24px 70px rgba(55, 73, 89, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+.upp-card-soft {
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  background: rgba(255, 255, 255, 0.38);
+  backdrop-filter: blur(22px);
+  box-shadow:
+    0 18px 48px rgba(55, 73, 89, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.upp-input {
+  height: 48px;
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid rgba(190, 205, 214, 0.82);
+  background: rgba(255, 255, 255, 0.62);
+  padding: 0 16px;
+  color: #132033;
+  font-size: 0.925rem;
+  font-weight: 500;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.upp-input::placeholder {
+  color: #8796a4;
+}
+
+.upp-input:focus {
+  border-color: rgba(249, 115, 22, 0.55);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12);
+}
+
+.upp-label {
+  margin-bottom: 8px;
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #405263;
+}
+
+.upp-title {
+  color: #101828;
+  font-weight: 850;
+  letter-spacing: -0.04em;
+}
+
+.upp-muted {
+  color: #667789;
+}
+
+.upp-orange {
+  color: #f97316;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e8f0f3;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(115, 133, 148, 0.45);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(249, 115, 22, 0.5);
 }

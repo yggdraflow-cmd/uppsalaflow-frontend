@@ -3,12 +3,18 @@ import type { ReactNode } from "react";
 type CardProps = {
   title?: string;
   children: ReactNode;
+  className?: string;
 };
 
-export function Card({ title, children }: CardProps) {
+export function Card({ title, children, className = "" }: CardProps) {
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-      {title && <h2 className="mb-4 text-lg font-semibold text-zinc-900">{title}</h2>}
+    <section className={`upp-card rounded-[32px] p-6 ${className}`}>
+      {title ? (
+        <h2 className="mb-6 text-2xl upp-title">
+          {title}
+        </h2>
+      ) : null}
+
       {children}
     </section>
   );
