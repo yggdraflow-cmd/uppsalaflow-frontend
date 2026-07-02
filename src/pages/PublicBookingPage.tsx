@@ -45,6 +45,16 @@ type PublicBusiness = {
   professionals: PublicProfessional[];
 };
 
+type BookedAppointment = {
+  startTime: string;
+  endTime: string;
+};
+
+type BookedTimesResponse = {
+  bookedTimes: string[];
+  appointments: BookedAppointment[];
+};
+
 type BookingFormData = {
   serviceId: string;
   professionalId: string;
@@ -95,11 +105,66 @@ function formatCurrency(value: string | number) {
   }).format(Number(value));
 }
 
+function timeToMinutes(time: string) {
+  const [hours, minutes] = time.split(":").map(Number);
+
+  return hours * 60 + minutes;
+}
+
+function addMinutesToTime(time: string, minutesToAdd: number) {
+  const [hours, minutes] = time.split(":").map(Number);
+
+  const date = new Date(2000, 0, 1, hours, minutes);
+  date.setMinutes(date.getMinutes() + minutesToAdd);
+
+  const finalHours = String(date.getHours()).padStart(2, "0");
+  const finalMinutes = String(date.getMinutes()).padStart(2, "0");
+
+  return `${finalHours}:${finalMinutes}`;
+}
+
+function hasTimeConflict(
+  newStartTime: string,
+  newEndTime: string,
+  existingStartTime: string,
+  existingEndTime: string
+) {
+  const newStart = timeToMinutes(newStartTime);
+  const newEnd = timeToMinutes(newEndTime);
+  const existingStart = timeToMinutes(existingStartTime);
+  const existingEnd = timeToMinutes(existingEndTime);
+
+  return newStart < existingEnd && newEnd > existingStart;
+}
+
+function getErrorMessage(error: unknown) {
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "response" in error &&
+    typeof error.response === "object" &&
+    error.response !== null &&
+    "data" in error.response &&
+    typeof error.response.data === "object" &&
+    error.response.data !== null &&
+    "message" in error.response.data &&
+    typeof error.response.data.message === "string"
+  ) {
+    return error.response.data.message;
+  }
+
+  return "Não foi possível confirmar o agendamento.";
+}
+
 export function PublicBookingPage() {
   const { slug } = useParams();
 
   const [business, setBusiness] = useState<PublicBusiness | null>(null);
+  const [bookedAppointments, setBookedAppointments] = useState<
+    BookedAppointment[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingTimes, setIsLoadingTimes] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -138,6 +203,37 @@ export function PublicBookingPage() {
     );
   }, [business, formData.professionalId]);
 
+  const timeOptions = useMemo(() => {
+    return availableTimes.map((time) => {
+      if (!selectedService) {
+        return {
+          time,
+          disabled: false,
+        };
+      }
+
+      const endTime = addMinutesToTime(time, selectedService.durationMinutes);
+
+      const disabled = bookedAppointments.some((appointment) =>
+        hasTimeConflict(
+          time,
+          endTime,
+          appointment.startTime,
+          appointment.endTime
+        )
+      );
+
+      return {
+        time,
+        disabled,
+      };
+    });
+  }, [bookedAppointments, selectedService]);
+
+  const selectedTimeOption = useMemo(() => {
+    return timeOptions.find((option) => option.time === formData.startTime);
+  }, [formData.startTime, timeOptions]);
+
   useEffect(() => {
     async function loadPublicBusiness() {
       if (!slug) {
@@ -169,6 +265,58 @@ export function PublicBookingPage() {
     loadPublicBusiness();
   }, [slug]);
 
+  useEffect(() => {
+    async function loadBookedTimes() {
+      if (!slug || !formData.date || !formData.professionalId) {
+        setBookedAppointments([]);
+        return;
+      }
+
+      setIsLoadingTimes(true);
+
+      try {
+        const response = await api.get<BookedTimesResponse>(
+          `/public/businesses/${slug}/booked-times`,
+          {
+            params: {
+              date: formData.date,
+              professionalId: formData.professionalId,
+            },
+          }
+        );
+
+        setBookedAppointments(response.data.appointments);
+      } catch {
+        setBookedAppointments([]);
+      } finally {
+        setIsLoadingTimes(false);
+      }
+    }
+
+    loadBookedTimes();
+  }, [slug, formData.date, formData.professionalId]);
+
+  useEffect(() => {
+    if (timeOptions.length === 0) {
+      return;
+    }
+
+    const currentOption = timeOptions.find(
+      (option) => option.time === formData.startTime
+    );
+
+    if (currentOption && !currentOption.disabled) {
+      return;
+    }
+
+    const firstAvailableOption = timeOptions.find((option) => !option.disabled);
+
+    setFormData((currentFormData) => ({
+      ...currentFormData,
+      startTime: firstAvailableOption?.time ?? "",
+    }));
+  }, [formData.startTime, timeOptions]);
+
   function updateFormField(field: keyof BookingFormData, value: string) {
     setFormData((currentFormData) => ({
       ...currentFormData,
@@ -181,6 +329,11 @@ export function PublicBookingPage() {
 
     if (!slug) {
       setErrorMessage("Link de agendamento inválido.");
+      return;
+    }
+
+    if (selectedTimeOption?.disabled) {
+      setErrorMessage("Esse horário já está ocupado. Escolha outro horário.");
       return;
     }
 
@@ -204,6 +357,19 @@ export function PublicBookingPage() {
         "Agendamento solicitado com sucesso. O negócio já recebeu sua solicitação."
       );
 
+      if (selectedService) {
+        setBookedAppointments((currentAppointments) => [
+          ...currentAppointments,
+          {
+            startTime: formData.startTime,
+            endTime: addMinutesToTime(
+              formData.startTime,
+              selectedService.durationMinutes
+            ),
+          },
+        ]);
+      }
+
       setFormData((currentFormData) => ({
         ...currentFormData,
         clientName: "",
@@ -211,11 +377,8 @@ export function PublicBookingPage() {
         clientEmail: "",
         notes: "",
       }));
-    } catch (error: any) {
-      setErrorMessage(
-        error?.response?.data?.message ??
-          "Não foi possível confirmar o agendamento."
-      );
+    } catch (error) {
+      setErrorMessage(getErrorMessage(error));
     } finally {
       setIsSaving(false);
     }
@@ -470,7 +633,9 @@ export function PublicBookingPage() {
               </label>
 
               <label className="block">
-                <span className="upp-label">Horário</span>
+                <span className="upp-label">
+                  Horário {isLoadingTimes ? "(verificando...)" : ""}
+                </span>
 
                 <select
                   className="upp-input"
@@ -480,9 +645,15 @@ export function PublicBookingPage() {
                   }
                   required
                 >
-                  {availableTimes.map((time) => (
-                    <option key={time} value={time}>
-                      {time}
+                  {timeOptions.map((option) => (
+                    <option
+                      key={option.time}
+                      value={option.time}
+                      disabled={option.disabled}
+                    >
+                      {option.disabled
+                        ? `${option.time} - ocupado`
+                        : option.time}
                     </option>
                   ))}
                 </select>
@@ -553,6 +724,20 @@ export function PublicBookingPage() {
                 </div>
 
                 <div className="flex items-center justify-between gap-4">
+                  <span>Data</span>
+                  <strong className="text-right text-[#132033]">
+                    {formData.date}
+                  </strong>
+                </div>
+
+                <div className="flex items-center justify-between gap-4">
+                  <span>Horário</span>
+                  <strong className="text-right text-[#132033]">
+                    {formData.startTime || "Sem horário disponível"}
+                  </strong>
+                </div>
+
+                <div className="flex items-center justify-between gap-4">
                   <span>Valor</span>
                   <strong className="text-right text-[#132033]">
                     {selectedService
@@ -594,10 +779,12 @@ export function PublicBookingPage() {
                 type="submit"
                 disabled={
                   isSaving ||
+                  isLoadingTimes ||
                   !formData.serviceId ||
                   !formData.professionalId ||
                   !formData.date ||
-                  !formData.startTime
+                  !formData.startTime ||
+                  Boolean(selectedTimeOption?.disabled)
                 }
                 className="w-full sm:w-auto"
               >
