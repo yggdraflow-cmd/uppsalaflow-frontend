@@ -33,6 +33,29 @@ const appointmentStatusOptions: AppointmentStatus[] = [
   "NO_SHOW",
 ];
 
+const availableTimes = [
+  "08:00",
+  "08:30",
+  "09:00",
+  "09:30",
+  "10:00",
+  "10:30",
+  "11:00",
+  "11:30",
+  "12:00",
+  "13:00",
+  "13:30",
+  "14:00",
+  "14:30",
+  "15:00",
+  "15:30",
+  "16:00",
+  "16:30",
+  "17:00",
+  "17:30",
+  "18:00",
+];
+
 function getTodayDate() {
   return new Date().toISOString().split("T")[0];
 }
@@ -52,6 +75,26 @@ function addMinutesToTime(time: string, minutesToAdd: number) {
   return `${finalHours}:${finalMinutes}`;
 }
 
+function timeToMinutes(time: string) {
+  const [hours, minutes] = time.split(":").map(Number);
+
+  return hours * 60 + minutes;
+}
+
+function hasTimeConflict(
+  newStartTime: string,
+  newEndTime: string,
+  existingStartTime: string,
+  existingEndTime: string
+) {
+  const newStart = timeToMinutes(newStartTime);
+  const newEnd = timeToMinutes(newEndTime);
+  const existingStart = timeToMinutes(existingStartTime);
+  const existingEnd = timeToMinutes(existingEndTime);
+
+  return newStart < existingEnd && newEnd > existingStart;
+}
+
 function formatCurrency(value: string | number) {
   return Number(value).toLocaleString("pt-BR", {
     style: "currency",
@@ -63,6 +106,25 @@ function sortAppointmentsByTime(appointments: AppointmentWithRelations[]) {
   return [...appointments].sort((firstAppointment, secondAppointment) =>
     firstAppointment.startTime.localeCompare(secondAppointment.startTime)
   );
+}
+
+function getApiErrorMessage(error: unknown, fallbackMessage: string) {
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "response" in error &&
+    typeof error.response === "object" &&
+    error.response !== null &&
+    "data" in error.response &&
+    typeof error.response.data === "object" &&
+    error.response.data !== null &&
+    "message" in error.response.data &&
+    typeof error.response.data.message === "string"
+  ) {
+    return error.response.data.message;
+  }
+
+  return fallbackMessage;
 }
 
 export function AppointmentsPage() {
@@ -99,6 +161,48 @@ export function AppointmentsPage() {
     return addMinutesToTime(startTime, selectedService.durationMinutes);
   }, [selectedService, startTime]);
 
+  const timeOptions = useMemo(() => {
+    return availableTimes.map((time) => {
+      if (!selectedService || !selectedProfessionalId) {
+        return {
+          time,
+          disabled: false,
+        };
+      }
+
+      const endTime = addMinutesToTime(time, selectedService.durationMinutes);
+
+      const disabled = appointments.some((appointment) => {
+        if (appointment.professionalId !== selectedProfessionalId) {
+          return false;
+        }
+
+        if (
+          appointment.status === "CANCELED" ||
+          appointment.status === "NO_SHOW"
+        ) {
+          return false;
+        }
+
+        return hasTimeConflict(
+          time,
+          endTime,
+          appointment.startTime,
+          appointment.endTime
+        );
+      });
+
+      return {
+        time,
+        disabled,
+      };
+    });
+  }, [appointments, selectedProfessionalId, selectedService]);
+
+  const selectedTimeOption = useMemo(() => {
+    return timeOptions.find((option) => option.time === startTime);
+  }, [startTime, timeOptions]);
+
   useEffect(() => {
     async function loadBusinesses() {
       try {
@@ -111,8 +215,11 @@ export function AppointmentsPage() {
         if (response.data.length > 0) {
           setSelectedBusinessId(response.data[0].id);
         }
-      } catch {
-        setError("Não foi possível carregar os negócios.");
+      } catch (error) {
+        setBusinesses([]);
+        setError(
+          getApiErrorMessage(error, "Não foi possível carregar os negócios.")
+        );
       }
     }
 
@@ -152,8 +259,16 @@ export function AppointmentsPage() {
         setSelectedClientId(clientsResponse.data[0]?.id || "");
         setSelectedServiceId(servicesResponse.data[0]?.id || "");
         setSelectedProfessionalId(professionalsResponse.data[0]?.id || "");
-      } catch {
-        setError("Não foi possível carregar os dados do negócio.");
+      } catch (error) {
+        setClients([]);
+        setServices([]);
+        setProfessionals([]);
+        setError(
+          getApiErrorMessage(
+            error,
+            "Não foi possível carregar os dados do negócio."
+          )
+        );
       }
     }
 
@@ -181,13 +296,36 @@ export function AppointmentsPage() {
         );
 
         setAppointments(sortAppointmentsByTime(response.data));
-      } catch {
-        setError("Não foi possível carregar a agenda do dia.");
+      } catch (error) {
+        setAppointments([]);
+        setError(
+          getApiErrorMessage(error, "Não foi possível carregar a agenda do dia.")
+        );
       }
     }
 
     loadAppointments();
   }, [selectedBusinessId, selectedDate]);
+
+  useEffect(() => {
+    if (timeOptions.length === 0) {
+      return;
+    }
+
+    const currentTimeOption = timeOptions.find(
+      (option) => option.time === startTime
+    );
+
+    if (currentTimeOption && !currentTimeOption.disabled) {
+      return;
+    }
+
+    const firstAvailableTimeOption = timeOptions.find(
+      (option) => !option.disabled
+    );
+
+    setStartTime(firstAvailableTimeOption?.time || "");
+  }, [startTime, timeOptions]);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -206,6 +344,16 @@ export function AppointmentsPage() {
 
     if (!selectedService || !calculatedEndTime) {
       setError("Selecione um serviço válido.");
+      return;
+    }
+
+    if (!startTime) {
+      setError("Não há horário disponível para este serviço nesta data.");
+      return;
+    }
+
+    if (selectedTimeOption?.disabled) {
+      setError("Esse horário já está ocupado para este profissional.");
       return;
     }
 
@@ -235,8 +383,10 @@ export function AppointmentsPage() {
 
       setMessage("Agendamento criado com sucesso.");
       setNotes("");
-    } catch {
-      setError("Não foi possível criar o agendamento.");
+    } catch (error) {
+      setError(
+        getApiErrorMessage(error, "Não foi possível criar o agendamento.")
+      );
     } finally {
       setIsSaving(false);
     }
@@ -264,15 +414,20 @@ export function AppointmentsPage() {
       );
 
       setMessage("Status do agendamento atualizado.");
-    } catch {
-      setError("Não foi possível atualizar o status do agendamento.");
+    } catch (error) {
+      setError(
+        getApiErrorMessage(
+          error,
+          "Não foi possível atualizar o status do agendamento."
+        )
+      );
     }
   }
 
   return (
     <div>
       <div className="mb-8">
-        <p className="text-sm font-medium text-beauty-700">Agenda</p>
+        <p className="text-sm font-medium text-orange-500">Agenda</p>
         <h1 className="text-3xl font-bold text-zinc-950">Agendamentos</h1>
         <p className="mt-2 text-zinc-600">
           Crie atendimentos, liste a agenda por dia e altere o status.
@@ -294,7 +449,7 @@ export function AppointmentsPage() {
               <select
                 value={selectedBusinessId}
                 onChange={(event) => setSelectedBusinessId(event.target.value)}
-                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-beauty-500 focus:ring-2 focus:ring-beauty-100"
+                className="upp-input"
               >
                 {businesses.map((business) => (
                   <option key={business.id} value={business.id}>
@@ -327,7 +482,7 @@ export function AppointmentsPage() {
               <select
                 value={selectedClientId}
                 onChange={(event) => setSelectedClientId(event.target.value)}
-                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-beauty-500 focus:ring-2 focus:ring-beauty-100"
+                className="upp-input"
               >
                 {clients.length === 0 ? (
                   <option value="">Nenhum cliente cadastrado</option>
@@ -349,7 +504,7 @@ export function AppointmentsPage() {
               <select
                 value={selectedServiceId}
                 onChange={(event) => setSelectedServiceId(event.target.value)}
-                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-beauty-500 focus:ring-2 focus:ring-beauty-100"
+                className="upp-input"
               >
                 {services.length === 0 ? (
                   <option value="">Nenhum serviço cadastrado</option>
@@ -373,7 +528,7 @@ export function AppointmentsPage() {
                 onChange={(event) =>
                   setSelectedProfessionalId(event.target.value)
                 }
-                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-beauty-500 focus:ring-2 focus:ring-beauty-100"
+                className="upp-input"
               >
                 {professionals.length === 0 ? (
                   <option value="">Nenhum profissional cadastrado</option>
@@ -387,13 +542,34 @@ export function AppointmentsPage() {
               </select>
             </label>
 
-            <Input
-              label="Horário inicial"
-              type="time"
-              value={startTime}
-              onChange={(event) => setStartTime(event.target.value)}
-              required
-            />
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-zinc-700">
+                Horário inicial
+              </span>
+
+              <select
+                value={startTime}
+                onChange={(event) => setStartTime(event.target.value)}
+                className="upp-input"
+                required
+              >
+                {timeOptions.length === 0 ? (
+                  <option value="">Nenhum horário disponível</option>
+                ) : (
+                  timeOptions.map((option) => (
+                    <option
+                      key={option.time}
+                      value={option.time}
+                      disabled={option.disabled}
+                    >
+                      {option.disabled
+                        ? `${option.time} - ocupado`
+                        : option.time}
+                    </option>
+                  ))
+                )}
+              </select>
+            </label>
 
             <div className="rounded-xl bg-zinc-50 p-3 text-sm text-zinc-600 ring-1 ring-zinc-200">
               <p>
@@ -423,11 +599,17 @@ export function AppointmentsPage() {
                 onChange={(event) => setNotes(event.target.value)}
                 rows={4}
                 placeholder="Observações do atendimento..."
-                className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-beauty-500 focus:ring-2 focus:ring-beauty-100"
+                className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
               />
             </label>
 
-            <Button type="submit" disabled={isSaving} className="w-full">
+            <Button
+              type="submit"
+              disabled={
+                isSaving || !startTime || Boolean(selectedTimeOption?.disabled)
+              }
+              className="w-full"
+            >
               {isSaving ? "Salvando..." : "Criar agendamento"}
             </Button>
           </form>
@@ -455,7 +637,7 @@ export function AppointmentsPage() {
                           {appointment.client.name}
                         </h2>
 
-                        <span className="rounded-full bg-beauty-50 px-3 py-1 text-xs font-semibold text-beauty-700">
+                        <span className="rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-700">
                           {appointmentStatusLabels[appointment.status]}
                         </span>
                       </div>
@@ -501,7 +683,7 @@ export function AppointmentsPage() {
                               event.target.value as AppointmentStatus
                             )
                           }
-                          className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-beauty-500 focus:ring-2 focus:ring-beauty-100"
+                          className="upp-input"
                         >
                           {appointmentStatusOptions.map((status) => (
                             <option key={status} value={status}>
