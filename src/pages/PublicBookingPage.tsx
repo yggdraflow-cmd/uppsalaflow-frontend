@@ -66,6 +66,8 @@ type BookingFormData = {
   notes: string;
 };
 
+const BUSINESS_CLOSE_TIME = "18:00";
+
 const availableTimes = [
   "08:00",
   "08:30",
@@ -163,9 +165,11 @@ export function PublicBookingPage() {
   const [bookedAppointments, setBookedAppointments] = useState<
     BookedAppointment[]
   >([]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingTimes, setIsLoadingTimes] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -209,12 +213,21 @@ export function PublicBookingPage() {
         return {
           time,
           disabled: false,
+          reason: "",
         };
       }
 
       const endTime = addMinutesToTime(time, selectedService.durationMinutes);
 
-      const disabled = bookedAppointments.some((appointment) =>
+      if (timeToMinutes(endTime) > timeToMinutes(BUSINESS_CLOSE_TIME)) {
+        return {
+          time,
+          disabled: true,
+          reason: "fora do expediente",
+        };
+      }
+
+      const hasConflict = bookedAppointments.some((appointment) =>
         hasTimeConflict(
           time,
           endTime,
@@ -225,7 +238,8 @@ export function PublicBookingPage() {
 
       return {
         time,
-        disabled,
+        disabled: hasConflict,
+        reason: hasConflict ? "ocupado" : "",
       };
     });
   }, [bookedAppointments, selectedService]);
@@ -332,8 +346,13 @@ export function PublicBookingPage() {
       return;
     }
 
+    if (!formData.startTime) {
+      setErrorMessage("Não há horário disponível para este serviço nesta data.");
+      return;
+    }
+
     if (selectedTimeOption?.disabled) {
-      setErrorMessage("Esse horário já está ocupado. Escolha outro horário.");
+      setErrorMessage("Esse horário não está disponível. Escolha outro horário.");
       return;
     }
 
@@ -652,7 +671,7 @@ export function PublicBookingPage() {
                       disabled={option.disabled}
                     >
                       {option.disabled
-                        ? `${option.time} - ocupado`
+                        ? `${option.time} - ${option.reason}`
                         : option.time}
                     </option>
                   ))}

@@ -15,6 +15,12 @@ type AppointmentWithRelations = Appointment & {
   service: BeautyService;
 };
 
+type TimeOption = {
+  time: string;
+  disabled: boolean;
+  reason: string;
+};
+
 const appointmentStatusLabels: Record<AppointmentStatus, string> = {
   SCHEDULED: "Agendado",
   CONFIRMED: "Confirmado",
@@ -32,6 +38,8 @@ const appointmentStatusOptions: AppointmentStatus[] = [
   "CANCELED",
   "NO_SHOW",
 ];
+
+const BUSINESS_CLOSE_TIME = "18:00";
 
 const availableTimes = [
   "08:00",
@@ -60,14 +68,21 @@ function getTodayDate() {
   return new Date().toISOString().split("T")[0];
 }
 
+function getDateOnly(date: string | Date) {
+  return new Date(date).toISOString().split("T")[0];
+}
+
+function formatDisplayDate(date: string | Date) {
+  return new Date(date).toLocaleDateString("pt-BR", {
+    timeZone: "UTC",
+  });
+}
+
 function addMinutesToTime(time: string, minutesToAdd: number) {
   const [hours, minutes] = time.split(":").map(Number);
 
-  const date = new Date();
-  date.setHours(hours);
-  date.setMinutes(minutes + minutesToAdd);
-  date.setSeconds(0);
-  date.setMilliseconds(0);
+  const date = new Date(2000, 0, 1, hours, minutes);
+  date.setMinutes(date.getMinutes() + minutesToAdd);
 
   const finalHours = String(date.getHours()).padStart(2, "0");
   const finalMinutes = String(date.getMinutes()).padStart(2, "0");
@@ -108,6 +123,21 @@ function sortAppointmentsByTime(appointments: AppointmentWithRelations[]) {
   );
 }
 
+function sortHistoryAppointments(appointments: AppointmentWithRelations[]) {
+  return [...appointments].sort((firstAppointment, secondAppointment) => {
+    const firstDate = new Date(firstAppointment.date).getTime();
+    const secondDate = new Date(secondAppointment.date).getTime();
+
+    if (firstDate !== secondDate) {
+      return secondDate - firstDate;
+    }
+
+    return secondAppointment.startTime.localeCompare(
+      firstAppointment.startTime
+    );
+  });
+}
+
 function getApiErrorMessage(error: unknown, fallbackMessage: string) {
   if (
     typeof error === "object" &&
@@ -127,12 +157,25 @@ function getApiErrorMessage(error: unknown, fallbackMessage: string) {
   return fallbackMessage;
 }
 
+function isHistoryStatus(status: AppointmentStatus) {
+  return (
+    status === "FINISHED" || status === "CANCELED" || status === "NO_SHOW"
+  );
+}
+
+function isCanceledStatus(status: AppointmentStatus) {
+  return status === "CANCELED" || status === "NO_SHOW";
+}
+
 export function AppointmentsPage() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
   const [services, setServices] = useState<BeautyService[]>([]);
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [appointments, setAppointments] = useState<
+    AppointmentWithRelations[]
+  >([]);
+  const [historyAppointments, setHistoryAppointments] = useState<
     AppointmentWithRelations[]
   >([]);
 
@@ -161,18 +204,84 @@ export function AppointmentsPage() {
     return addMinutesToTime(startTime, selectedService.durationMinutes);
   }, [selectedService, startTime]);
 
-  const timeOptions = useMemo(() => {
+  const activeDayAppointments = useMemo(() => {
+    return appointments.filter(
+      (appointment) => !isHistoryStatus(appointment.status)
+    );
+  }, [appointments]);
+
+  const daySummary = useMemo(() => {
+    const finishedCount = appointments.filter(
+      (appointment) => appointment.status === "FINISHED"
+    ).length;
+
+    const canceledCount = appointments.filter((appointment) =>
+      isCanceledStatus(appointment.status)
+    ).length;
+
+    const estimatedRevenue = appointments.reduce((total, appointment) => {
+      if (isCanceledStatus(appointment.status)) {
+        return total;
+      }
+
+      return total + Number(appointment.price);
+    }, 0);
+
+    return {
+      total: appointments.length,
+      active: activeDayAppointments.length,
+      finished: finishedCount,
+      canceled: canceledCount,
+      estimatedRevenue,
+    };
+  }, [appointments, activeDayAppointments.length]);
+
+  const historySummary = useMemo(() => {
+    const finishedCount = historyAppointments.filter(
+      (appointment) => appointment.status === "FINISHED"
+    ).length;
+
+    const canceledCount = historyAppointments.filter((appointment) =>
+      isCanceledStatus(appointment.status)
+    ).length;
+
+    const revenue = historyAppointments.reduce((total, appointment) => {
+      if (isCanceledStatus(appointment.status)) {
+        return total;
+      }
+
+      return total + Number(appointment.price);
+    }, 0);
+
+    return {
+      total: historyAppointments.length,
+      finished: finishedCount,
+      canceled: canceledCount,
+      revenue,
+    };
+  }, [historyAppointments]);
+
+  const timeOptions = useMemo<TimeOption[]>(() => {
     return availableTimes.map((time) => {
       if (!selectedService || !selectedProfessionalId) {
         return {
           time,
           disabled: false,
+          reason: "",
         };
       }
 
       const endTime = addMinutesToTime(time, selectedService.durationMinutes);
 
-      const disabled = appointments.some((appointment) => {
+      if (timeToMinutes(endTime) > timeToMinutes(BUSINESS_CLOSE_TIME)) {
+        return {
+          time,
+          disabled: true,
+          reason: "fora do expediente",
+        };
+      }
+
+      const hasConflict = appointments.some((appointment) => {
         if (appointment.professionalId !== selectedProfessionalId) {
           return false;
         }
@@ -194,7 +303,8 @@ export function AppointmentsPage() {
 
       return {
         time,
-        disabled,
+        disabled: hasConflict,
+        reason: hasConflict ? "indisponível" : "",
       };
     });
   }, [appointments, selectedProfessionalId, selectedService]);
@@ -233,6 +343,7 @@ export function AppointmentsPage() {
         setServices([]);
         setProfessionals([]);
         setAppointments([]);
+        setHistoryAppointments([]);
         return;
       }
 
@@ -308,6 +419,40 @@ export function AppointmentsPage() {
   }, [selectedBusinessId, selectedDate]);
 
   useEffect(() => {
+    async function loadHistoryAppointments() {
+      if (!selectedBusinessId) {
+        setHistoryAppointments([]);
+        return;
+      }
+
+      try {
+        setError("");
+
+        const response = await api.get<AppointmentWithRelations[]>(
+          "/appointments/history",
+          {
+            params: {
+              businessId: selectedBusinessId,
+            },
+          }
+        );
+
+        setHistoryAppointments(sortHistoryAppointments(response.data));
+      } catch (error) {
+        setHistoryAppointments([]);
+        setError(
+          getApiErrorMessage(
+            error,
+            "Não foi possível carregar o histórico geral."
+          )
+        );
+      }
+    }
+
+    loadHistoryAppointments();
+  }, [selectedBusinessId]);
+
+  useEffect(() => {
     if (timeOptions.length === 0) {
       return;
     }
@@ -353,7 +498,7 @@ export function AppointmentsPage() {
     }
 
     if (selectedTimeOption?.disabled) {
-      setError("Esse horário já está ocupado para este profissional.");
+      setError("Esse horário não está disponível. Escolha outro horário.");
       return;
     }
 
@@ -405,13 +550,48 @@ export function AppointmentsPage() {
         { status }
       );
 
-      setAppointments((currentAppointments) =>
-        sortAppointmentsByTime(
+      const updatedAppointment = response.data;
+
+      setAppointments((currentAppointments) => {
+        const selectedDateOnly = selectedDate;
+        const appointmentDateOnly = getDateOnly(updatedAppointment.date);
+
+        if (appointmentDateOnly !== selectedDateOnly) {
+          return currentAppointments;
+        }
+
+        const appointmentAlreadyExists = currentAppointments.some(
+          (appointment) => appointment.id === appointmentId
+        );
+
+        if (!appointmentAlreadyExists) {
+          return sortAppointmentsByTime([
+            updatedAppointment,
+            ...currentAppointments,
+          ]);
+        }
+
+        return sortAppointmentsByTime(
           currentAppointments.map((appointment) =>
-            appointment.id === appointmentId ? response.data : appointment
+            appointment.id === appointmentId ? updatedAppointment : appointment
           )
-        )
-      );
+        );
+      });
+
+      setHistoryAppointments((currentHistoryAppointments) => {
+        const withoutUpdatedAppointment = currentHistoryAppointments.filter(
+          (appointment) => appointment.id !== appointmentId
+        );
+
+        if (!isHistoryStatus(updatedAppointment.status)) {
+          return sortHistoryAppointments(withoutUpdatedAppointment);
+        }
+
+        return sortHistoryAppointments([
+          updatedAppointment,
+          ...withoutUpdatedAppointment,
+        ]);
+      });
 
       setMessage("Status do agendamento atualizado.");
     } catch (error) {
@@ -424,13 +604,125 @@ export function AppointmentsPage() {
     }
   }
 
+  function renderAppointmentCard(
+    appointment: AppointmentWithRelations,
+    showDate = false
+  ) {
+    return (
+      <div
+        key={appointment.id}
+        className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4"
+      >
+        <div className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-lg font-semibold text-zinc-950">
+                {appointment.client.name}
+              </h2>
+
+              <span className="rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-700">
+                {appointmentStatusLabels[appointment.status]}
+              </span>
+            </div>
+
+            {showDate && (
+              <p className="mt-1 text-sm text-zinc-500">
+                Data:{" "}
+                <span className="font-medium text-zinc-900">
+                  {formatDisplayDate(appointment.date)}
+                </span>
+              </p>
+            )}
+
+            <p className="mt-1 text-sm text-zinc-500">
+              Serviço:{" "}
+              <span className="font-medium text-zinc-900">
+                {appointment.service.name}
+              </span>
+            </p>
+
+            <p className="mt-1 text-sm text-zinc-500">
+              Profissional: {appointment.professional.name}
+            </p>
+
+            <p className="mt-1 text-sm text-zinc-500">
+              Horário: {appointment.startTime} até {appointment.endTime}
+            </p>
+
+            <p className="mt-1 text-sm text-zinc-500">
+              Preço: {formatCurrency(appointment.price)}
+            </p>
+
+            {appointment.notes && (
+              <p className="mt-3 rounded-xl bg-white px-3 py-2 text-sm text-zinc-600 ring-1 ring-zinc-200">
+                {appointment.notes}
+              </p>
+            )}
+          </div>
+
+          <div className="flex min-w-52 flex-col gap-3">
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-zinc-700">
+                Status
+              </span>
+
+              <select
+                value={appointment.status}
+                onChange={(event) =>
+                  handleStatusChange(
+                    appointment.id,
+                    event.target.value as AppointmentStatus
+                  )
+                }
+                className="upp-input"
+              >
+                {appointmentStatusOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {appointmentStatusLabels[status]}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <div className="grid gap-2">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => handleStatusChange(appointment.id, "CONFIRMED")}
+              >
+                Confirmar
+              </Button>
+
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => handleStatusChange(appointment.id, "FINISHED")}
+              >
+                Finalizar
+              </Button>
+
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => handleStatusChange(appointment.id, "CANCELED")}
+              >
+                Cancelar
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="mb-8">
         <p className="text-sm font-medium text-orange-500">Agenda</p>
         <h1 className="text-3xl font-bold text-zinc-950">Agendamentos</h1>
         <p className="mt-2 text-zinc-600">
-          Crie atendimentos, liste a agenda por dia e altere o status.
+          Crie atendimentos, acompanhe a agenda do dia e consulte o histórico
+          geral do negócio.
         </p>
       </div>
 
@@ -563,7 +855,7 @@ export function AppointmentsPage() {
                       disabled={option.disabled}
                     >
                       {option.disabled
-                        ? `${option.time} - ocupado`
+                        ? `${option.time} - ${option.reason}`
                         : option.time}
                     </option>
                   ))
@@ -618,119 +910,167 @@ export function AppointmentsPage() {
           {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
         </Card>
 
-        <Card title="Agenda do dia">
-          {appointments.length === 0 ? (
-            <p className="text-sm text-zinc-500">
-              Nenhum agendamento cadastrado para este dia.
-            </p>
-          ) : (
-            <div className="space-y-3">
-              {appointments.map((appointment) => (
-                <div
-                  key={appointment.id}
-                  className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4"
-                >
-                  <div className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h2 className="text-lg font-semibold text-zinc-950">
-                          {appointment.client.name}
-                        </h2>
+        <div className="space-y-6">
+          <Card title="Agenda do dia">
+            <div className="mb-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                  Horários do dia
+                </p>
+                <strong className="mt-2 block text-2xl text-zinc-950">
+                  {daySummary.total}
+                </strong>
+              </div>
 
-                        <span className="rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-700">
-                          {appointmentStatusLabels[appointment.status]}
-                        </span>
-                      </div>
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                  Ativos
+                </p>
+                <strong className="mt-2 block text-2xl text-zinc-950">
+                  {daySummary.active}
+                </strong>
+              </div>
 
-                      <p className="mt-1 text-sm text-zinc-500">
-                        Serviço:{" "}
-                        <span className="font-medium text-zinc-900">
-                          {appointment.service.name}
-                        </span>
-                      </p>
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                  Finalizados no dia
+                </p>
+                <strong className="mt-2 block text-2xl text-zinc-950">
+                  {daySummary.finished}
+                </strong>
+              </div>
 
-                      <p className="mt-1 text-sm text-zinc-500">
-                        Profissional: {appointment.professional.name}
-                      </p>
-
-                      <p className="mt-1 text-sm text-zinc-500">
-                        Horário: {appointment.startTime} até{" "}
-                        {appointment.endTime}
-                      </p>
-
-                      <p className="mt-1 text-sm text-zinc-500">
-                        Preço: {formatCurrency(appointment.price)}
-                      </p>
-
-                      {appointment.notes && (
-                        <p className="mt-3 rounded-xl bg-white px-3 py-2 text-sm text-zinc-600 ring-1 ring-zinc-200">
-                          {appointment.notes}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="flex min-w-52 flex-col gap-3">
-                      <label className="block">
-                        <span className="mb-1 block text-sm font-medium text-zinc-700">
-                          Status
-                        </span>
-
-                        <select
-                          value={appointment.status}
-                          onChange={(event) =>
-                            handleStatusChange(
-                              appointment.id,
-                              event.target.value as AppointmentStatus
-                            )
-                          }
-                          className="upp-input"
-                        >
-                          {appointmentStatusOptions.map((status) => (
-                            <option key={status} value={status}>
-                              {appointmentStatusLabels[status]}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-
-                      <div className="grid gap-2">
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          onClick={() =>
-                            handleStatusChange(appointment.id, "CONFIRMED")
-                          }
-                        >
-                          Confirmar
-                        </Button>
-
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          onClick={() =>
-                            handleStatusChange(appointment.id, "FINISHED")
-                          }
-                        >
-                          Finalizar
-                        </Button>
-
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          onClick={() =>
-                            handleStatusChange(appointment.id, "CANCELED")
-                          }
-                        >
-                          Cancelar
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                  Cancelados no dia
+                </p>
+                <strong className="mt-2 block text-2xl text-zinc-950">
+                  {daySummary.canceled}
+                </strong>
+              </div>
             </div>
-          )}
-        </Card>
+
+            <div className="mb-6 rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+              <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h2 className="text-base font-semibold text-zinc-950">
+                    Horários agendados no dia
+                  </h2>
+                  <p className="mt-1 text-sm text-zinc-500">
+                    Aqui aparecem somente os horários reais marcados na data
+                    selecionada.
+                  </p>
+                </div>
+
+                <strong className="text-sm text-zinc-700">
+                  Faturamento estimado do dia:{" "}
+                  <span className="text-zinc-950">
+                    {formatCurrency(daySummary.estimatedRevenue)}
+                  </span>
+                </strong>
+              </div>
+
+              {appointments.length === 0 ? (
+                <p className="mt-4 text-sm text-zinc-500">
+                  Nenhum horário agendado para este dia.
+                </p>
+              ) : (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {appointments.map((appointment) => (
+                    <span
+                      key={appointment.id}
+                      className="rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700"
+                    >
+                      {appointment.startTime} até {appointment.endTime} •{" "}
+                      {appointment.client.name} •{" "}
+                      {appointmentStatusLabels[appointment.status]}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <h2 className="mb-3 text-lg font-semibold text-zinc-950">
+                Atendimentos ativos do dia
+              </h2>
+
+              {activeDayAppointments.length === 0 ? (
+                <p className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-500">
+                  Nenhum atendimento ativo para este dia.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {activeDayAppointments.map((appointment) =>
+                    renderAppointmentCard(appointment)
+                  )}
+                </div>
+              )}
+            </div>
+          </Card>
+
+          <Card title="Histórico geral">
+            <div className="mb-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                  Total histórico
+                </p>
+                <strong className="mt-2 block text-2xl text-zinc-950">
+                  {historySummary.total}
+                </strong>
+              </div>
+
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                  Finalizados
+                </p>
+                <strong className="mt-2 block text-2xl text-zinc-950">
+                  {historySummary.finished}
+                </strong>
+              </div>
+
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                  Cancelados / faltas
+                </p>
+                <strong className="mt-2 block text-2xl text-zinc-950">
+                  {historySummary.canceled}
+                </strong>
+              </div>
+
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                  Receita realizada
+                </p>
+                <strong className="mt-2 block text-2xl text-zinc-950">
+                  {formatCurrency(historySummary.revenue)}
+                </strong>
+              </div>
+            </div>
+
+            <div className="mb-5 rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+              <h2 className="text-base font-semibold text-zinc-950">
+                Histórico do negócio
+              </h2>
+              <p className="mt-1 text-sm text-zinc-500">
+                Lista geral de atendimentos finalizados, cancelados e marcados
+                como não compareceu, independente da data selecionada na agenda.
+              </p>
+            </div>
+
+            {historyAppointments.length === 0 ? (
+              <p className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-500">
+                Nenhum atendimento no histórico geral ainda.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {historyAppointments.map((appointment) =>
+                  renderAppointmentCard(appointment, true)
+                )}
+              </div>
+            )}
+          </Card>
+        </div>
       </div>
     </div>
   );

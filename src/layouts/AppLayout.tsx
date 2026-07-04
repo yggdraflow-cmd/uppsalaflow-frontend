@@ -12,6 +12,8 @@ import {
   Users,
 } from "lucide-react";
 
+import { clearAuthStorage } from "../services/api";
+
 type AppLayoutProps = {
   children?: ReactNode;
 };
@@ -48,20 +50,39 @@ const menuItems = [
     icon: CalendarDays,
   },
   {
-    label: "Configuração",
+    label: "Configurações",
     path: "/settings",
     icon: Settings,
   },
 ];
 
+function getStoredUserLabel() {
+  const rawUser =
+    localStorage.getItem("@uppsalaflow:user") ||
+    localStorage.getItem("user");
+
+  if (!rawUser) {
+    return "Usuário logado";
+  }
+
+  try {
+    const user = JSON.parse(rawUser) as {
+      name?: string;
+      email?: string;
+    };
+
+    return user.name || user.email || "Usuário logado";
+  } catch {
+    return "Usuário logado";
+  }
+}
+
 export function AppLayout({ children }: AppLayoutProps) {
   const navigate = useNavigate();
+  const userLabel = getStoredUserLabel();
 
   function handleLogout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("beautyflow_token");
-    localStorage.removeItem("uppsalaflow_token");
-
+    clearAuthStorage();
     navigate("/login");
   }
 
@@ -117,7 +138,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               <div className="flex items-center gap-3 text-sm font-bold text-[#6a7a89]">
                 <span>Uppsalaflow</span>
                 <span className="h-1 w-1 rounded-full bg-[#aab8c3]" />
-                <span className="text-[#132033]">Main</span>
+                <span className="text-[#132033]">Painel interno</span>
               </div>
 
               <p className="mt-1 text-xs font-semibold text-[#8a99a6]">
@@ -126,16 +147,15 @@ export function AppLayout({ children }: AppLayoutProps) {
             </div>
 
             <div className="flex items-center gap-3">
-              <button
-                type="button"
-                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/80 bg-white/45 text-[#506173] shadow-sm backdrop-blur-xl transition hover:text-[#f97316]"
-                title="Notificações"
+              <div
+                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/80 bg-white/45 text-[#506173] shadow-sm backdrop-blur-xl"
+                title="Notificações em breve"
               >
                 <Bell size={22} />
-              </button>
+              </div>
 
               <div className="hidden rounded-full border border-white/80 bg-white/45 px-5 py-3 text-sm font-bold text-[#132033] shadow-sm backdrop-blur-xl sm:block">
-                Admin
+                {userLabel}
               </div>
             </div>
           </header>

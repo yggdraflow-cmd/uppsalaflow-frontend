@@ -1,7 +1,7 @@
 import type { User } from "../types/auth";
 
-const TOKEN_KEY = "@beautyflow:token";
-const USER_KEY = "@beautyflow:user";
+const TOKEN_KEY = "@uppsalaflow:token";
+const USER_KEY = "@uppsalaflow:user";
 
 export function saveAuth(token: string, user: User) {
   localStorage.setItem(TOKEN_KEY, token);
