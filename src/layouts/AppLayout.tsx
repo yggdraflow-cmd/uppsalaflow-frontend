@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   LogOut,
   Scissors,
-  Settings,
   UserRound,
   Users,
 } from "lucide-react";
@@ -48,11 +47,6 @@ const menuItems = [
     label: "Agenda",
     path: "/appointments",
     icon: CalendarDays,
-  },
-  {
-    label: "Configurações",
-    path: "/settings",
-    icon: Settings,
   },
 ];
 
