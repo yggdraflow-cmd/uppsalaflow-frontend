@@ -11,6 +11,7 @@ import { ServicesPage } from "../pages/ServicesPage";
 import { ProfessionalsPage } from "../pages/ProfessionalsPage";
 import { AppointmentsPage } from "../pages/AppointmentsPage";
 import { PublicBookingPage } from "../pages/PublicBookingPage";
+import { AdminPage } from "../pages/AdminPage";
 
 function ProtectedPage({ children }: { children: ReactNode }) {
   return (
@@ -77,6 +78,15 @@ export function AppRoutes() {
         element={
           <ProtectedPage>
             <AppointmentsPage />
+          </ProtectedPage>
+        }
+      />
+
+      <Route
+        path="/admin"
+        element={
+          <ProtectedPage>
+            <AdminPage />
           </ProtectedPage>
         }
       />
