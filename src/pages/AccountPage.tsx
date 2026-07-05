@@ -1,11 +1,53 @@
 import { FormEvent, useState } from "react";
-import { LockKeyhole, UserRound } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole, UserRound } from "lucide-react";
 
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
-import { Input } from "../components/Input";
 import { api } from "../services/api";
 import { getUser } from "../services/authStorage";
+
+type PasswordFieldProps = {
+  label: string;
+  value: string;
+  minLength?: number;
+  onChange: (value: string) => void;
+};
+
+function PasswordField({
+  label,
+  value,
+  minLength,
+  onChange,
+}: PasswordFieldProps) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    <label className="block">
+      <span className="upp-label">{label}</span>
+
+      <div className="relative">
+        <input
+          className="upp-input pr-14"
+          type={isVisible ? "text" : "password"}
+          value={value}
+          minLength={minLength}
+          onChange={(event) => onChange(event.target.value)}
+          required
+        />
+
+        <button
+          type="button"
+          onClick={() => setIsVisible((currentValue) => !currentValue)}
+          className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-[#506173] transition hover:text-[#f97316]"
+          aria-label={isVisible ? "Ocultar senha" : "Mostrar senha"}
+          title={isVisible ? "Ocultar senha" : "Mostrar senha"}
+        >
+          {isVisible ? <EyeOff size={21} /> : <Eye size={21} />}
+        </button>
+      </div>
+    </label>
+  );
+}
 
 function getApiErrorMessage(error: unknown, fallbackMessage: string) {
   if (
@@ -106,35 +148,32 @@ export function AccountPage() {
 
         <Card title="Alterar senha">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
+            <PasswordField
               label="Senha atual"
-              type="password"
               value={currentPassword}
-              onChange={(event) => setCurrentPassword(event.target.value)}
-              required
+              onChange={setCurrentPassword}
             />
 
-            <Input
+            <PasswordField
               label="Nova senha"
-              type="password"
               minLength={8}
               value={newPassword}
-              onChange={(event) => setNewPassword(event.target.value)}
-              required
+              onChange={setNewPassword}
             />
 
-            <Input
+            <PasswordField
               label="Confirmar nova senha"
-              type="password"
               minLength={8}
               value={confirmNewPassword}
-              onChange={(event) => setConfirmNewPassword(event.target.value)}
-              required
+              onChange={setConfirmNewPassword}
             />
 
             <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-600">
               <div className="flex items-start gap-3">
-                <LockKeyhole className="mt-0.5 shrink-0 text-orange-500" size={20} />
+                <LockKeyhole
+                  className="mt-0.5 shrink-0 text-orange-500"
+                  size={20}
+                />
                 <p>
                   Use uma senha nova, com pelo menos 8 caracteres. Não reutilize
                   senha que apareceu em alerta de vazamento do navegador.
@@ -154,7 +193,11 @@ export function AccountPage() {
               </p>
             ) : null}
 
-            <Button type="submit" disabled={isSaving} className="w-full sm:w-auto">
+            <Button
+              type="submit"
+              disabled={isSaving}
+              className="w-full sm:w-auto"
+            >
               {isSaving ? "Alterando..." : "Alterar senha"}
             </Button>
           </form>
