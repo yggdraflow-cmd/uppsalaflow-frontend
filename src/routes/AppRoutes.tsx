@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { PrivateRoute } from "./PrivateRoute";
+
 import { AppLayout } from "../layouts/AppLayout";
+import { AdminLayout } from "../layouts/AdminLayout";
 import { LoginPage } from "../pages/LoginPage";
 import { RegisterPage } from "../pages/RegisterPage";
 import { DashboardPage } from "../pages/DashboardPage";
@@ -12,87 +13,125 @@ import { ProfessionalsPage } from "../pages/ProfessionalsPage";
 import { AppointmentsPage } from "../pages/AppointmentsPage";
 import { PublicBookingPage } from "../pages/PublicBookingPage";
 import { AdminPage } from "../pages/AdminPage";
+import { getToken, getUser } from "../services/authStorage";
 
-function ProtectedPage({ children }: { children: ReactNode }) {
-  return (
-    <PrivateRoute>
-      <AppLayout>{children}</AppLayout>
-    </PrivateRoute>
-  );
+function CustomerPage({ children }: { children: ReactNode }) {
+  const token = getToken();
+  const user = getUser();
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user?.role === "ADMIN") {
+    return <Navigate to="/admin" replace />;
+  }
+
+  return <AppLayout>{children}</AppLayout>;
+}
+
+function AdminProtectedPage({ children }: { children: ReactNode }) {
+  const token = getToken();
+  const user = getUser();
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user?.role !== "ADMIN") {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <AdminLayout>{children}</AdminLayout>;
+}
+
+function HomeRedirect() {
+  const token = getToken();
+  const user = getUser();
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user?.role === "ADMIN") {
+    return <Navigate to="/admin" replace />;
+  }
+
+  return <Navigate to="/dashboard" replace />;
 }
 
 export function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/" element={<HomeRedirect />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
       <Route
+        path="/admin"
+        element={
+          <AdminProtectedPage>
+            <AdminPage />
+          </AdminProtectedPage>
+        }
+      />
+
+      <Route
         path="/dashboard"
         element={
-          <ProtectedPage>
+          <CustomerPage>
             <DashboardPage />
-          </ProtectedPage>
+          </CustomerPage>
         }
       />
 
       <Route
         path="/businesses"
         element={
-          <ProtectedPage>
+          <CustomerPage>
             <BusinessesPage />
-          </ProtectedPage>
+          </CustomerPage>
         }
       />
 
       <Route
         path="/clients"
         element={
-          <ProtectedPage>
+          <CustomerPage>
             <ClientsPage />
-          </ProtectedPage>
+          </CustomerPage>
         }
       />
 
       <Route
         path="/services"
         element={
-          <ProtectedPage>
+          <CustomerPage>
             <ServicesPage />
-          </ProtectedPage>
+          </CustomerPage>
         }
       />
 
       <Route
         path="/professionals"
         element={
-          <ProtectedPage>
+          <CustomerPage>
             <ProfessionalsPage />
-          </ProtectedPage>
+          </CustomerPage>
         }
       />
 
       <Route
         path="/appointments"
         element={
-          <ProtectedPage>
+          <CustomerPage>
             <AppointmentsPage />
-          </ProtectedPage>
-        }
-      />
-
-      <Route
-        path="/admin"
-        element={
-          <ProtectedPage>
-            <AdminPage />
-          </ProtectedPage>
+          </CustomerPage>
         }
       />
 
       <Route path="/agendar/:slug" element={<PublicBookingPage />} />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<HomeRedirect />} />
     </Routes>
   );
 }
