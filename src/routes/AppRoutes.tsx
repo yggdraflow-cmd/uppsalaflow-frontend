@@ -13,6 +13,7 @@ import { ProfessionalsPage } from "../pages/ProfessionalsPage";
 import { AppointmentsPage } from "../pages/AppointmentsPage";
 import { PublicBookingPage } from "../pages/PublicBookingPage";
 import { AdminPage } from "../pages/AdminPage";
+import { AccountPage } from "../pages/AccountPage";
 import { getToken, getUser } from "../services/authStorage";
 
 function CustomerPage({ children }: { children: ReactNode }) {
@@ -73,6 +74,24 @@ export function AppRoutes() {
           <AdminProtectedPage>
             <AdminPage />
           </AdminProtectedPage>
+        }
+      />
+
+      <Route
+        path="/admin/account"
+        element={
+          <AdminProtectedPage>
+            <AccountPage />
+          </AdminProtectedPage>
+        }
+      />
+
+      <Route
+        path="/account"
+        element={
+          <CustomerPage>
+            <AccountPage />
+          </CustomerPage>
         }
       />
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { LogOut, ShieldCheck } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 import { clearAuthStorage } from "../services/api";
 import { getUser } from "../services/authStorage";
@@ -41,9 +41,13 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden rounded-full border border-white/80 bg-white/45 px-5 py-3 text-sm font-bold text-[#132033] shadow-sm backdrop-blur-xl sm:block">
+            <Link
+              to="/admin/account"
+              className="hidden rounded-full border border-white/80 bg-white/45 px-5 py-3 text-sm font-bold text-[#132033] shadow-sm backdrop-blur-xl transition hover:text-[#f97316] sm:block"
+              title="Minha conta"
+            >
               {user?.name || user?.email || "Admin"}
-            </div>
+            </Link>
 
             <button
               type="button"
