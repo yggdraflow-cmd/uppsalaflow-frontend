@@ -8,19 +8,7 @@ import { Input } from "../components/Input";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { api } from "../services/api";
 import { saveAuth } from "../services/authStorage";
-import type { AuthResponse, UserRole } from "../types/auth";
-
-function getRouteForRole(role: UserRole) {
-  if (role === "ADMIN") {
-    return "/admin";
-  }
-
-  if (role === "CLIENT") {
-    return "/cliente/agendamentos";
-  }
-
-  return "/dashboard";
-}
+import type { AuthResponse } from "../types/auth";
 
 type PasswordFieldProps = {
   value: string;
@@ -38,6 +26,7 @@ function PasswordField({ value, onChange }: PasswordFieldProps) {
         <input
           className="upp-input pr-14"
           type={isVisible ? "text" : "password"}
+          minLength={6}
           value={value}
           onChange={(event) => onChange(event.target.value)}
           required
@@ -57,9 +46,10 @@ function PasswordField({ value, onChange }: PasswordFieldProps) {
   );
 }
 
-export function LoginPage() {
+export function ClientRegisterPage() {
   const navigate = useNavigate();
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -73,15 +63,16 @@ export function LoginPage() {
       setIsSaving(true);
       setError("");
 
-      const response = await api.post<AuthResponse>("/auth/login", {
+      const response = await api.post<AuthResponse>("/auth/client/register", {
+        name,
         email,
         password,
       });
 
       saveAuth(response.data.token, response.data.user);
-      navigate(getRouteForRole(response.data.user.role));
+      navigate("/cliente/agendamentos");
     } catch {
-      setError("E-mail ou senha inválidos.");
+      setError("Não foi possível criar sua conta de cliente.");
     } finally {
       setIsSaving(false);
     }
@@ -89,8 +80,15 @@ export function LoginPage() {
 
   return (
     <AuthLayout>
-      <Card title="Entrar">
+      <Card title="Criar conta de cliente">
         <form onSubmit={handleSubmit} className="space-y-4">
+          <Input
+            label="Nome"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            required
+          />
+
           <Input
             label="E-mail"
             type="email"
@@ -104,21 +102,21 @@ export function LoginPage() {
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
           <Button type="submit" disabled={isSaving} className="w-full">
-            {isSaving ? "Entrando..." : "Entrar"}
+            {isSaving ? "Criando..." : "Criar conta"}
           </Button>
         </form>
 
         <p className="mt-4 text-center text-sm text-zinc-600">
-          Ainda não tem conta?{" "}
-          <Link to="/register" className="font-semibold text-orange-600">
-            Criar conta
+          Já tem conta?{" "}
+          <Link to="/cliente/login" className="font-semibold text-orange-600">
+            Entrar como cliente
           </Link>
         </p>
 
         <p className="mt-3 text-center text-sm text-zinc-600">
-          Quer agendar um horário?{" "}
-          <Link to="/cliente/login" className="font-semibold text-orange-600">
-            Entrar como cliente
+          Tem um negócio?{" "}
+          <Link to="/register" className="font-semibold text-orange-600">
+            Criar conta da empresa
           </Link>
         </p>
       </Card>

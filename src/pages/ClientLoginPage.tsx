@@ -57,7 +57,7 @@ function PasswordField({ value, onChange }: PasswordFieldProps) {
   );
 }
 
-export function LoginPage() {
+export function ClientLoginPage() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -89,7 +89,7 @@ export function LoginPage() {
 
   return (
     <AuthLayout>
-      <Card title="Entrar">
+      <Card title="Entrar como cliente">
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
             label="E-mail"
@@ -110,15 +110,18 @@ export function LoginPage() {
 
         <p className="mt-4 text-center text-sm text-zinc-600">
           Ainda não tem conta?{" "}
-          <Link to="/register" className="font-semibold text-orange-600">
-            Criar conta
+          <Link
+            to="/cliente/cadastro"
+            className="font-semibold text-orange-600"
+          >
+            Criar conta de cliente
           </Link>
         </p>
 
         <p className="mt-3 text-center text-sm text-zinc-600">
-          Quer agendar um horário?{" "}
-          <Link to="/cliente/login" className="font-semibold text-orange-600">
-            Entrar como cliente
+          Tem um negócio?{" "}
+          <Link to="/login" className="font-semibold text-orange-600">
+            Entrar no painel da empresa
           </Link>
         </p>
       </Card>
