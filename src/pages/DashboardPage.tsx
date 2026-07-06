@@ -1,6 +1,21 @@
-import { CalendarDays, DollarSign, Scissors, Users } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Card } from "../components/Card";
+import {
+  Activity,
+  AlertCircle,
+  Ban,
+  BriefcaseBusiness,
+  CalendarCheck,
+  CalendarDays,
+  CheckCircle2,
+  CircleDollarSign,
+  Clock3,
+  Scissors,
+  Sparkles,
+  UserPlus,
+  UsersRound,
+  XCircle,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+
 import { Input } from "../components/Input";
 import { api } from "../services/api";
 import type { Business } from "../types/business";
@@ -32,6 +47,52 @@ function formatCurrency(value: number) {
   });
 }
 
+function formatDateLabel(value: string) {
+  const date = new Date(`${value}T00:00:00`);
+
+  return date.toLocaleDateString("pt-BR", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function getStoredUserName() {
+  const rawUser =
+    localStorage.getItem("@uppsalaflow:user") ||
+    localStorage.getItem("user");
+
+  if (!rawUser) {
+    return "usuário";
+  }
+
+  try {
+    const user = JSON.parse(rawUser) as {
+      name?: string;
+      email?: string;
+    };
+
+    return user.name || user.email || "usuário";
+  } catch {
+    return "usuário";
+  }
+}
+
+function getGreeting() {
+  const hour = new Date().getHours();
+
+  if (hour < 12) {
+    return "Bom dia";
+  }
+
+  if (hour < 18) {
+    return "Boa tarde";
+  }
+
+  return "Boa noite";
+}
+
 export function DashboardPage() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [selectedBusinessId, setSelectedBusinessId] = useState("");
@@ -43,6 +104,13 @@ export function DashboardPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const selectedBusiness = useMemo(
+    () => businesses.find((business) => business.id === selectedBusinessId),
+    [businesses, selectedBusinessId]
+  );
+
+  const userName = getStoredUserName();
 
   useEffect(() => {
     async function loadBusinesses() {
@@ -111,177 +179,414 @@ export function DashboardPage() {
     loadDashboard();
   }, [selectedBusinessId, selectedDate]);
 
-  const cards = [
+  const activeServices = services.filter((service) => service.active).length;
+
+  const statusItems = [
+    {
+      label: "Agendados",
+      value: summary?.appointmentsByStatus.scheduled || 0,
+      icon: CalendarDays,
+    },
+    {
+      label: "Confirmados",
+      value: summary?.appointmentsByStatus.confirmed || 0,
+      icon: CheckCircle2,
+    },
+    {
+      label: "Em atendimento",
+      value: summary?.appointmentsByStatus.inProgress || 0,
+      icon: Activity,
+    },
+    {
+      label: "Finalizados",
+      value: summary?.appointmentsByStatus.finished || 0,
+      icon: CalendarCheck,
+    },
+    {
+      label: "Cancelados",
+      value: summary?.appointmentsByStatus.canceled || 0,
+      icon: XCircle,
+    },
+    {
+      label: "Não compareceu",
+      value: summary?.appointmentsByStatus.noShow || 0,
+      icon: Ban,
+    },
+  ];
+
+  const totalStatusCount = statusItems.reduce((total, item) => {
+    return total + item.value;
+  }, 0);
+
+  const metricCards = [
     {
       title: "Atendimentos no dia",
       value: String(summary?.totalAppointments || 0),
-      icon: CalendarDays,
+      description: "Marcados para a data selecionada",
+      icon: CalendarCheck,
+      highlight: true,
     },
     {
       title: "Faturamento estimado",
       value: formatCurrency(summary?.estimatedRevenue || 0),
-      icon: DollarSign,
+      description: "Baseado nos serviços do dia",
+      icon: CircleDollarSign,
+      highlight: false,
     },
     {
-      title: "Clientes",
+      title: "Clientes cadastrados",
       value: String(clients.length),
-      icon: Users,
+      description: "Base total do negócio",
+      icon: UsersRound,
+      highlight: false,
     },
     {
       title: "Serviços ativos",
-      value: String(services.filter((service) => service.active).length),
+      value: String(activeServices),
+      description: "Disponíveis para agendamento",
       icon: Scissors,
+      highlight: false,
     },
   ];
 
   return (
-    <div>
-      <div className="mb-8">
-        <p className="text-sm font-medium text-beauty-700">Painel</p>
-        <h1 className="text-3xl font-bold text-zinc-950">Dashboard</h1>
-        <p className="mt-2 text-zinc-600">
-          Visão geral dos atendimentos, faturamento estimado, clientes e serviços.
-        </p>
-      </div>
+    <div className="space-y-6">
+      <section className="rounded-[34px] border border-white/80 bg-white/55 p-7 shadow-[0_24px_80px_rgba(55,73,89,0.14)] backdrop-blur-2xl">
+        <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-xs font-black uppercase tracking-[0.28em] text-orange-500 shadow-sm">
+              <Sparkles size={15} />
+              Dashboard
+            </div>
 
-      <div className="mb-6 grid gap-4 xl:grid-cols-2">
-        <Card title="Negócio selecionado">
-          {businesses.length === 0 ? (
-            <p className="text-sm text-red-600">
-              Nenhum negócio cadastrado ainda.
+            <h1 className="mt-5 text-3xl font-black tracking-tight text-[#101828] md:text-4xl">
+              {getGreeting()}, {userName}
+            </h1>
+
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-[#667789]">
+              Acompanhe agenda, faturamento estimado, clientes e serviços do
+              negócio selecionado. Um painel útil, não um quadro bonito fingindo
+              que trabalha.
             </p>
-          ) : (
-            <label className="block">
-              <span className="mb-1 block text-sm font-medium text-zinc-700">
-                Escolha o negócio
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2 xl:w-[560px]">
+            <label className="block rounded-[24px] border border-white/80 bg-white/65 p-4 shadow-sm backdrop-blur-xl">
+              <span className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-[#718196]">
+                Negócio
               </span>
 
               <select
                 value={selectedBusinessId}
                 onChange={(event) => setSelectedBusinessId(event.target.value)}
-                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-beauty-500 focus:ring-2 focus:ring-beauty-100"
+                className="w-full rounded-2xl border border-[#d8e2ea] bg-white px-4 py-3 text-sm font-bold text-[#132033] outline-none transition focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
               >
-                {businesses.map((business) => (
-                  <option key={business.id} value={business.id}>
-                    {business.name}
-                  </option>
-                ))}
+                {businesses.length === 0 ? (
+                  <option value="">Nenhum negócio cadastrado</option>
+                ) : (
+                  businesses.map((business) => (
+                    <option key={business.id} value={business.id}>
+                      {business.name}
+                    </option>
+                  ))
+                )}
               </select>
             </label>
-          )}
-        </Card>
 
-        <Card title="Data do resumo">
-          <Input
-            label="Data"
-            type="date"
-            value={selectedDate}
-            onChange={(event) => setSelectedDate(event.target.value)}
-          />
-        </Card>
-      </div>
+            <div className="rounded-[24px] border border-white/80 bg-white/65 p-4 shadow-sm backdrop-blur-xl">
+              <Input
+                label="Data do resumo"
+                type="date"
+                value={selectedDate}
+                onChange={(event) => setSelectedDate(event.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
 
       {error && (
-        <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-[24px] border border-red-200 bg-red-50 p-4 text-sm font-bold text-red-700">
           {error}
         </div>
       )}
 
       {isLoading ? (
-        <Card>
-          <p className="text-sm text-zinc-500">Carregando dashboard...</p>
-        </Card>
+        <section className="rounded-[30px] border border-white/80 bg-white/55 p-7 shadow-[0_18px_55px_rgba(55,73,89,0.10)] backdrop-blur-2xl">
+          <p className="text-sm font-bold text-[#667789]">
+            Carregando dashboard...
+          </p>
+        </section>
       ) : (
         <>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {cards.map((item) => {
+          <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {metricCards.map((item) => {
               const Icon = item.icon;
 
               return (
-                <Card key={item.title}>
-                  <div className="flex items-center justify-between">
+                <article
+                  key={item.title}
+                  className={[
+                    "rounded-[30px] border p-6 shadow-[0_18px_55px_rgba(55,73,89,0.10)] backdrop-blur-2xl",
+                    item.highlight
+                      ? "border-orange-200 bg-gradient-to-br from-orange-500 to-orange-400 text-white"
+                      : "border-white/80 bg-white/55 text-[#132033]",
+                  ].join(" ")}
+                >
+                  <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-sm text-zinc-500">{item.title}</p>
-                      <strong className="mt-2 block text-2xl text-zinc-950">
+                      <p
+                        className={[
+                          "text-sm font-black",
+                          item.highlight ? "text-white/85" : "text-[#667789]",
+                        ].join(" ")}
+                      >
+                        {item.title}
+                      </p>
+
+                      <strong className="mt-4 block text-3xl font-black tracking-tight">
+                        {item.value}
+                      </strong>
+
+                      <span
+                        className={[
+                          "mt-3 block text-xs font-bold",
+                          item.highlight ? "text-white/80" : "text-[#8a99a6]",
+                        ].join(" ")}
+                      >
+                        {item.description}
+                      </span>
+                    </div>
+
+                    <span
+                      className={[
+                        "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl",
+                        item.highlight
+                          ? "bg-white/20 text-white"
+                          : "bg-[#eef4fb] text-[#132033]",
+                      ].join(" ")}
+                    >
+                      <Icon size={23} />
+                    </span>
+                  </div>
+                </article>
+              );
+            })}
+          </section>
+
+          <section className="grid gap-6 xl:grid-cols-[1.45fr_0.9fr]">
+            <article className="rounded-[34px] border border-white/80 bg-white/55 p-7 shadow-[0_22px_70px_rgba(55,73,89,0.12)] backdrop-blur-2xl">
+              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <h2 className="text-xl font-black text-[#132033]">
+                    Movimento do dia
+                  </h2>
+
+                  <p className="mt-2 text-sm text-[#667789]">
+                    {formatDateLabel(selectedDate)}
+                  </p>
+                </div>
+
+                <div className="rounded-full bg-[#132033] px-5 py-3 text-sm font-black text-white">
+                  {summary?.totalAppointments || 0} atendimentos
+                </div>
+              </div>
+
+              <div className="mt-8 flex min-h-[260px] items-end gap-4 rounded-[28px] border border-white/80 bg-white/45 px-5 py-6">
+                {statusItems.map((item) => {
+                  const Icon = item.icon;
+                  const percentage =
+                    totalStatusCount > 0
+                      ? Math.max((item.value / totalStatusCount) * 100, 8)
+                      : 8;
+
+                  return (
+                    <div
+                      key={item.label}
+                      className="flex flex-1 flex-col items-center gap-3"
+                    >
+                      <div className="flex h-[180px] w-full items-end justify-center rounded-full bg-[#edf3f8] p-1">
+                        <div
+                          className="w-full rounded-full bg-[#132033]"
+                          style={{ height: `${percentage}%` }}
+                        />
+                      </div>
+
+                      <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-orange-50 text-orange-500">
+                        <Icon size={18} />
+                      </div>
+
+                      <strong className="text-sm font-black text-[#132033]">
+                        {item.value}
+                      </strong>
+
+                      <span className="text-center text-[11px] font-bold leading-4 text-[#718196]">
+                        {item.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </article>
+
+            <article className="rounded-[34px] border border-white/80 bg-white/55 p-7 shadow-[0_22px_70px_rgba(55,73,89,0.12)] backdrop-blur-2xl">
+              <h2 className="text-xl font-black text-[#132033]">
+                Resumo do negócio
+              </h2>
+
+              <p className="mt-2 text-sm leading-6 text-[#667789]">
+                Dados rápidos do negócio selecionado.
+              </p>
+
+              <div className="mt-6 space-y-4">
+                <div className="rounded-[26px] border border-white/80 bg-white/55 p-5">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#132033] text-white">
+                      <BriefcaseBusiness size={21} />
+                    </span>
+
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-[0.18em] text-[#718196]">
+                        Negócio atual
+                      </p>
+                      <strong className="mt-1 block text-lg font-black text-[#132033]">
+                        {selectedBusiness?.name || "Nenhum negócio selecionado"}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
+                  <div className="rounded-[26px] border border-white/80 bg-white/55 p-5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-bold text-[#667789]">
+                        Total de serviços
+                      </span>
+                      <strong className="text-2xl font-black text-[#132033]">
+                        {services.length}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div className="rounded-[26px] border border-white/80 bg-white/55 p-5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-bold text-[#667789]">
+                        Serviços ativos
+                      </span>
+                      <strong className="text-2xl font-black text-[#132033]">
+                        {activeServices}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div className="rounded-[26px] border border-white/80 bg-white/55 p-5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-bold text-[#667789]">
+                        Base de clientes
+                      </span>
+                      <strong className="text-2xl font-black text-[#132033]">
+                        {clients.length}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </section>
+
+          <section className="grid gap-6 xl:grid-cols-2">
+            <article className="rounded-[34px] border border-white/80 bg-white/55 p-7 shadow-[0_22px_70px_rgba(55,73,89,0.12)] backdrop-blur-2xl">
+              <h2 className="text-xl font-black text-[#132033]">
+                Atendimentos por status
+              </h2>
+
+              <div className="mt-6 space-y-3">
+                {statusItems.map((item) => {
+                  const Icon = item.icon;
+
+                  return (
+                    <div
+                      key={item.label}
+                      className="flex items-center justify-between rounded-[22px] border border-white/80 bg-white/55 px-5 py-4"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#eef4fb] text-[#132033]">
+                          <Icon size={19} />
+                        </span>
+
+                        <span className="text-sm font-bold text-[#667789]">
+                          {item.label}
+                        </span>
+                      </div>
+
+                      <strong className="text-lg font-black text-[#132033]">
                         {item.value}
                       </strong>
                     </div>
+                  );
+                })}
+              </div>
+            </article>
 
-                    <span className="rounded-2xl bg-beauty-50 p-3 text-beauty-700">
-                      <Icon size={22} />
-                    </span>
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
+            <article className="rounded-[34px] border border-white/80 bg-white/55 p-7 shadow-[0_22px_70px_rgba(55,73,89,0.12)] backdrop-blur-2xl">
+              <h2 className="text-xl font-black text-[#132033]">
+                Próximas ações
+              </h2>
 
-          <div className="mt-6 grid gap-6 xl:grid-cols-2">
-            <Card title="Atendimentos por status">
-              {!summary ? (
-                <p className="text-sm text-zinc-500">
-                  Nenhum dado carregado ainda.
-                </p>
-              ) : (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between rounded-xl bg-zinc-50 px-4 py-3">
-                    <span className="text-sm text-zinc-600">Agendados</span>
-                    <strong>{summary.appointmentsByStatus.scheduled}</strong>
-                  </div>
+              <p className="mt-2 text-sm leading-6 text-[#667789]">
+                O dashboard já usa os dados reais disponíveis. As próximas
+                melhorias naturais são indicadores por período, ranking de
+                serviços e agenda da semana.
+              </p>
 
-                  <div className="flex items-center justify-between rounded-xl bg-zinc-50 px-4 py-3">
-                    <span className="text-sm text-zinc-600">Confirmados</span>
-                    <strong>{summary.appointmentsByStatus.confirmed}</strong>
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-xl bg-zinc-50 px-4 py-3">
-                    <span className="text-sm text-zinc-600">Em atendimento</span>
-                    <strong>{summary.appointmentsByStatus.inProgress}</strong>
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-xl bg-zinc-50 px-4 py-3">
-                    <span className="text-sm text-zinc-600">Finalizados</span>
-                    <strong>{summary.appointmentsByStatus.finished}</strong>
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-xl bg-zinc-50 px-4 py-3">
-                    <span className="text-sm text-zinc-600">Cancelados</span>
-                    <strong>{summary.appointmentsByStatus.canceled}</strong>
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-xl bg-zinc-50 px-4 py-3">
-                    <span className="text-sm text-zinc-600">Não compareceu</span>
-                    <strong>{summary.appointmentsByStatus.noShow}</strong>
+              <div className="mt-6 space-y-4">
+                <div className="rounded-[26px] border border-orange-100 bg-orange-50/70 p-5">
+                  <div className="flex items-start gap-3">
+                    <Clock3 className="mt-1 text-orange-500" size={22} />
+                    <div>
+                      <strong className="text-sm font-black text-[#132033]">
+                        Revisar agenda do dia
+                      </strong>
+                      <p className="mt-1 text-sm leading-6 text-[#667789]">
+                        Confirme pendências, finalize atendimentos concluídos e
+                        marque ausências quando necessário.
+                      </p>
+                    </div>
                   </div>
                 </div>
-              )}
-            </Card>
 
-            <Card title="Resumo do negócio">
-              <div className="space-y-3">
-                <div className="rounded-xl bg-zinc-50 px-4 py-3">
-                  <p className="text-sm text-zinc-500">Clientes cadastrados</p>
-                  <strong className="mt-1 block text-xl text-zinc-950">
-                    {clients.length}
-                  </strong>
+                <div className="rounded-[26px] border border-blue-100 bg-blue-50/70 p-5">
+                  <div className="flex items-start gap-3">
+                    <UserPlus className="mt-1 text-blue-600" size={22} />
+                    <div>
+                      <strong className="text-sm font-black text-[#132033]">
+                        Manter clientes atualizados
+                      </strong>
+                      <p className="mt-1 text-sm leading-6 text-[#667789]">
+                        Cadastre telefone e e-mail corretamente para facilitar
+                        confirmação e reagendamento.
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="rounded-xl bg-zinc-50 px-4 py-3">
-                  <p className="text-sm text-zinc-500">Serviços cadastrados</p>
-                  <strong className="mt-1 block text-xl text-zinc-950">
-                    {services.length}
-                  </strong>
-                </div>
-
-                <div className="rounded-xl bg-zinc-50 px-4 py-3">
-                  <p className="text-sm text-zinc-500">Faturamento estimado do dia</p>
-                  <strong className="mt-1 block text-xl text-zinc-950">
-                    {formatCurrency(summary?.estimatedRevenue || 0)}
-                  </strong>
+                <div className="rounded-[26px] border border-slate-200 bg-white/60 p-5">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="mt-1 text-[#132033]" size={22} />
+                    <div>
+                      <strong className="text-sm font-black text-[#132033]">
+                        MVP em evolução
+                      </strong>
+                      <p className="mt-1 text-sm leading-6 text-[#667789]">
+                        Esta tela ainda não substitui relatórios avançados.
+                        Ela entrega uma visão rápida para operação diária.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </Card>
-          </div>
+            </article>
+          </section>
         </>
       )}
     </div>
