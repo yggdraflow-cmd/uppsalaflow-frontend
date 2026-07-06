@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   CalendarDays,
   CheckCircle2,
@@ -14,6 +14,7 @@ import {
 import { api } from "../services/api";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
+import { getToken, getUser } from "../services/authStorage";
 
 type PublicService = {
   id: string;
@@ -161,6 +162,9 @@ function getErrorMessage(error: unknown) {
 export function PublicBookingPage() {
   const { slug } = useParams();
 
+  const authUser = getUser();
+  const isClientLoggedIn = Boolean(getToken() && authUser?.role === "CLIENT");
+
   const [business, setBusiness] = useState<PublicBusiness | null>(null);
   const [bookedAppointments, setBookedAppointments] = useState<
     BookedAppointment[]
@@ -178,9 +182,9 @@ export function PublicBookingPage() {
     professionalId: "",
     date: getTodayDate(),
     startTime: "",
-    clientName: "",
+    clientName: isClientLoggedIn ? authUser?.name ?? "" : "",
     clientPhone: "",
-    clientEmail: "",
+    clientEmail: isClientLoggedIn ? authUser?.email ?? "" : "",
     notes: "",
   });
 
@@ -332,6 +336,8 @@ export function PublicBookingPage() {
   }, [formData.startTime, timeOptions]);
 
   function updateFormField(field: keyof BookingFormData, value: string) {
+    setSuccessMessage("");
+
     setFormData((currentFormData) => ({
       ...currentFormData,
       [field]: value,
@@ -391,9 +397,9 @@ export function PublicBookingPage() {
 
       setFormData((currentFormData) => ({
         ...currentFormData,
-        clientName: "",
+        clientName: isClientLoggedIn ? currentFormData.clientName : "",
         clientPhone: "",
-        clientEmail: "",
+        clientEmail: isClientLoggedIn ? currentFormData.clientEmail : "",
         notes: "",
       }));
     } catch (error) {
@@ -442,7 +448,7 @@ export function PublicBookingPage() {
     <main className="min-h-screen bg-[#e8f0f3] px-4 py-8 text-[#132033]">
       <section className="mx-auto min-h-[calc(100vh-64px)] max-w-7xl overflow-hidden rounded-[38px] border border-white/80 bg-white/32 shadow-[0_30px_100px_rgba(55,73,89,0.16)] backdrop-blur-3xl">
         <header className="border-b border-white/70 px-6 py-6 md:px-10">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.35em] text-orange-500">
                 Uppsalaflow
@@ -475,10 +481,59 @@ export function PublicBookingPage() {
               </div>
             </div>
 
-            <div className="rounded-[28px] border border-white/80 bg-white/45 p-5 text-sm font-bold text-[#667789] shadow-sm backdrop-blur-2xl">
-              <div className="flex items-center gap-3">
-                <Sparkles className="text-orange-500" size={22} />
-                <span>Escolha seu serviço e confirme seu horário.</span>
+            <div className="w-full space-y-3 md:max-w-md">
+              <div className="rounded-[28px] border border-white/80 bg-white/45 p-5 text-sm font-bold text-[#667789] shadow-sm backdrop-blur-2xl">
+                <div className="flex items-center gap-3">
+                  <Sparkles className="text-orange-500" size={22} />
+                  <span>Escolha seu serviço e confirme seu horário.</span>
+                </div>
+              </div>
+
+              <div className="rounded-[28px] border border-white/80 bg-white/45 p-5 text-sm font-bold text-[#667789] shadow-sm backdrop-blur-2xl">
+                {isClientLoggedIn ? (
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.25em] text-orange-500">
+                      Cliente logado
+                    </p>
+
+                    <p className="mt-2 text-[#132033]">
+                      Agendando como {authUser?.name || authUser?.email}.
+                    </p>
+
+                    <Link
+                      to="/cliente/agendamentos"
+                      className="mt-3 inline-flex font-black text-orange-600 transition hover:text-orange-700"
+                    >
+                      Ver meus agendamentos
+                    </Link>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.25em] text-orange-500">
+                      Portal do cliente
+                    </p>
+
+                    <p className="mt-2">
+                      Entre como cliente para acompanhar seus horários depois.
+                    </p>
+
+                    <div className="mt-3 flex flex-wrap gap-3">
+                      <Link
+                        to="/cliente/login"
+                        className="font-black text-orange-600 transition hover:text-orange-700"
+                      >
+                        Entrar
+                      </Link>
+
+                      <Link
+                        to="/cliente/cadastro"
+                        className="font-black text-orange-600 transition hover:text-orange-700"
+                      >
+                        Criar conta
+                      </Link>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -644,6 +699,7 @@ export function PublicBookingPage() {
                   type="date"
                   className="upp-input"
                   value={formData.date}
+                  min={getTodayDate()}
                   onChange={(event) =>
                     updateFormField("date", event.target.value)
                   }
@@ -783,9 +839,23 @@ export function PublicBookingPage() {
             ) : null}
 
             {successMessage ? (
-              <p className="mt-5 rounded-3xl border border-emerald-200 bg-emerald-50/80 px-5 py-4 text-sm font-bold text-emerald-700">
-                {successMessage}
-              </p>
+              <div className="mt-5 rounded-3xl border border-emerald-200 bg-emerald-50/80 px-5 py-4 text-sm font-bold text-emerald-700">
+                <p>{successMessage}</p>
+
+                {isClientLoggedIn ? (
+                  <Link
+                    to="/cliente/agendamentos"
+                    className="mt-3 inline-flex rounded-2xl bg-emerald-700 px-4 py-3 text-sm font-black text-white transition hover:bg-emerald-800"
+                  >
+                    Ver meus agendamentos
+                  </Link>
+                ) : (
+                  <p className="mt-3 text-emerald-800">
+                    Para acompanhar seus horários depois, entre ou crie uma
+                    conta de cliente.
+                  </p>
+                )}
+              </div>
             ) : null}
 
             <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -799,6 +869,7 @@ export function PublicBookingPage() {
                 disabled={
                   isSaving ||
                   isLoadingTimes ||
+                  Boolean(successMessage) ||
                   !formData.serviceId ||
                   !formData.professionalId ||
                   !formData.date ||
@@ -807,7 +878,11 @@ export function PublicBookingPage() {
                 }
                 className="w-full sm:w-auto"
               >
-                {isSaving ? "Confirmando..." : "Confirmar agendamento"}
+                {successMessage
+                  ? "Agendamento solicitado"
+                  : isSaving
+                    ? "Confirmando..."
+                    : "Confirmar agendamento"}
               </Button>
             </div>
           </form>
