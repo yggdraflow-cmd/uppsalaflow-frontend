@@ -165,7 +165,7 @@ export function ProfessionalsPage() {
   return (
     <div>
       <div className="mb-8">
-        <p className="text-sm font-medium text-beauty-700">Equipe</p>
+        <p className="text-sm font-medium text-[#171717]">Equipe</p>
         <h1 className="text-3xl font-bold text-zinc-950">Profissionais</h1>
         <p className="mt-2 text-zinc-600">
           Cadastre, edite e organize os profissionais que realizam os
@@ -191,7 +191,7 @@ export function ProfessionalsPage() {
                   setSelectedBusinessId(event.target.value);
                   resetForm();
                 }}
-                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-beauty-500 focus:ring-2 focus:ring-beauty-100"
+                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#dedede]"
               >
                 {businesses.map((business) => (
                   <option key={business.id} value={business.id}>
@@ -279,7 +279,7 @@ export function ProfessionalsPage() {
                           {professional.name}
                         </h2>
 
-                        <span className="rounded-full bg-beauty-50 px-3 py-1 text-xs font-semibold text-beauty-700">
+                        <span className="rounded-full bg-[#f3f3f3] px-3 py-1 text-xs font-semibold text-[#171717]">
                           {professional.active ? "Ativo" : "Inativo"}
                         </span>
                       </div>

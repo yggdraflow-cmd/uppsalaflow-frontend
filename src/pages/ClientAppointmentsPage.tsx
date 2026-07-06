@@ -236,7 +236,7 @@ export function ClientAppointmentsPage() {
   return (
     <div>
       <div className="mb-8">
-        <p className="text-sm font-medium text-orange-500">
+        <p className="text-sm font-medium text-[#171717]">
           Portal do cliente
         </p>
 
@@ -273,7 +273,7 @@ export function ClientAppointmentsPage() {
       {!isLoading && !errorMessage && appointments.length === 0 ? (
         <Card>
           <div className="text-center">
-            <CalendarDays className="mx-auto text-orange-500" size={34} />
+            <CalendarDays className="mx-auto text-[#171717]" size={34} />
 
             <h2 className="mt-4 text-2xl font-black text-[#101828]">
               Nenhum agendamento encontrado
@@ -286,7 +286,7 @@ export function ClientAppointmentsPage() {
 
             <Link
               to="/agendar/salao-da-mayara"
-              className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-[#121b35] bg-[#121b35] px-5 text-sm font-black text-white transition hover:bg-[#1c294b]"
+              className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-[#171717] bg-[#171717] px-5 text-sm font-black text-white transition hover:bg-[#000000]"
             >
               <PlusCircle size={18} />
               Agendar no Salão da Mayara
@@ -309,11 +309,11 @@ export function ClientAppointmentsPage() {
                 <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-3">
-                      <span className="rounded-full bg-orange-50 px-3 py-1 text-xs font-black text-orange-700">
+                      <span className="rounded-full bg-[#f3f3f3] px-3 py-1 text-xs font-black text-[#171717]">
                         {statusLabels[appointment.status] ?? appointment.status}
                       </span>
 
-                      <span className="rounded-full bg-white/60 px-3 py-1 text-xs font-black text-[#506173]">
+                      <span className="rounded-full bg-white/60 px-3 py-1 text-xs font-black text-[#555555]">
                         {formatCurrency(appointment.price)}
                       </span>
 
@@ -328,9 +328,9 @@ export function ClientAppointmentsPage() {
                       {appointment.business.name}
                     </h2>
 
-                    <div className="mt-4 grid gap-3 text-sm font-bold text-[#506173]">
+                    <div className="mt-4 grid gap-3 text-sm font-bold text-[#555555]">
                       <div className="flex items-center gap-2">
-                        <CalendarDays size={18} className="text-orange-500" />
+                        <CalendarDays size={18} className="text-[#171717]" />
                         <span>
                           {formatDate(appointment.date)} às{" "}
                           {appointment.startTime}
@@ -338,14 +338,14 @@ export function ClientAppointmentsPage() {
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <Clock size={18} className="text-orange-500" />
+                        <Clock size={18} className="text-[#171717]" />
                         <span>
                           {appointment.startTime} até {appointment.endTime}
                         </span>
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <Scissors size={18} className="text-orange-500" />
+                        <Scissors size={18} className="text-[#171717]" />
                         <span>
                           {appointment.service.name} ·{" "}
                           {appointment.service.durationMinutes} min
@@ -353,13 +353,13 @@ export function ClientAppointmentsPage() {
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <UserRound size={18} className="text-orange-500" />
+                        <UserRound size={18} className="text-[#171717]" />
                         <span>{appointment.professional.name}</span>
                       </div>
 
                       {appointment.business.address ? (
                         <div className="flex items-center gap-2">
-                          <MapPin size={18} className="text-orange-500" />
+                          <MapPin size={18} className="text-[#171717]" />
                           <span>{appointment.business.address}</span>
                         </div>
                       ) : null}
@@ -413,7 +413,7 @@ export function ClientAppointmentsPage() {
                                     }
                                     rows={3}
                                     placeholder="Responder com uma observação opcional..."
-                                    className="w-full resize-none rounded-xl border border-blue-100 bg-white px-3 py-2 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                                    className="w-full resize-none rounded-xl border border-blue-100 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#dedede]"
                                   />
 
                                   <div className="mt-3 flex flex-wrap gap-3">
@@ -456,7 +456,7 @@ export function ClientAppointmentsPage() {
 
                     <div className="mt-5 rounded-3xl border border-zinc-200 bg-white/70 p-5">
                       <div className="flex items-center gap-2">
-                        <MessageCircle size={20} className="text-orange-500" />
+                        <MessageCircle size={20} className="text-[#171717]" />
                         <h3 className="text-lg font-black text-[#101828]">
                           Conversa com o salão
                         </h3>
@@ -474,7 +474,7 @@ export function ClientAppointmentsPage() {
                               className={[
                                 "rounded-2xl px-4 py-3 text-sm ring-1",
                                 appointmentMessage.sender === "CLIENT"
-                                  ? "bg-orange-50 text-orange-900 ring-orange-100"
+                                  ? "bg-[#f3f3f3] text-[#171717] ring-[#dedede]"
                                   : "bg-zinc-50 text-zinc-700 ring-zinc-200",
                               ].join(" ")}
                             >
@@ -500,7 +500,7 @@ export function ClientAppointmentsPage() {
                         }
                         rows={3}
                         placeholder="Digite uma mensagem para o salão..."
-                        className="mt-4 w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                        className="mt-4 w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#dedede]"
                       />
 
                       <Button

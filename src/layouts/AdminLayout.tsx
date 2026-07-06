@@ -19,11 +19,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#e8f0f3] p-4 text-[#132033]">
-      <div className="mx-auto min-h-[calc(100vh-32px)] max-w-[1500px] overflow-hidden rounded-[34px] border border-white/80 bg-white/32 shadow-[0_30px_100px_rgba(55,73,89,0.18)] backdrop-blur-3xl">
+    <div className="min-h-screen bg-[#e9e9e9] p-4 text-[#171717]">
+      <div className="mx-auto min-h-[calc(100vh-32px)] max-w-[1500px] overflow-hidden rounded-[34px] border border-white/80 bg-white/32 shadow-[0_30px_100px_rgba(0,0,0,0.18)] backdrop-blur-3xl">
         <header className="flex h-[88px] items-center justify-between border-b border-white/70 px-8">
           <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#121b35] text-white shadow-[0_18px_42px_rgba(18,27,53,0.22)]">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#171717] text-white shadow-[0_18px_42px_rgba(0,0,0,0.22)]">
               <ShieldCheck size={27} />
             </div>
 
@@ -31,7 +31,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               <div className="flex items-center gap-3 text-sm font-bold text-[#6a7a89]">
                 <span>Uppsalaflow</span>
                 <span className="h-1 w-1 rounded-full bg-[#aab8c3]" />
-                <span className="text-[#132033]">Admin da plataforma</span>
+                <span className="text-[#171717]">Admin da plataforma</span>
               </div>
 
               <p className="mt-1 text-xs font-semibold text-[#8a99a6]">
@@ -43,7 +43,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <div className="flex items-center gap-3">
             <Link
               to="/admin/account"
-              className="hidden rounded-full border border-white/80 bg-white/45 px-5 py-3 text-sm font-bold text-[#132033] shadow-sm backdrop-blur-xl transition hover:text-[#f97316] sm:block"
+              className="hidden rounded-full border border-white/80 bg-white/45 px-5 py-3 text-sm font-bold text-[#171717] shadow-sm backdrop-blur-xl transition hover:text-[#171717] sm:block"
               title="Minha conta"
             >
               {user?.name || user?.email || "Admin"}
@@ -52,7 +52,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <button
               type="button"
               onClick={handleLogout}
-              className="flex h-12 items-center gap-2 rounded-2xl border border-white/80 bg-white/45 px-4 text-sm font-bold text-[#506173] shadow-sm backdrop-blur-xl transition hover:text-[#f97316]"
+              className="flex h-12 items-center gap-2 rounded-2xl border border-white/80 bg-white/45 px-4 text-sm font-bold text-[#555555] shadow-sm backdrop-blur-xl transition hover:text-[#171717]"
             >
               <LogOut size={20} />
               Sair

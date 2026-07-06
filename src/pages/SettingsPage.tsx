@@ -9,8 +9,8 @@ export function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-[32px] border border-white/80 bg-white/55 p-8 shadow-[0_22px_70px_rgba(55,73,89,0.12)] backdrop-blur-2xl">
-        <p className="text-xs font-black uppercase tracking-[0.32em] text-orange-500">
+      <section className="rounded-[32px] border border-white/80 bg-white/55 p-8 shadow-[0_22px_70px_rgba(0,0,0,0.12)] backdrop-blur-2xl">
+        <p className="text-xs font-black uppercase tracking-[0.32em] text-[#171717]">
           Configurações
         </p>
 
@@ -25,8 +25,8 @@ export function SettingsPage() {
       </section>
 
       <section className="grid gap-5 lg:grid-cols-2">
-        <div className="rounded-[30px] border border-white/80 bg-white/50 p-6 shadow-[0_18px_55px_rgba(55,73,89,0.10)] backdrop-blur-2xl">
-          <h2 className="text-lg font-black text-[#132033]">
+        <div className="rounded-[30px] border border-white/80 bg-white/50 p-6 shadow-[0_18px_55px_rgba(0,0,0,0.10)] backdrop-blur-2xl">
+          <h2 className="text-lg font-black text-[#171717]">
             Expediente padrão
           </h2>
 
@@ -35,13 +35,13 @@ export function SettingsPage() {
             seguem blocos de 30 minutos.
           </p>
 
-          <div className="mt-5 rounded-2xl bg-[#132033] px-5 py-4 text-sm font-black text-white">
+          <div className="mt-5 rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white">
             08:00 até 18:00
           </div>
         </div>
 
-        <div className="rounded-[30px] border border-white/80 bg-white/50 p-6 shadow-[0_18px_55px_rgba(55,73,89,0.10)] backdrop-blur-2xl">
-          <h2 className="text-lg font-black text-[#132033]">
+        <div className="rounded-[30px] border border-white/80 bg-white/50 p-6 shadow-[0_18px_55px_rgba(0,0,0,0.10)] backdrop-blur-2xl">
+          <h2 className="text-lg font-black text-[#171717]">
             Próximas configurações
           </h2>
 

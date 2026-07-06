@@ -38,7 +38,7 @@ function PasswordField({
         <button
           type="button"
           onClick={() => setIsVisible((currentValue) => !currentValue)}
-          className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-[#506173] transition hover:text-[#f97316]"
+          className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-[#555555] transition hover:text-[#171717]"
           aria-label={isVisible ? "Ocultar senha" : "Mostrar senha"}
           title={isVisible ? "Ocultar senha" : "Mostrar senha"}
         >
@@ -114,7 +114,7 @@ export function AccountPage() {
   return (
     <div>
       <div className="mb-8">
-        <p className="text-sm font-medium text-orange-500">Minha conta</p>
+        <p className="text-sm font-medium text-[#171717]">Minha conta</p>
         <h1 className="text-3xl font-bold text-zinc-950">
           Dados da conta
         </h1>
@@ -126,7 +126,7 @@ export function AccountPage() {
       <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
         <Card title="Usuário logado">
           <div className="flex items-start gap-4">
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#121b35] text-white">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#171717] text-white">
               <UserRound size={25} />
             </span>
 
@@ -139,7 +139,7 @@ export function AccountPage() {
                 {user?.email || "E-mail não encontrado"}
               </p>
 
-              <p className="mt-3 inline-flex rounded-full bg-orange-50 px-3 py-1 text-xs font-bold text-orange-700">
+              <p className="mt-3 inline-flex rounded-full bg-[#f3f3f3] px-3 py-1 text-xs font-bold text-[#171717]">
                 {user?.role || "Sem perfil"}
               </p>
             </div>
@@ -171,7 +171,7 @@ export function AccountPage() {
             <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-600">
               <div className="flex items-start gap-3">
                 <LockKeyhole
-                  className="mt-0.5 shrink-0 text-orange-500"
+                  className="mt-0.5 shrink-0 text-[#171717]"
                   size={20}
                 />
                 <p>

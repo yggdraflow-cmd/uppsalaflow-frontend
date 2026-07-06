@@ -118,7 +118,7 @@ export function BusinessesPage() {
   return (
     <div>
       <div className="mb-8">
-        <p className="text-sm font-medium text-beauty-700">Configuração</p>
+        <p className="text-sm font-medium text-[#171717]">Configuração</p>
         <h1 className="text-3xl font-bold text-zinc-950">Meu negócio</h1>
         <p className="mt-2 text-zinc-600">
           Cadastre e edite as informações do salão, barbearia, estúdio ou
@@ -243,7 +243,7 @@ export function BusinessesPage() {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                      <span className="rounded-full bg-beauty-50 px-3 py-1 text-center text-xs font-semibold text-beauty-700">
+                      <span className="rounded-full bg-[#f3f3f3] px-3 py-1 text-center text-xs font-semibold text-[#171717]">
                         Ativo
                       </span>
 

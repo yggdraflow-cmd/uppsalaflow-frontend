@@ -166,7 +166,7 @@ export function AdminPage() {
   return (
     <div>
       <div className="mb-8">
-        <p className="text-sm font-medium text-orange-500">
+        <p className="text-sm font-medium text-[#171717]">
           Admin da plataforma
         </p>
         <h1 className="text-3xl font-bold text-zinc-950">
@@ -204,7 +204,7 @@ export function AdminPage() {
                       </strong>
                     </div>
 
-                    <span className="rounded-2xl bg-orange-50 p-3 text-orange-700">
+                    <span className="rounded-2xl bg-[#f3f3f3] p-3 text-[#171717]">
                       <Icon size={22} />
                     </span>
                   </div>
@@ -292,7 +292,7 @@ export function AdminPage() {
                       key={user.id}
                       className="flex items-start gap-3 rounded-2xl border border-zinc-200 bg-zinc-50 p-4"
                     >
-                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#121b35] text-white">
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#171717] text-white">
                         <UserRound size={20} />
                       </span>
 
@@ -303,7 +303,7 @@ export function AdminPage() {
                         <p className="truncate text-sm text-zinc-500">
                           {user.email}
                         </p>
-                        <p className="mt-1 text-xs font-semibold text-orange-600">
+                        <p className="mt-1 text-xs font-semibold text-[#171717]">
                           {user.role} • criado em {formatDate(user.createdAt)}
                         </p>
                       </div>

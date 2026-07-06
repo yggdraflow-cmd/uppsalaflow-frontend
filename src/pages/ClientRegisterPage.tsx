@@ -35,7 +35,7 @@ function PasswordField({ value, onChange }: PasswordFieldProps) {
         <button
           type="button"
           onClick={() => setIsVisible((currentValue) => !currentValue)}
-          className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-[#506173] transition hover:text-[#f97316]"
+          className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-[#555555] transition hover:text-[#171717]"
           aria-label={isVisible ? "Ocultar senha" : "Mostrar senha"}
           title={isVisible ? "Ocultar senha" : "Mostrar senha"}
         >
@@ -118,14 +118,14 @@ export function ClientRegisterPage() {
 
         <p className="mt-4 text-center text-sm text-zinc-600">
           Já tem conta?{" "}
-          <Link to="/cliente/login" className="font-semibold text-orange-600">
+          <Link to="/cliente/login" className="font-semibold text-[#171717]">
             Entrar como cliente
           </Link>
         </p>
 
         <p className="mt-3 text-center text-sm text-zinc-600">
           Tem um negócio?{" "}
-          <Link to="/register" className="font-semibold text-orange-600">
+          <Link to="/register" className="font-semibold text-[#171717]">
             Criar conta da empresa
           </Link>
         </p>

@@ -13,8 +13,8 @@ body {
   margin: 0;
   background:
     radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), transparent 34%),
-    linear-gradient(135deg, #eef5f7 0%, #e8f0f3 42%, #dfe9ee 100%);
-  color: #132033;
+    linear-gradient(135deg, #eef5f7 0%, #e9e9e9 42%, #dfe9ee 100%);
+  color: #171717;
   font-family:
     Inter,
     ui-sans-serif,
@@ -73,7 +73,7 @@ button {
   border: 1px solid rgba(190, 205, 214, 0.82);
   background: rgba(255, 255, 255, 0.62);
   padding: 0 16px;
-  color: #132033;
+  color: #171717;
   font-size: 0.925rem;
   font-weight: 500;
   outline: none;
@@ -98,7 +98,7 @@ button {
   display: block;
   font-size: 0.875rem;
   font-weight: 700;
-  color: #405263;
+  color: #555555;
 }
 
 .upp-title {
@@ -112,7 +112,7 @@ button {
 }
 
 .upp-orange {
-  color: #f97316;
+  color: #171717;
 }
 
 ::-webkit-scrollbar {
@@ -121,7 +121,7 @@ button {
 }
 
 ::-webkit-scrollbar-track {
-  background: #e8f0f3;
+  background: #e9e9e9;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -131,4 +131,57 @@ button {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(249, 115, 22, 0.5);
+}\n\n/* Uppsalaflow monochrome legacy overrides */
+.upp-card,
+.upp-card-soft {
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #171717;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(20px);
+}
+
+.upp-input {
+  min-height: 3.5rem;
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid #d7d7d7;
+  background: #ffffff;
+  padding: 0.875rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #171717;
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.upp-input::placeholder {
+  color: #9a9a9a;
+}
+
+.upp-input:focus {
+  border-color: #171717;
+  box-shadow: none;
+}
+
+.upp-label {
+  margin-bottom: 0.5rem;
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 900;
+  color: #444444;
+}
+
+.upp-title {
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #171717;
+}
+
+.upp-muted {
+  color: #666666;
+}
+
+.upp-orange {
+  color: #171717;
 }

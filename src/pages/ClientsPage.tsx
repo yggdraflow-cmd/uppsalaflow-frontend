@@ -183,7 +183,7 @@ export function ClientsPage() {
   return (
     <div>
       <div className="mb-8">
-        <p className="text-sm font-medium text-beauty-700">Cadastro</p>
+        <p className="text-sm font-medium text-[#171717]">Cadastro</p>
         <h1 className="text-3xl font-bold text-zinc-950">Clientes</h1>
         <p className="mt-2 text-zinc-600">
           Cadastre, edite e acompanhe os clientes do negócio selecionado.
@@ -210,7 +210,7 @@ export function ClientsPage() {
                   setSelectedBusinessId(event.target.value);
                   resetForm();
                 }}
-                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-beauty-500 focus:ring-2 focus:ring-beauty-100"
+                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#dedede]"
               >
                 {businesses.map((business) => (
                   <option key={business.id} value={business.id}>
@@ -266,7 +266,7 @@ export function ClientsPage() {
                 onChange={(event) => setNotes(event.target.value)}
                 rows={4}
                 placeholder="Preferências, alergias, histórico ou observações gerais..."
-                className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-beauty-500 focus:ring-2 focus:ring-beauty-100"
+                className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#dedede]"
               />
             </label>
 

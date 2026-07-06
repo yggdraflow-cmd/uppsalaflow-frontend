@@ -411,8 +411,8 @@ export function PublicBookingPage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-[#e8f0f3] px-4 py-8 text-[#132033]">
-        <section className="mx-auto flex min-h-[calc(100vh-64px)] max-w-5xl items-center justify-center rounded-[36px] border border-white/80 bg-white/35 shadow-[0_30px_100px_rgba(55,73,89,0.14)] backdrop-blur-3xl">
+      <main className="min-h-screen bg-[#e9e9e9] px-4 py-8 text-[#171717]">
+        <section className="mx-auto flex min-h-[calc(100vh-64px)] max-w-5xl items-center justify-center rounded-[36px] border border-white/80 bg-white/35 shadow-[0_30px_100px_rgba(0,0,0,0.14)] backdrop-blur-3xl">
           <p className="text-sm font-black uppercase tracking-[0.3em] text-[#667789]">
             Carregando agendamento...
           </p>
@@ -423,10 +423,10 @@ export function PublicBookingPage() {
 
   if (!business) {
     return (
-      <main className="min-h-screen bg-[#e8f0f3] px-4 py-8 text-[#132033]">
-        <section className="mx-auto flex min-h-[calc(100vh-64px)] max-w-5xl items-center justify-center rounded-[36px] border border-white/80 bg-white/35 p-8 text-center shadow-[0_30px_100px_rgba(55,73,89,0.14)] backdrop-blur-3xl">
+      <main className="min-h-screen bg-[#e9e9e9] px-4 py-8 text-[#171717]">
+        <section className="mx-auto flex min-h-[calc(100vh-64px)] max-w-5xl items-center justify-center rounded-[36px] border border-white/80 bg-white/35 p-8 text-center shadow-[0_30px_100px_rgba(0,0,0,0.14)] backdrop-blur-3xl">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.32em] text-orange-500">
+            <p className="text-xs font-black uppercase tracking-[0.32em] text-[#171717]">
               Uppsalaflow
             </p>
 
@@ -445,12 +445,12 @@ export function PublicBookingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#e8f0f3] px-4 py-8 text-[#132033]">
-      <section className="mx-auto min-h-[calc(100vh-64px)] max-w-7xl overflow-hidden rounded-[38px] border border-white/80 bg-white/32 shadow-[0_30px_100px_rgba(55,73,89,0.16)] backdrop-blur-3xl">
+    <main className="min-h-screen bg-[#e9e9e9] px-4 py-8 text-[#171717]">
+      <section className="mx-auto min-h-[calc(100vh-64px)] max-w-7xl overflow-hidden rounded-[38px] border border-white/80 bg-white/32 shadow-[0_30px_100px_rgba(0,0,0,0.16)] backdrop-blur-3xl">
         <header className="border-b border-white/70 px-6 py-6 md:px-10">
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.35em] text-orange-500">
+              <p className="text-xs font-black uppercase tracking-[0.35em] text-[#171717]">
                 Uppsalaflow
               </p>
 
@@ -484,7 +484,7 @@ export function PublicBookingPage() {
             <div className="w-full space-y-3 md:max-w-md">
               <div className="rounded-[28px] border border-white/80 bg-white/45 p-5 text-sm font-bold text-[#667789] shadow-sm backdrop-blur-2xl">
                 <div className="flex items-center gap-3">
-                  <Sparkles className="text-orange-500" size={22} />
+                  <Sparkles className="text-[#171717]" size={22} />
                   <span>Escolha seu serviço e confirme seu horário.</span>
                 </div>
               </div>
@@ -492,24 +492,24 @@ export function PublicBookingPage() {
               <div className="rounded-[28px] border border-white/80 bg-white/45 p-5 text-sm font-bold text-[#667789] shadow-sm backdrop-blur-2xl">
                 {isClientLoggedIn ? (
                   <div>
-                    <p className="text-xs font-black uppercase tracking-[0.25em] text-orange-500">
+                    <p className="text-xs font-black uppercase tracking-[0.25em] text-[#171717]">
                       Cliente logado
                     </p>
 
-                    <p className="mt-2 text-[#132033]">
+                    <p className="mt-2 text-[#171717]">
                       Agendando como {authUser?.name || authUser?.email}.
                     </p>
 
                     <Link
                       to="/cliente/agendamentos"
-                      className="mt-3 inline-flex font-black text-orange-600 transition hover:text-orange-700"
+                      className="mt-3 inline-flex font-black text-[#171717] transition hover:text-[#171717]"
                     >
                       Ver meus agendamentos
                     </Link>
                   </div>
                 ) : (
                   <div>
-                    <p className="text-xs font-black uppercase tracking-[0.25em] text-orange-500">
+                    <p className="text-xs font-black uppercase tracking-[0.25em] text-[#171717]">
                       Portal do cliente
                     </p>
 
@@ -520,14 +520,14 @@ export function PublicBookingPage() {
                     <div className="mt-3 flex flex-wrap gap-3">
                       <Link
                         to="/cliente/login"
-                        className="font-black text-orange-600 transition hover:text-orange-700"
+                        className="font-black text-[#171717] transition hover:text-[#171717]"
                       >
                         Entrar
                       </Link>
 
                       <Link
                         to="/cliente/cadastro"
-                        className="font-black text-orange-600 transition hover:text-orange-700"
+                        className="font-black text-[#171717] transition hover:text-[#171717]"
                       >
                         Criar conta
                       </Link>
@@ -544,7 +544,7 @@ export function PublicBookingPage() {
             <section className="upp-card rounded-[34px] p-6">
               <div className="mb-5 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-black uppercase tracking-[0.28em] text-orange-500">
+                  <p className="text-xs font-black uppercase tracking-[0.28em] text-[#171717]">
                     Serviços
                   </p>
 
@@ -553,7 +553,7 @@ export function PublicBookingPage() {
                   </h2>
                 </div>
 
-                <Scissors className="text-[#506173]" size={26} />
+                <Scissors className="text-[#555555]" size={26} />
               </div>
 
               {business.services.length === 0 ? (
@@ -573,8 +573,8 @@ export function PublicBookingPage() {
                         className={[
                           "w-full rounded-[24px] border p-4 text-left transition-all duration-200",
                           isSelected
-                            ? "border-[#121b35] bg-[#121b35] text-white shadow-[0_18px_45px_rgba(18,27,53,0.18)]"
-                            : "border-white/80 bg-white/45 text-[#132033] hover:bg-white/70",
+                            ? "border-[#171717] bg-[#171717] text-white shadow-[0_18px_45px_rgba(0,0,0,0.18)]"
+                            : "border-white/80 bg-white/45 text-[#171717] hover:bg-white/70",
                         ].join(" ")}
                       >
                         <div className="flex items-start justify-between gap-4">
@@ -624,7 +624,7 @@ export function PublicBookingPage() {
             <section className="upp-card rounded-[34px] p-6">
               <div className="mb-5 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-black uppercase tracking-[0.28em] text-orange-500">
+                  <p className="text-xs font-black uppercase tracking-[0.28em] text-[#171717]">
                     Profissional
                   </p>
 
@@ -633,7 +633,7 @@ export function PublicBookingPage() {
                   </h2>
                 </div>
 
-                <UserRound className="text-[#506173]" size={26} />
+                <UserRound className="text-[#555555]" size={26} />
               </div>
 
               {business.professionals.length === 0 ? (
@@ -656,8 +656,8 @@ export function PublicBookingPage() {
                         className={[
                           "flex w-full items-center justify-between rounded-[24px] border p-4 text-left transition-all duration-200",
                           isSelected
-                            ? "border-[#121b35] bg-[#121b35] text-white shadow-[0_18px_45px_rgba(18,27,53,0.18)]"
-                            : "border-white/80 bg-white/45 text-[#132033] hover:bg-white/70",
+                            ? "border-[#171717] bg-[#171717] text-white shadow-[0_18px_45px_rgba(0,0,0,0.18)]"
+                            : "border-white/80 bg-white/45 text-[#171717] hover:bg-white/70",
                         ].join(" ")}
                       >
                         <span className="font-black">{professional.name}</span>
@@ -674,7 +674,7 @@ export function PublicBookingPage() {
           <form onSubmit={handleSubmit} className="upp-card rounded-[34px] p-6">
             <div className="mb-7 flex items-start justify-between gap-5">
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.28em] text-orange-500">
+                <p className="text-xs font-black uppercase tracking-[0.28em] text-[#171717]">
                   Agendamento
                 </p>
 
@@ -688,7 +688,7 @@ export function PublicBookingPage() {
                 </p>
               </div>
 
-              <CalendarDays className="shrink-0 text-[#506173]" size={30} />
+              <CalendarDays className="shrink-0 text-[#555555]" size={30} />
             </div>
 
             <div className="grid gap-5 md:grid-cols-2">
@@ -779,42 +779,42 @@ export function PublicBookingPage() {
             </div>
 
             <div className="mt-7 rounded-[28px] border border-white/80 bg-white/45 p-5 backdrop-blur-xl">
-              <p className="text-xs font-black uppercase tracking-[0.28em] text-orange-500">
+              <p className="text-xs font-black uppercase tracking-[0.28em] text-[#171717]">
                 Resumo
               </p>
 
-              <div className="mt-4 grid gap-3 text-sm font-bold text-[#506173]">
+              <div className="mt-4 grid gap-3 text-sm font-bold text-[#555555]">
                 <div className="flex items-center justify-between gap-4">
                   <span>Serviço</span>
-                  <strong className="text-right text-[#132033]">
+                  <strong className="text-right text-[#171717]">
                     {selectedService?.name ?? "Selecione"}
                   </strong>
                 </div>
 
                 <div className="flex items-center justify-between gap-4">
                   <span>Profissional</span>
-                  <strong className="text-right text-[#132033]">
+                  <strong className="text-right text-[#171717]">
                     {selectedProfessional?.name ?? "Selecione"}
                   </strong>
                 </div>
 
                 <div className="flex items-center justify-between gap-4">
                   <span>Data</span>
-                  <strong className="text-right text-[#132033]">
+                  <strong className="text-right text-[#171717]">
                     {formData.date}
                   </strong>
                 </div>
 
                 <div className="flex items-center justify-between gap-4">
                   <span>Horário</span>
-                  <strong className="text-right text-[#132033]">
+                  <strong className="text-right text-[#171717]">
                     {formData.startTime || "Sem horário disponível"}
                   </strong>
                 </div>
 
                 <div className="flex items-center justify-between gap-4">
                   <span>Valor</span>
-                  <strong className="text-right text-[#132033]">
+                  <strong className="text-right text-[#171717]">
                     {selectedService
                       ? formatCurrency(selectedService.price)
                       : "R$ 0,00"}
@@ -823,7 +823,7 @@ export function PublicBookingPage() {
 
                 <div className="flex items-center justify-between gap-4">
                   <span>Duração</span>
-                  <strong className="text-right text-[#132033]">
+                  <strong className="text-right text-[#171717]">
                     {selectedService
                       ? `${selectedService.durationMinutes} min`
                       : "-"}
@@ -860,7 +860,7 @@ export function PublicBookingPage() {
 
             <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2 text-sm font-bold text-[#667789]">
-                <Clock size={18} className="text-orange-500" />
+                <Clock size={18} className="text-[#171717]" />
                 <span>Confirmação rápida pelo Uppsalaflow.</span>
               </div>
 

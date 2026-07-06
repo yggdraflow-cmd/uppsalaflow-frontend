@@ -875,7 +875,7 @@ export function AppointmentsPage() {
                 {appointment.client.name}
               </h2>
 
-              <span className="rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-700">
+              <span className="rounded-full bg-[#f3f3f3] px-3 py-1 text-xs font-semibold text-[#171717]">
                 {appointmentStatusLabels[appointment.status]}
               </span>
 
@@ -966,7 +966,7 @@ export function AppointmentsPage() {
                       className={[
                         "rounded-xl px-3 py-2 text-sm ring-1",
                         appointmentMessage.sender === "OWNER"
-                          ? "bg-orange-50 text-orange-900 ring-orange-100"
+                          ? "bg-[#f3f3f3] text-[#171717] ring-[#dedede]"
                           : "bg-zinc-50 text-zinc-700 ring-zinc-200",
                       ].join(" ")}
                     >
@@ -983,8 +983,8 @@ export function AppointmentsPage() {
             ) : null}
 
             {proposalAppointmentId === appointment.id ? (
-              <div className="mt-4 rounded-2xl border border-orange-100 bg-orange-50/80 p-4">
-                <h3 className="text-sm font-black text-orange-900">
+              <div className="mt-4 rounded-2xl border border-[#dedede] bg-[#f3f3f3] p-4">
+                <h3 className="text-sm font-black text-[#171717]">
                   Sugerir outro horário
                 </h3>
 
@@ -1024,7 +1024,7 @@ export function AppointmentsPage() {
                     value={proposalMessage}
                     onChange={(event) => setProposalMessage(event.target.value)}
                     rows={4}
-                    className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                    className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#dedede]"
                   />
                 </label>
 
@@ -1058,7 +1058,7 @@ export function AppointmentsPage() {
                   onChange={(event) => setOwnerMessage(event.target.value)}
                   rows={3}
                   placeholder="Digite uma mensagem para o cliente..."
-                  className="mt-3 w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                  className="mt-3 w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#dedede]"
                 />
 
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -1155,7 +1155,7 @@ export function AppointmentsPage() {
   return (
     <div>
       <div className="mb-8">
-        <p className="text-sm font-medium text-orange-500">Agenda</p>
+        <p className="text-sm font-medium text-[#171717]">Agenda</p>
         <h1 className="text-3xl font-bold text-zinc-950">Agendamentos</h1>
         <p className="mt-2 text-zinc-600">
           Crie atendimentos, acompanhe a agenda do dia e consulte o histórico
@@ -1328,7 +1328,7 @@ export function AppointmentsPage() {
                 onChange={(event) => setNotes(event.target.value)}
                 rows={4}
                 placeholder="Observações do atendimento..."
-                className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#dedede]"
               />
             </label>
 
@@ -1349,7 +1349,7 @@ export function AppointmentsPage() {
 
         <div className="space-y-6">
           <Card title="Pendências de confirmação">
-            <div className="mb-5 rounded-2xl border border-orange-100 bg-orange-50/80 p-4">
+            <div className="mb-5 rounded-2xl border border-[#dedede] bg-[#f3f3f3] p-4">
               <h2 className="text-base font-semibold text-zinc-950">
                 Clientes aguardando confirmação
               </h2>
@@ -1359,7 +1359,7 @@ export function AppointmentsPage() {
                 independente da data selecionada na agenda do dia.
               </p>
 
-              <strong className="mt-3 block text-sm text-orange-700">
+              <strong className="mt-3 block text-sm text-[#171717]">
                 Total pendente: {pendingAppointments.length}
               </strong>
             </div>
