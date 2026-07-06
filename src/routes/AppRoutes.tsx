@@ -15,6 +15,7 @@ import { AppointmentsPage } from "../pages/AppointmentsPage";
 import { PublicBookingPage } from "../pages/PublicBookingPage";
 import { AdminPage } from "../pages/AdminPage";
 import { AccountPage } from "../pages/AccountPage";
+import { SettingsPage } from "../pages/SettingsPage";
 import { ClientLoginPage } from "../pages/ClientLoginPage";
 import { ClientRegisterPage } from "../pages/ClientRegisterPage";
 import { ClientAppointmentsPage } from "../pages/ClientAppointmentsPage";
@@ -144,6 +145,15 @@ export function AppRoutes() {
         element={
           <CustomerPage>
             <AccountPage />
+          </CustomerPage>
+        }
+      />
+
+      <Route
+        path="/settings"
+        element={
+          <CustomerPage>
+            <SettingsPage />
           </CustomerPage>
         }
       />

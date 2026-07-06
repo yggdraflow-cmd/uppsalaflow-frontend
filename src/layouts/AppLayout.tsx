@@ -9,6 +9,7 @@ import {
   Scissors,
   UserRound,
   Users,
+  Settings,
 } from "lucide-react";
 
 import { clearAuthStorage } from "../services/api";
@@ -47,6 +48,11 @@ const menuItems = [
     label: "Agenda",
     path: "/appointments",
     icon: CalendarDays,
+  },
+  {
+    label: "Configurações",
+    path: "/settings",
+    icon: Settings,
   },
 ];
 
