@@ -887,7 +887,7 @@ export function AppointmentsPage() {
             </div>
 
             {showDate && (
-              <p className="mt-1 text-sm text-zinc-500">
+              <p className="mt-1 break-words text-sm text-zinc-500">
                 Data:{" "}
                 <span className="font-medium text-zinc-900">
                   {formatDisplayDate(appointment.date)}
@@ -895,22 +895,22 @@ export function AppointmentsPage() {
               </p>
             )}
 
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 break-words text-sm text-zinc-500">
               Serviço:{" "}
               <span className="font-medium text-zinc-900">
                 {appointment.service.name}
               </span>
             </p>
 
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 break-words text-sm text-zinc-500">
               Profissional: {appointment.professional.name}
             </p>
 
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 break-words text-sm text-zinc-500">
               Horário: {appointment.startTime} até {appointment.endTime}
             </p>
 
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 break-words text-sm text-zinc-500">
               Preço: {formatCurrency(appointment.price)}
             </p>
 
@@ -1004,7 +1004,7 @@ export function AppointmentsPage() {
                       onChange={(event) =>
                         setProposalStartTime(event.target.value)
                       }
-                      className="upp-input"
+                      className="upp-input w-full"
                     >
                       {availableTimes.map((time) => (
                         <option key={time} value={time}>
@@ -1081,7 +1081,7 @@ export function AppointmentsPage() {
             ) : null}
           </div>
 
-          <div className="flex min-w-52 flex-col gap-3">
+          <div className="flex w-full flex-col gap-3 lg:w-56 lg:shrink-0">
             <label className="block">
               <span className="mb-1 block text-sm font-medium text-zinc-700">
                 Status
@@ -1095,7 +1095,7 @@ export function AppointmentsPage() {
                     event.target.value as AppointmentStatus
                   )
                 }
-                className="upp-input"
+                className="upp-input w-full"
               >
                 {appointmentStatusOptions.map((status) => (
                   <option key={status} value={status}>
@@ -1178,7 +1178,7 @@ export function AppointmentsPage() {
               <select
                 value={selectedBusinessId}
                 onChange={(event) => setSelectedBusinessId(event.target.value)}
-                className="upp-input"
+                className="upp-input w-full"
               >
                 {businesses.map((business) => (
                   <option key={business.id} value={business.id}>
@@ -1211,7 +1211,7 @@ export function AppointmentsPage() {
               <select
                 value={selectedClientId}
                 onChange={(event) => setSelectedClientId(event.target.value)}
-                className="upp-input"
+                className="upp-input w-full"
               >
                 {clients.length === 0 ? (
                   <option value="">Nenhum cliente cadastrado</option>
@@ -1233,7 +1233,7 @@ export function AppointmentsPage() {
               <select
                 value={selectedServiceId}
                 onChange={(event) => setSelectedServiceId(event.target.value)}
-                className="upp-input"
+                className="upp-input w-full"
               >
                 {services.length === 0 ? (
                   <option value="">Nenhum serviço cadastrado</option>
@@ -1257,7 +1257,7 @@ export function AppointmentsPage() {
                 onChange={(event) =>
                   setSelectedProfessionalId(event.target.value)
                 }
-                className="upp-input"
+                className="upp-input w-full"
               >
                 {professionals.length === 0 ? (
                   <option value="">Nenhum profissional cadastrado</option>
@@ -1279,7 +1279,7 @@ export function AppointmentsPage() {
               <select
                 value={startTime}
                 onChange={(event) => setStartTime(event.target.value)}
-                className="upp-input"
+                className="upp-input w-full"
                 required
               >
                 {timeOptions.length === 0 ? (
@@ -1378,8 +1378,8 @@ export function AppointmentsPage() {
           </Card>
 
           <Card title="Agenda do dia">
-            <div className="mb-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+            <div className="mb-5 grid gap-3 sm:grid-cols-2">
+              <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Horários do dia
                 </p>
@@ -1388,7 +1388,7 @@ export function AppointmentsPage() {
                 </strong>
               </div>
 
-              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Ativos
                 </p>
@@ -1397,7 +1397,7 @@ export function AppointmentsPage() {
                 </strong>
               </div>
 
-              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Finalizados no dia
                 </p>
@@ -1406,7 +1406,7 @@ export function AppointmentsPage() {
                 </strong>
               </div>
 
-              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Cancelados no dia
                 </p>
@@ -1422,7 +1422,7 @@ export function AppointmentsPage() {
                   <h2 className="text-base font-semibold text-zinc-950">
                     Horários agendados no dia
                   </h2>
-                  <p className="mt-1 text-sm text-zinc-500">
+                  <p className="mt-1 break-words text-sm text-zinc-500">
                     Aqui aparecem somente os horários reais marcados na data
                     selecionada.
                   </p>
@@ -1476,8 +1476,8 @@ export function AppointmentsPage() {
           </Card>
 
           <Card title="Histórico geral">
-            <div className="mb-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+            <div className="mb-5 grid gap-3 sm:grid-cols-2">
+              <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Total histórico
                 </p>
@@ -1486,7 +1486,7 @@ export function AppointmentsPage() {
                 </strong>
               </div>
 
-              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Finalizados
                 </p>
@@ -1495,7 +1495,7 @@ export function AppointmentsPage() {
                 </strong>
               </div>
 
-              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Cancelados / faltas
                 </p>
@@ -1504,7 +1504,7 @@ export function AppointmentsPage() {
                 </strong>
               </div>
 
-              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Receita realizada
                 </p>
@@ -1518,7 +1518,7 @@ export function AppointmentsPage() {
               <h2 className="text-base font-semibold text-zinc-950">
                 Histórico do negócio
               </h2>
-              <p className="mt-1 text-sm text-zinc-500">
+              <p className="mt-1 break-words text-sm text-zinc-500">
                 Lista geral de atendimentos finalizados, cancelados e marcados
                 como não compareceu, independente da data selecionada na agenda.
               </p>
