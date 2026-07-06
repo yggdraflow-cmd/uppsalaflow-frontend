@@ -9,10 +9,34 @@ import type { Client } from "../types/client";
 import type { Professional } from "../types/professional";
 import type { BeautyService } from "../types/service";
 
+type AppointmentProposalStatus = "PENDING" | "ACCEPTED" | "DECLINED" | "CANCELED";
+
+type AppointmentMessageSender = "OWNER" | "CLIENT";
+
+type AppointmentProposal = {
+  id: string;
+  suggestedDate: string | Date;
+  suggestedStartTime: string;
+  suggestedEndTime: string;
+  message?: string | null;
+  status: AppointmentProposalStatus;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+};
+
+type AppointmentMessage = {
+  id: string;
+  sender: AppointmentMessageSender;
+  message: string;
+  createdAt: string | Date;
+};
+
 type AppointmentWithRelations = Appointment & {
   client: Client;
   professional: Professional;
   service: BeautyService;
+  proposals?: AppointmentProposal[];
+  messages?: AppointmentMessage[];
 };
 
 type TimeOption = {
@@ -38,6 +62,13 @@ const appointmentStatusOptions: AppointmentStatus[] = [
   "CANCELED",
   "NO_SHOW",
 ];
+
+const proposalStatusLabels: Record<AppointmentProposalStatus, string> = {
+  PENDING: "Aguardando cliente",
+  ACCEPTED: "Aceita",
+  DECLINED: "Recusada",
+  CANCELED: "Cancelada",
+};
 
 const BUSINESS_CLOSE_TIME = "18:00";
 
@@ -194,6 +225,14 @@ export function AppointmentsPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+
+  const [proposalAppointmentId, setProposalAppointmentId] = useState("");
+  const [proposalDate, setProposalDate] = useState(getTodayDate());
+  const [proposalStartTime, setProposalStartTime] = useState("09:00");
+  const [proposalMessage, setProposalMessage] = useState("");
+
+  const [messageAppointmentId, setMessageAppointmentId] = useState("");
+  const [ownerMessage, setOwnerMessage] = useState("");
 
   const selectedService = useMemo(() => {
     return services.find((service) => service.id === selectedServiceId);
@@ -510,6 +549,159 @@ export function AppointmentsPage() {
     setStartTime(firstAvailableTimeOption?.time || "");
   }, [startTime, timeOptions]);
 
+  function syncAppointmentInLists(updatedAppointment: AppointmentWithRelations) {
+    setAppointments((currentAppointments) => {
+      const selectedDateOnly = selectedDate;
+      const appointmentDateOnly = getDateOnly(updatedAppointment.date);
+
+      if (appointmentDateOnly !== selectedDateOnly) {
+        return currentAppointments.filter(
+          (appointment) => appointment.id !== updatedAppointment.id
+        );
+      }
+
+      const appointmentAlreadyExists = currentAppointments.some(
+        (appointment) => appointment.id === updatedAppointment.id
+      );
+
+      if (!appointmentAlreadyExists && isHistoryStatus(updatedAppointment.status)) {
+        return currentAppointments;
+      }
+
+      if (!appointmentAlreadyExists) {
+        return sortAppointmentsByTime([
+          updatedAppointment,
+          ...currentAppointments,
+        ]);
+      }
+
+      return sortAppointmentsByTime(
+        currentAppointments.map((appointment) =>
+          appointment.id === updatedAppointment.id
+            ? updatedAppointment
+            : appointment
+        )
+      );
+    });
+
+    setPendingAppointments((currentPendingAppointments) => {
+      const withoutUpdatedAppointment = currentPendingAppointments.filter(
+        (appointment) => appointment.id !== updatedAppointment.id
+      );
+
+      if (updatedAppointment.status !== "SCHEDULED") {
+        return sortHistoryAppointments(withoutUpdatedAppointment);
+      }
+
+      return sortHistoryAppointments([
+        updatedAppointment,
+        ...withoutUpdatedAppointment,
+      ]);
+    });
+
+    setHistoryAppointments((currentHistoryAppointments) => {
+      const withoutUpdatedAppointment = currentHistoryAppointments.filter(
+        (appointment) => appointment.id !== updatedAppointment.id
+      );
+
+      if (!isHistoryStatus(updatedAppointment.status)) {
+        return sortHistoryAppointments(withoutUpdatedAppointment);
+      }
+
+      return sortHistoryAppointments([
+        updatedAppointment,
+        ...withoutUpdatedAppointment,
+      ]);
+    });
+  }
+
+  function openProposalForm(appointment: AppointmentWithRelations) {
+    if (proposalAppointmentId === appointment.id) {
+      setProposalAppointmentId("");
+      return;
+    }
+
+    setProposalAppointmentId(appointment.id);
+    setProposalDate(getDateOnly(appointment.date));
+    setProposalStartTime(appointment.startTime);
+    setProposalMessage(
+      `Olá, ${appointment.client.name}. Esse horário não está disponível para confirmação. Posso te atender neste novo horário?`
+    );
+  }
+
+  async function handleCreateProposal(appointment: AppointmentWithRelations) {
+    if (!proposalDate || !proposalStartTime || !proposalMessage.trim()) {
+      setError("Informe data, horário e mensagem para sugerir outro horário.");
+      return;
+    }
+
+    try {
+      setMessage("");
+      setError("");
+
+      const response = await api.post<AppointmentWithRelations>(
+        `/appointments/${appointment.id}/proposals`,
+        {
+          date: new Date(`${proposalDate}T00:00:00`).toISOString(),
+          startTime: proposalStartTime,
+          message: proposalMessage.trim(),
+        }
+      );
+
+      syncAppointmentInLists(response.data);
+
+      setProposalAppointmentId("");
+      setProposalMessage("");
+      setMessage("Sugestão de novo horário enviada ao cliente.");
+    } catch (error) {
+      setError(
+        getApiErrorMessage(
+          error,
+          "Não foi possível enviar a sugestão de novo horário."
+        )
+      );
+    }
+  }
+
+  function openMessageForm(appointment: AppointmentWithRelations) {
+    if (messageAppointmentId === appointment.id) {
+      setMessageAppointmentId("");
+      return;
+    }
+
+    setMessageAppointmentId(appointment.id);
+    setOwnerMessage("");
+  }
+
+  async function handleCreateOwnerMessage(appointment: AppointmentWithRelations) {
+    if (!ownerMessage.trim()) {
+      setError("Digite uma mensagem antes de enviar.");
+      return;
+    }
+
+    try {
+      setMessage("");
+      setError("");
+
+      const response = await api.post<AppointmentWithRelations>(
+        `/appointments/${appointment.id}/messages`,
+        {
+          message: ownerMessage.trim(),
+        }
+      );
+
+      syncAppointmentInLists(response.data);
+
+      setMessageAppointmentId("");
+      setOwnerMessage("");
+      setMessage("Mensagem enviada ao cliente.");
+    } catch (error) {
+      setError(
+        getApiErrorMessage(error, "Não foi possível enviar a mensagem.")
+      );
+    }
+  }
+
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
@@ -665,13 +857,19 @@ export function AppointmentsPage() {
     appointment: AppointmentWithRelations,
     showDate = false
   ) {
+    const proposals = appointment.proposals ?? [];
+    const messages = appointment.messages ?? [];
+    const pendingProposal = proposals.find(
+      (proposal) => proposal.status === "PENDING"
+    );
+
     return (
       <div
         key={appointment.id}
         className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4"
       >
         <div className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
-          <div>
+          <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-lg font-semibold text-zinc-950">
                 {appointment.client.name}
@@ -680,6 +878,12 @@ export function AppointmentsPage() {
               <span className="rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-700">
                 {appointmentStatusLabels[appointment.status]}
               </span>
+
+              {pendingProposal ? (
+                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                  Proposta enviada
+                </span>
+              ) : null}
             </div>
 
             {showDate && (
@@ -715,6 +919,166 @@ export function AppointmentsPage() {
                 {appointment.notes}
               </p>
             )}
+
+            {proposals.length > 0 ? (
+              <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50/70 p-4">
+                <h3 className="text-sm font-black text-blue-900">
+                  Sugestões de horário
+                </h3>
+
+                <div className="mt-3 space-y-3">
+                  {proposals.map((proposal) => (
+                    <div
+                      key={proposal.id}
+                      className="rounded-xl bg-white/80 p-3 text-sm text-blue-900 ring-1 ring-blue-100"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <strong>
+                          {formatDisplayDate(proposal.suggestedDate)} ·{" "}
+                          {proposal.suggestedStartTime} até{" "}
+                          {proposal.suggestedEndTime}
+                        </strong>
+
+                        <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-black text-blue-700">
+                          {proposalStatusLabels[proposal.status]}
+                        </span>
+                      </div>
+
+                      {proposal.message ? (
+                        <p className="mt-2 text-blue-800">{proposal.message}</p>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {messages.length > 0 ? (
+              <div className="mt-4 rounded-2xl border border-zinc-200 bg-white p-4">
+                <h3 className="text-sm font-black text-zinc-950">
+                  Conversa com o cliente
+                </h3>
+
+                <div className="mt-3 space-y-2">
+                  {messages.map((appointmentMessage) => (
+                    <div
+                      key={appointmentMessage.id}
+                      className={[
+                        "rounded-xl px-3 py-2 text-sm ring-1",
+                        appointmentMessage.sender === "OWNER"
+                          ? "bg-orange-50 text-orange-900 ring-orange-100"
+                          : "bg-zinc-50 text-zinc-700 ring-zinc-200",
+                      ].join(" ")}
+                    >
+                      <strong className="block text-xs uppercase tracking-wide">
+                        {appointmentMessage.sender === "OWNER"
+                          ? "Salão"
+                          : "Cliente"}
+                      </strong>
+                      <span>{appointmentMessage.message}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {proposalAppointmentId === appointment.id ? (
+              <div className="mt-4 rounded-2xl border border-orange-100 bg-orange-50/80 p-4">
+                <h3 className="text-sm font-black text-orange-900">
+                  Sugerir outro horário
+                </h3>
+
+                <div className="mt-3 grid gap-3 md:grid-cols-2">
+                  <Input
+                    label="Nova data"
+                    type="date"
+                    value={proposalDate}
+                    onChange={(event) => setProposalDate(event.target.value)}
+                  />
+
+                  <label className="block">
+                    <span className="upp-label">Novo horário</span>
+
+                    <select
+                      value={proposalStartTime}
+                      onChange={(event) =>
+                        setProposalStartTime(event.target.value)
+                      }
+                      className="upp-input"
+                    >
+                      {availableTimes.map((time) => (
+                        <option key={time} value={time}>
+                          {time}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+
+                <label className="mt-3 block">
+                  <span className="mb-1 block text-sm font-medium text-zinc-700">
+                    Mensagem para o cliente
+                  </span>
+
+                  <textarea
+                    value={proposalMessage}
+                    onChange={(event) => setProposalMessage(event.target.value)}
+                    rows={4}
+                    className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                  />
+                </label>
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    onClick={() => handleCreateProposal(appointment)}
+                  >
+                    Enviar sugestão
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => setProposalAppointmentId("")}
+                  >
+                    Fechar
+                  </Button>
+                </div>
+              </div>
+            ) : null}
+
+            {messageAppointmentId === appointment.id ? (
+              <div className="mt-4 rounded-2xl border border-zinc-200 bg-white p-4">
+                <h3 className="text-sm font-black text-zinc-950">
+                  Enviar mensagem
+                </h3>
+
+                <textarea
+                  value={ownerMessage}
+                  onChange={(event) => setOwnerMessage(event.target.value)}
+                  rows={3}
+                  placeholder="Digite uma mensagem para o cliente..."
+                  className="mt-3 w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                />
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    onClick={() => handleCreateOwnerMessage(appointment)}
+                  >
+                    Enviar mensagem
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => setMessageAppointmentId("")}
+                  >
+                    Fechar
+                  </Button>
+                </div>
+              </div>
+            ) : null}
           </div>
 
           <div className="flex min-w-52 flex-col gap-3">
@@ -748,6 +1112,22 @@ export function AppointmentsPage() {
                 onClick={() => handleStatusChange(appointment.id, "CONFIRMED")}
               >
                 Confirmar
+              </Button>
+
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => openProposalForm(appointment)}
+              >
+                Sugerir outro horário
+              </Button>
+
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => openMessageForm(appointment)}
+              >
+                Mensagem
               </Button>
 
               <Button
