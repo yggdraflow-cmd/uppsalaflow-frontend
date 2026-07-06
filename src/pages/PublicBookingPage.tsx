@@ -183,7 +183,7 @@ export function PublicBookingPage() {
     date: getTodayDate(),
     startTime: "",
     clientName: isClientLoggedIn ? authUser?.name ?? "" : "",
-    clientPhone: "",
+    clientPhone: isClientLoggedIn ? authUser?.phone ?? "" : "",
     clientEmail: isClientLoggedIn ? authUser?.email ?? "" : "",
     notes: "",
   });
@@ -398,7 +398,7 @@ export function PublicBookingPage() {
       setFormData((currentFormData) => ({
         ...currentFormData,
         clientName: isClientLoggedIn ? currentFormData.clientName : "",
-        clientPhone: "",
+        clientPhone: isClientLoggedIn ? currentFormData.clientPhone : "",
         clientEmail: isClientLoggedIn ? currentFormData.clientEmail : "",
         notes: "",
       }));

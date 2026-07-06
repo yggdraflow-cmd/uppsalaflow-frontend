@@ -51,6 +51,7 @@ export function ClientRegisterPage() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
 
   const [error, setError] = useState("");
@@ -66,6 +67,7 @@ export function ClientRegisterPage() {
       const response = await api.post<AuthResponse>("/auth/client/register", {
         name,
         email,
+        phone,
         password,
       });
 
@@ -94,6 +96,14 @@ export function ClientRegisterPage() {
             type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
+            required
+          />
+
+          <Input
+            label="Telefone"
+            placeholder="(11) 99999-9999"
+            value={phone}
+            onChange={(event) => setPhone(event.target.value)}
             required
           />
 
