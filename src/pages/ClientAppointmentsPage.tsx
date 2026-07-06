@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { CalendarDays, Clock, MapPin, Scissors, UserRound } from "lucide-react";
+import { Link } from "react-router-dom";
+import { CalendarDays, Clock, MapPin, PlusCircle, Scissors, UserRound } from "lucide-react";
 
 import { Card } from "../components/Card";
 import { api } from "../services/api";
@@ -123,6 +124,14 @@ export function ClientAppointmentsPage() {
               Quando você marcar um horário em uma página pública de
               agendamento, ele aparecerá aqui.
             </p>
+
+            <Link
+              to="/agendar/salao-da-mayara"
+              className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-[#121b35] bg-[#121b35] px-5 text-sm font-black text-white transition hover:bg-[#1c294b]"
+            >
+              <PlusCircle size={18} />
+              Agendar no Salão da Mayara
+            </Link>
           </div>
         </Card>
       ) : null}

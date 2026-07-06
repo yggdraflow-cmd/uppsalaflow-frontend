@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
-import { CalendarDays, LogOut, UserRound } from "lucide-react";
+import { CalendarDays, LogOut, PlusCircle, UserRound } from "lucide-react";
 
 import { clearAuthStorage } from "../services/api";
 import { getUser } from "../services/authStorage";
@@ -45,6 +45,14 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/agendar/salao-da-mayara"
+              className="inline-flex items-center gap-2 rounded-full border border-[#121b35] bg-[#121b35] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#1c294b]"
+            >
+              <PlusCircle size={18} />
+              Agendar horário
+            </Link>
+
             <NavLink
               to="/cliente/agendamentos"
               className={({ isActive }) =>
