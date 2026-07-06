@@ -178,6 +178,9 @@ export function AppointmentsPage() {
   const [historyAppointments, setHistoryAppointments] = useState<
     AppointmentWithRelations[]
   >([]);
+  const [pendingAppointments, setPendingAppointments] = useState<
+    AppointmentWithRelations[]
+  >([]);
 
   const [selectedBusinessId, setSelectedBusinessId] = useState("");
   const [selectedClientId, setSelectedClientId] = useState("");
@@ -344,6 +347,7 @@ export function AppointmentsPage() {
         setProfessionals([]);
         setAppointments([]);
         setHistoryAppointments([]);
+        setPendingAppointments([]);
         return;
       }
 
@@ -417,6 +421,40 @@ export function AppointmentsPage() {
 
     loadAppointments();
   }, [selectedBusinessId, selectedDate]);
+
+  useEffect(() => {
+    async function loadPendingAppointments() {
+      if (!selectedBusinessId) {
+        setPendingAppointments([]);
+        return;
+      }
+
+      try {
+        setError("");
+
+        const response = await api.get<AppointmentWithRelations[]>(
+          "/appointments/pending",
+          {
+            params: {
+              businessId: selectedBusinessId,
+            },
+          }
+        );
+
+        setPendingAppointments(sortHistoryAppointments(response.data));
+      } catch (error) {
+        setPendingAppointments([]);
+        setError(
+          getApiErrorMessage(
+            error,
+            "Não foi possível carregar as pendências de confirmação."
+          )
+        );
+      }
+    }
+
+    loadPendingAppointments();
+  }, [selectedBusinessId]);
 
   useEffect(() => {
     async function loadHistoryAppointments() {
@@ -526,6 +564,10 @@ export function AppointmentsPage() {
         sortAppointmentsByTime([response.data, ...currentAppointments])
       );
 
+      setPendingAppointments((currentPendingAppointments) =>
+        sortHistoryAppointments([response.data, ...currentPendingAppointments])
+      );
+
       setMessage("Agendamento criado com sucesso.");
       setNotes("");
     } catch (error) {
@@ -576,6 +618,21 @@ export function AppointmentsPage() {
             appointment.id === appointmentId ? updatedAppointment : appointment
           )
         );
+      });
+
+      setPendingAppointments((currentPendingAppointments) => {
+        const withoutUpdatedAppointment = currentPendingAppointments.filter(
+          (appointment) => appointment.id !== appointmentId
+        );
+
+        if (updatedAppointment.status !== "SCHEDULED") {
+          return sortHistoryAppointments(withoutUpdatedAppointment);
+        }
+
+        return sortHistoryAppointments([
+          updatedAppointment,
+          ...withoutUpdatedAppointment,
+        ]);
       });
 
       setHistoryAppointments((currentHistoryAppointments) => {
@@ -911,6 +968,35 @@ export function AppointmentsPage() {
         </Card>
 
         <div className="space-y-6">
+          <Card title="Pendências de confirmação">
+            <div className="mb-5 rounded-2xl border border-orange-100 bg-orange-50/80 p-4">
+              <h2 className="text-base font-semibold text-zinc-950">
+                Clientes aguardando confirmação
+              </h2>
+
+              <p className="mt-1 text-sm text-zinc-600">
+                Aqui aparecem todos os agendamentos solicitados pelos clientes,
+                independente da data selecionada na agenda do dia.
+              </p>
+
+              <strong className="mt-3 block text-sm text-orange-700">
+                Total pendente: {pendingAppointments.length}
+              </strong>
+            </div>
+
+            {pendingAppointments.length === 0 ? (
+              <p className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-500">
+                Nenhum cliente aguardando confirmação no momento.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {pendingAppointments.map((appointment) =>
+                  renderAppointmentCard(appointment, true)
+                )}
+              </div>
+            )}
+          </Card>
+
           <Card title="Agenda do dia">
             <div className="mb-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
               <div className="rounded-2xl border border-zinc-200 bg-white p-4">
