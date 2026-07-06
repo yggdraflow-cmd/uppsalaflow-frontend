@@ -22,10 +22,26 @@ import type { Business } from "../types/business";
 import type { Client } from "../types/client";
 import type { BeautyService } from "../types/service";
 
+type UpcomingAppointment = {
+  id: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  status: string;
+  price: number;
+  clientName: string;
+  clientPhone: string | null;
+  clientEmail: string | null;
+  professionalName: string;
+  serviceName: string;
+  serviceDurationMinutes: number;
+};
+
 type DashboardSummary = {
   date: string;
   totalAppointments: number;
   estimatedRevenue: number;
+  upcomingAppointments: UpcomingAppointment[];
   appointmentsByStatus: {
     scheduled: number;
     confirmed: number;
@@ -56,6 +72,26 @@ function formatDateLabel(value: string) {
     month: "long",
     year: "numeric",
   });
+}
+
+function formatTime(value: string) {
+  return new Date(value).toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function getAppointmentStatusLabel(status: string) {
+  const labels: Record<string, string> = {
+    SCHEDULED: "Agendado",
+    CONFIRMED: "Confirmado",
+    IN_PROGRESS: "Em atendimento",
+    FINISHED: "Finalizado",
+    CANCELED: "Cancelado",
+    NO_SHOW: "Não compareceu",
+  };
+
+  return labels[status] || status;
 }
 
 function getStoredUserName() {
@@ -180,6 +216,7 @@ export function DashboardPage() {
   }, [selectedBusinessId, selectedDate]);
 
   const activeServices = services.filter((service) => service.active).length;
+  const upcomingAppointments = summary?.upcomingAppointments || [];
 
   const statusItems = [
     {
@@ -529,61 +566,98 @@ export function DashboardPage() {
             </article>
 
             <article className="rounded-[34px] border border-white/80 bg-white/55 p-7 shadow-[0_22px_70px_rgba(55,73,89,0.12)] backdrop-blur-2xl">
-              <h2 className="text-xl font-black text-[#132033]">
-                Próximas ações
-              </h2>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h2 className="text-xl font-black text-[#132033]">
+                    Próximos atendimentos
+                  </h2>
 
-              <p className="mt-2 text-sm leading-6 text-[#667789]">
-                O dashboard já usa os dados reais disponíveis. As próximas
-                melhorias naturais são indicadores por período, ranking de
-                serviços e agenda da semana.
-              </p>
+                  <p className="mt-2 text-sm leading-6 text-[#667789]">
+                    Atendimentos ativos da data selecionada, ordenados por
+                    horário.
+                  </p>
+                </div>
+
+                <span className="inline-flex rounded-full bg-orange-50 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-orange-500">
+                  {upcomingAppointments.length} na agenda
+                </span>
+              </div>
 
               <div className="mt-6 space-y-4">
-                <div className="rounded-[26px] border border-orange-100 bg-orange-50/70 p-5">
-                  <div className="flex items-start gap-3">
-                    <Clock3 className="mt-1 text-orange-500" size={22} />
-                    <div>
-                      <strong className="text-sm font-black text-[#132033]">
-                        Revisar agenda do dia
-                      </strong>
-                      <p className="mt-1 text-sm leading-6 text-[#667789]">
-                        Confirme pendências, finalize atendimentos concluídos e
-                        marque ausências quando necessário.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                {upcomingAppointments.length === 0 ? (
+                  <div className="rounded-[26px] border border-slate-200 bg-white/60 p-5">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="mt-1 text-[#132033]" size={22} />
 
-                <div className="rounded-[26px] border border-blue-100 bg-blue-50/70 p-5">
-                  <div className="flex items-start gap-3">
-                    <UserPlus className="mt-1 text-blue-600" size={22} />
-                    <div>
-                      <strong className="text-sm font-black text-[#132033]">
-                        Manter clientes atualizados
-                      </strong>
-                      <p className="mt-1 text-sm leading-6 text-[#667789]">
-                        Cadastre telefone e e-mail corretamente para facilitar
-                        confirmação e reagendamento.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                      <div>
+                        <strong className="text-sm font-black text-[#132033]">
+                          Nenhum atendimento ativo
+                        </strong>
 
-                <div className="rounded-[26px] border border-slate-200 bg-white/60 p-5">
-                  <div className="flex items-start gap-3">
-                    <AlertCircle className="mt-1 text-[#132033]" size={22} />
-                    <div>
-                      <strong className="text-sm font-black text-[#132033]">
-                        MVP em evolução
-                      </strong>
-                      <p className="mt-1 text-sm leading-6 text-[#667789]">
-                        Esta tela ainda não substitui relatórios avançados.
-                        Ela entrega uma visão rápida para operação diária.
-                      </p>
+                        <p className="mt-1 text-sm leading-6 text-[#667789]">
+                          Não há agendamentos, confirmações ou atendimentos em
+                          andamento para esta data.
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  upcomingAppointments.map((appointment) => (
+                    <div
+                      key={appointment.id}
+                      className="rounded-[26px] border border-white/80 bg-white/60 p-5"
+                    >
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="flex items-start gap-3">
+                          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#132033] text-white">
+                            <Clock3 size={20} />
+                          </span>
+
+                          <div>
+                            <strong className="block text-base font-black text-[#132033]">
+                              {formatTime(appointment.startTime)} até{" "}
+                              {formatTime(appointment.endTime)}
+                            </strong>
+
+                            <p className="mt-1 text-sm font-bold text-[#667789]">
+                              {appointment.serviceName} ·{" "}
+                              {appointment.serviceDurationMinutes} min
+                            </p>
+
+                            <p className="mt-2 text-sm text-[#667789]">
+                              Profissional:{" "}
+                              <span className="font-bold text-[#132033]">
+                                {appointment.professionalName}
+                              </span>
+                            </p>
+                          </div>
+                        </div>
+
+                        <span className="rounded-full bg-[#dbeafe] px-4 py-2 text-xs font-black text-blue-700">
+                          {getAppointmentStatusLabel(appointment.status)}
+                        </span>
+                      </div>
+
+                      <div className="mt-4 rounded-[22px] border border-white/80 bg-white/70 p-4">
+                        <div className="flex items-start gap-3">
+                          <UserPlus className="mt-1 text-orange-500" size={20} />
+
+                          <div>
+                            <strong className="block text-sm font-black text-[#132033]">
+                              {appointment.clientName}
+                            </strong>
+
+                            <p className="mt-1 text-sm text-[#667789]">
+                              {appointment.clientPhone ||
+                                appointment.clientEmail ||
+                                "Contato não informado"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </article>
           </section>
