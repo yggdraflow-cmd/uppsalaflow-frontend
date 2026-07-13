@@ -9,6 +9,7 @@ import {
   ClipboardCheck,
   Clock3,
   Scissors,
+  Stethoscope,
   UsersRound,
   XCircle,
 } from "lucide-react";
@@ -18,6 +19,7 @@ import { api } from "../services/api";
 import type { Business } from "../types/business";
 import type { Client } from "../types/client";
 import type { BeautyService } from "../types/service";
+import { getBusinessTheme } from "../utils/businessTheme";
 
 type UpcomingAppointment = {
   id: string;
@@ -125,6 +127,230 @@ function getStoredUserName() {
   }
 }
 
+function getDashboardCopy(business?: Business) {
+  const theme = getBusinessTheme(business?.segment, business?.specialty);
+
+  if (business?.segment === "ODONTOLOGY") {
+    return {
+      theme,
+      description:
+        "Acompanhe consultas, procedimentos, pacientes e movimentação do consultório.",
+      mainTitle: "Informações do consultório",
+      mainSubtitle: "Resumo odontológico do dia selecionado",
+      appointmentsLabel: "consultas no dia",
+      servicesLabel: "procedimentos ativos",
+      clientsLabel: "Pacientes",
+      servicesSummaryLabel: "Procedimentos",
+      activeServicesSummaryLabel: "Ativos",
+      progressTitle: "Procedimentos",
+      progressSubtitle: "Finalizados no dia",
+      checklistTitle: "Checklist do consultório",
+      checklistItems: [
+        "Confirmar consultas pendentes",
+        "Finalizar procedimentos concluídos",
+        "Verificar retornos e observações",
+        "Conferir mensagens dos pacientes",
+      ],
+      upcomingTitle: "Próximas consultas",
+      upcomingSubtitle: "Consultas ativas da data selecionada.",
+      upcomingCountLabel: "na agenda",
+      emptyUpcoming: "Nenhuma consulta ativa para esta data.",
+      professionalLabel: "Profissional",
+      contactLabel: "Paciente",
+      statusTitle: "Status da agenda",
+      businessSummaryTitle: "Resumo do consultório",
+      businessSelectLabel: "Consultório",
+      emptyBusinessLabel: "Nenhum consultório cadastrado",
+      progressIcon: Stethoscope,
+    };
+  }
+
+  if (business?.segment === "VETERINARY") {
+    return {
+      theme,
+      description:
+        "Acompanhe atendimentos, tutores, pets, serviços e movimentação da clínica.",
+      mainTitle: "Informações da clínica",
+      mainSubtitle: "Resumo veterinário do dia selecionado",
+      appointmentsLabel: "atendimentos no dia",
+      servicesLabel: "serviços ativos",
+      clientsLabel: "Tutores",
+      servicesSummaryLabel: "Serviços",
+      activeServicesSummaryLabel: "Ativos",
+      progressTitle: "Atendimentos",
+      progressSubtitle: "Finalizados no dia",
+      checklistTitle: "Checklist da clínica",
+      checklistItems: [
+        "Confirmar atendimentos pendentes",
+        "Finalizar consultas concluídas",
+        "Verificar retornos e vacinas",
+        "Conferir mensagens dos tutores",
+      ],
+      upcomingTitle: "Próximos atendimentos",
+      upcomingSubtitle: "Atendimentos ativos da data selecionada.",
+      upcomingCountLabel: "na agenda",
+      emptyUpcoming: "Nenhum atendimento ativo para esta data.",
+      professionalLabel: "Profissional",
+      contactLabel: "Tutor",
+      statusTitle: "Status da agenda",
+      businessSummaryTitle: "Resumo da clínica",
+      businessSelectLabel: "Clínica",
+      emptyBusinessLabel: "Nenhuma clínica cadastrada",
+      progressIcon: Activity,
+    };
+  }
+
+  if (business?.segment === "BARBERSHOP") {
+    return {
+      theme,
+      description:
+        "Acompanhe cortes, clientes, barbeiros, serviços e faturamento estimado do dia.",
+      mainTitle: "Informações da barbearia",
+      mainSubtitle: "Resumo da barbearia no dia selecionado",
+      appointmentsLabel: "horários no dia",
+      servicesLabel: "serviços ativos",
+      clientsLabel: "Clientes",
+      servicesSummaryLabel: "Serviços",
+      activeServicesSummaryLabel: "Ativos",
+      progressTitle: "Atendimentos",
+      progressSubtitle: "Finalizados no dia",
+      checklistTitle: "Checklist da barbearia",
+      checklistItems: [
+        "Confirmar horários pendentes",
+        "Finalizar atendimentos concluídos",
+        "Verificar cancelamentos e faltas",
+        "Conferir mensagens dos clientes",
+      ],
+      upcomingTitle: "Próximos horários",
+      upcomingSubtitle: "Horários ativos da data selecionada.",
+      upcomingCountLabel: "na agenda",
+      emptyUpcoming: "Nenhum horário ativo para esta data.",
+      professionalLabel: "Barbeiro",
+      contactLabel: "Cliente",
+      statusTitle: "Status da agenda",
+      businessSummaryTitle: "Resumo da barbearia",
+      businessSelectLabel: "Barbearia",
+      emptyBusinessLabel: "Nenhuma barbearia cadastrada",
+      progressIcon: Scissors,
+    };
+  }
+
+  if (business?.segment === "BEAUTY") {
+    const isNails = business.specialty === "NAILS";
+
+    return {
+      theme,
+      description: isNails
+        ? "Acompanhe horários, clientes, nail designers, serviços e movimento do studio."
+        : "Acompanhe agenda, clientes, profissionais, serviços e movimento do estúdio.",
+      mainTitle: isNails ? "Informações do studio" : "Informações do estúdio",
+      mainSubtitle: isNails
+        ? "Resumo do studio de unhas no dia selecionado"
+        : "Resumo do estúdio no dia selecionado",
+      appointmentsLabel: "horários no dia",
+      servicesLabel: isNails ? "serviços de unhas ativos" : "serviços ativos",
+      clientsLabel: "Clientes",
+      servicesSummaryLabel: "Serviços",
+      activeServicesSummaryLabel: "Ativos",
+      progressTitle: isNails ? "Serviços de unhas" : "Atendimentos",
+      progressSubtitle: "Finalizados no dia",
+      checklistTitle: isNails ? "Checklist do studio" : "Checklist do estúdio",
+      checklistItems: isNails
+        ? [
+            "Confirmar horários pendentes",
+            "Finalizar serviços concluídos",
+            "Verificar manutenção e retornos",
+            "Conferir mensagens das clientes",
+          ]
+        : [
+            "Confirmar pendências da agenda",
+            "Finalizar atendimentos concluídos",
+            "Verificar cancelamentos e faltas",
+            "Conferir mensagens das clientes",
+          ],
+      upcomingTitle: isNails ? "Próximos horários" : "Próximos atendimentos",
+      upcomingSubtitle: "Atendimentos ativos da data selecionada.",
+      upcomingCountLabel: "na agenda",
+      emptyUpcoming: "Nenhum atendimento ativo para esta data.",
+      professionalLabel: isNails ? "Nail designer" : "Profissional",
+      contactLabel: "Cliente",
+      statusTitle: "Status da agenda",
+      businessSummaryTitle: isNails ? "Resumo do studio" : "Resumo do estúdio",
+      businessSelectLabel: isNails ? "Studio" : "Estúdio",
+      emptyBusinessLabel: "Nenhum estúdio cadastrado",
+      progressIcon: Scissors,
+    };
+  }
+
+  if (business?.segment === "WELLNESS") {
+    return {
+      theme,
+      description:
+        "Acompanhe sessões, clientes, profissionais, serviços e movimento do espaço.",
+      mainTitle: "Informações do espaço",
+      mainSubtitle: "Resumo do espaço no dia selecionado",
+      appointmentsLabel: "sessões no dia",
+      servicesLabel: "serviços ativos",
+      clientsLabel: "Clientes",
+      servicesSummaryLabel: "Serviços",
+      activeServicesSummaryLabel: "Ativos",
+      progressTitle: "Sessões",
+      progressSubtitle: "Finalizadas no dia",
+      checklistTitle: "Checklist do espaço",
+      checklistItems: [
+        "Confirmar sessões pendentes",
+        "Finalizar sessões concluídas",
+        "Verificar retornos e remarcações",
+        "Conferir mensagens dos clientes",
+      ],
+      upcomingTitle: "Próximas sessões",
+      upcomingSubtitle: "Sessões ativas da data selecionada.",
+      upcomingCountLabel: "na agenda",
+      emptyUpcoming: "Nenhuma sessão ativa para esta data.",
+      professionalLabel: "Profissional",
+      contactLabel: "Cliente",
+      statusTitle: "Status da agenda",
+      businessSummaryTitle: "Resumo do espaço",
+      businessSelectLabel: "Espaço",
+      emptyBusinessLabel: "Nenhum espaço cadastrado",
+      progressIcon: Activity,
+    };
+  }
+
+  return {
+    theme,
+    description:
+      "Acompanhe agenda, clientes, serviços e movimento do negócio em um só lugar.",
+    mainTitle: "Informações gerais",
+    mainSubtitle: "Resumo do dia selecionado",
+    appointmentsLabel: "atendimentos no dia",
+    servicesLabel: "serviços ativos",
+    clientsLabel: "Clientes",
+    servicesSummaryLabel: "Serviços",
+    activeServicesSummaryLabel: "Ativos",
+    progressTitle: "Progresso",
+    progressSubtitle: "Finalizados no dia",
+    checklistTitle: "Checklist do dia",
+    checklistItems: [
+      "Confirmar pendências da agenda",
+      "Finalizar atendimentos concluídos",
+      "Marcar cancelados e não compareceu",
+      "Verificar mensagens dos clientes",
+    ],
+    upcomingTitle: "Próximos atendimentos",
+    upcomingSubtitle: "Atendimentos ativos da data selecionada.",
+    upcomingCountLabel: "na agenda",
+    emptyUpcoming: "Nenhum atendimento ativo para esta data.",
+    professionalLabel: "Profissional",
+    contactLabel: "Cliente",
+    statusTitle: "Status da agenda",
+    businessSummaryTitle: "Resumo do negócio",
+    businessSelectLabel: "Negócio",
+    emptyBusinessLabel: "Nenhum negócio cadastrado",
+    progressIcon: Scissors,
+  };
+}
+
 export function DashboardPage() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [selectedBusinessId, setSelectedBusinessId] = useState("");
@@ -141,6 +367,9 @@ export function DashboardPage() {
     () => businesses.find((business) => business.id === selectedBusinessId),
     [businesses, selectedBusinessId]
   );
+
+  const copy = getDashboardCopy(selectedBusiness);
+  const ProgressIcon = copy.progressIcon;
 
   const userName = getStoredUserName();
   const activeServices = services.filter((service) => service.active).length;
@@ -249,7 +478,9 @@ export function DashboardPage() {
   const completedCount = summary?.appointmentsByStatus.finished || 0;
   const totalAppointments = summary?.totalAppointments || 0;
   const progressPercentage =
-    totalAppointments > 0 ? Math.round((completedCount / totalAppointments) * 100) : 0;
+    totalAppointments > 0
+      ? Math.round((completedCount / totalAppointments) * 100)
+      : 0;
 
   const totalStatusCount = statusItems.reduce((total, item) => {
     return total + item.value;
@@ -259,29 +490,32 @@ export function DashboardPage() {
     <div className="space-y-7 pb-4">
       <section className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
         <div className="flex min-h-[110px] flex-col justify-end">
+          <div className="mb-4 inline-flex w-fit rounded-full bg-[var(--yggdra-accent)] px-4 py-2 text-xs font-black text-[var(--yggdra-accent-text)] shadow-[0_12px_34px_var(--yggdra-shadow)]">
+            {copy.theme.brandName}
+          </div>
+
           <h1 className="text-4xl font-black tracking-tight text-[#171717] md:text-5xl">
             Olá, {userName}!
           </h1>
 
           <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-[#5f6368]">
-            Acompanhe o dia do negócio sem decoração inútil fingindo ser
-            inteligência operacional.
+            {copy.description}
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <label className="rounded-[24px] bg-white/82 p-5 shadow-[0_18px_45px_rgba(0,0,0,0.08)] backdrop-blur-xl">
+        <div className="grid gap-4 md:grid-cols-[1.25fr_0.75fr]">
+          <label className="min-w-0 rounded-[24px] bg-[var(--yggdra-card)] p-5 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
             <span className="mb-3 block text-xs font-black uppercase tracking-[0.28em] text-[#777]">
-              Negócio
+              {copy.businessSelectLabel}
             </span>
 
             <select
               value={selectedBusinessId}
               onChange={(event) => setSelectedBusinessId(event.target.value)}
-              className="w-full rounded-2xl border border-[#d7d7d7] bg-white px-4 py-3 text-sm font-black text-[#171717] outline-none transition focus:border-[#171717]"
+              className="w-full min-w-0 truncate rounded-2xl border border-[#d7d7d7] bg-white px-4 py-3 text-sm font-black text-[#171717] outline-none transition focus:border-[var(--yggdra-primary)]"
             >
               {businesses.length === 0 ? (
-                <option value="">Nenhum negócio cadastrado</option>
+                <option value="">{copy.emptyBusinessLabel}</option>
               ) : (
                 businesses.map((business) => (
                   <option key={business.id} value={business.id}>
@@ -292,7 +526,7 @@ export function DashboardPage() {
             </select>
           </label>
 
-          <label className="rounded-[24px] bg-white/82 p-5 shadow-[0_18px_45px_rgba(0,0,0,0.08)] backdrop-blur-xl">
+          <label className="rounded-[24px] bg-[var(--yggdra-card)] p-5 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
             <span className="mb-3 block text-xs font-black uppercase tracking-[0.28em] text-[#777]">
               Data
             </span>
@@ -301,7 +535,7 @@ export function DashboardPage() {
               type="date"
               value={selectedDate}
               onChange={(event) => setSelectedDate(event.target.value)}
-              className="w-full rounded-2xl border border-[#d7d7d7] bg-white px-4 py-3 text-sm font-black text-[#171717] outline-none transition focus:border-[#171717]"
+              className="w-full rounded-2xl border border-[#d7d7d7] bg-white px-4 py-3 text-sm font-black text-[#171717] outline-none transition focus:border-[var(--yggdra-primary)]"
             />
           </label>
         </div>
@@ -314,7 +548,7 @@ export function DashboardPage() {
       )}
 
       {isLoading ? (
-        <section className="rounded-[30px] bg-white/82 p-7 shadow-[0_18px_45px_rgba(0,0,0,0.08)] backdrop-blur-xl">
+        <section className="rounded-[30px] bg-[var(--yggdra-card)] p-7 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
           <p className="text-sm font-black text-[#5f6368]">
             Carregando dashboard...
           </p>
@@ -322,16 +556,16 @@ export function DashboardPage() {
       ) : (
         <>
           <section className="grid gap-5 xl:grid-cols-[1fr_1fr_0.8fr]">
-            <article className="rounded-[30px] bg-[#1f1f1f] p-7 text-white shadow-[0_24px_60px_rgba(0,0,0,0.26)]">
+            <article className="rounded-[30px] bg-[var(--yggdra-primary)] p-7 text-[var(--yggdra-primary-text)] shadow-[0_24px_60px_var(--yggdra-shadow)]">
               <div className="flex items-start justify-between">
                 <div>
-                  <h2 className="text-xl font-black">Informações gerais</h2>
-                  <p className="mt-2 text-xs font-bold text-white/55">
-                    Resumo do dia selecionado
+                  <h2 className="text-xl font-black">{copy.mainTitle}</h2>
+                  <p className="mt-2 text-xs font-bold opacity-65">
+                    {copy.mainSubtitle}
                   </p>
                 </div>
 
-                <ClipboardCheck size={22} className="text-white/70" />
+                <ClipboardCheck size={22} className="opacity-75" />
               </div>
 
               <div className="mt-8 grid grid-cols-2 gap-6">
@@ -339,29 +573,31 @@ export function DashboardPage() {
                   <strong className="text-5xl font-black">
                     {totalAppointments}
                   </strong>
-                  <p className="mt-2 text-xs font-bold leading-5 text-white/60">
-                    atendimentos no dia
+                  <p className="mt-2 text-xs font-bold leading-5 opacity-65">
+                    {copy.appointmentsLabel}
                   </p>
                 </div>
 
                 <div>
                   <strong className="text-5xl font-black">{activeServices}</strong>
-                  <p className="mt-2 text-xs font-bold leading-5 text-white/60">
-                    serviços ativos
+                  <p className="mt-2 text-xs font-bold leading-5 opacity-65">
+                    {copy.servicesLabel}
                   </p>
                 </div>
               </div>
 
               <div className="mt-8 grid grid-cols-3 gap-3">
-                <div className="rounded-2xl bg-white p-4 text-[#171717]">
+                <div className="rounded-2xl bg-white/95 p-4 text-[#171717]">
                   <UsersRound size={20} />
                   <strong className="mt-5 block text-2xl font-black">
                     {clients.length}
                   </strong>
-                  <span className="text-xs font-bold text-[#777]">Clientes</span>
+                  <span className="text-xs font-bold text-[#777]">
+                    {copy.clientsLabel}
+                  </span>
                 </div>
 
-                <div className="rounded-2xl bg-white p-4 text-[#171717]">
+                <div className="rounded-2xl bg-white/95 p-4 text-[#171717]">
                   <CheckCircle2 size={20} />
                   <strong className="mt-5 block text-2xl font-black">
                     {summary?.appointmentsByStatus.confirmed || 0}
@@ -371,7 +607,7 @@ export function DashboardPage() {
                   </span>
                 </div>
 
-                <div className="rounded-2xl bg-white p-4 text-[#171717]">
+                <div className="rounded-2xl bg-white/95 p-4 text-[#171717]">
                   <CircleDollarSign size={20} />
                   <strong className="mt-5 block text-xl font-black">
                     {formatCurrency(summary?.estimatedRevenue || 0)}
@@ -381,7 +617,7 @@ export function DashboardPage() {
               </div>
             </article>
 
-            <article className="rounded-[30px] bg-white/82 p-7 shadow-[0_18px_45px_rgba(0,0,0,0.08)] backdrop-blur-xl">
+            <article className="rounded-[30px] bg-[var(--yggdra-card)] p-7 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
               <div className="flex items-start justify-between">
                 <div>
                   <h2 className="text-xl font-black text-[#171717]">
@@ -392,22 +628,23 @@ export function DashboardPage() {
                   </p>
                 </div>
 
-                <Activity size={22} />
+                <Activity size={22} className="text-[var(--yggdra-primary)]" />
               </div>
 
-              <div className="mt-8 h-[190px] rounded-[24px] border border-[#dedede] bg-[#f5f5f5] p-5">
+              <div className="mt-8 h-[190px] rounded-[24px] border border-white/80 bg-[var(--yggdra-muted)] p-5">
                 <svg viewBox="0 0 420 150" className="h-full w-full">
                   <path
                     d="M10 115 C 60 35, 100 45, 145 82 S 230 130, 270 55 S 350 15, 410 78"
                     fill="none"
-                    stroke="#171717"
+                    stroke="var(--yggdra-primary)"
                     strokeWidth="5"
                     strokeLinecap="round"
                   />
                   <path
                     d="M10 105 C 65 95, 95 120, 145 72 S 220 20, 270 80 S 340 115, 410 45"
                     fill="none"
-                    stroke="#9ca3af"
+                    stroke="var(--yggdra-accent-text)"
+                    strokeOpacity="0.35"
                     strokeWidth="4"
                     strokeLinecap="round"
                   />
@@ -424,25 +661,25 @@ export function DashboardPage() {
               </div>
             </article>
 
-            <article className="rounded-[30px] bg-white/82 p-7 shadow-[0_18px_45px_rgba(0,0,0,0.08)] backdrop-blur-xl">
+            <article className="rounded-[30px] bg-[var(--yggdra-card)] p-7 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
               <div className="flex items-start justify-between">
                 <div>
                   <h2 className="text-xl font-black text-[#171717]">
-                    Progresso
+                    {copy.progressTitle}
                   </h2>
                   <p className="mt-2 text-xs font-bold text-[#777]">
-                    Finalizados no dia
+                    {copy.progressSubtitle}
                   </p>
                 </div>
 
-                <Scissors size={22} />
+                <ProgressIcon size={22} className="text-[var(--yggdra-primary)]" />
               </div>
 
               <div className="mt-8 flex justify-center">
                 <div
                   className="flex h-40 w-40 items-center justify-center rounded-full"
                   style={{
-                    background: `conic-gradient(#171717 ${progressPercentage}%, #e5e5e5 ${progressPercentage}% 100%)`,
+                    background: `conic-gradient(var(--yggdra-primary) ${progressPercentage}%, #e5e5e5 ${progressPercentage}% 100%)`,
                   }}
                 >
                   <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full bg-white">
@@ -459,18 +696,13 @@ export function DashboardPage() {
           </section>
 
           <section className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
-            <article className="rounded-[30px] bg-white/82 p-7 shadow-[0_18px_45px_rgba(0,0,0,0.08)] backdrop-blur-xl">
+            <article className="rounded-[30px] bg-[var(--yggdra-card)] p-7 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
               <h2 className="text-xl font-black text-[#171717]">
-                Checklist do dia
+                {copy.checklistTitle}
               </h2>
 
               <div className="mt-6 space-y-4">
-                {[
-                  "Confirmar pendências da agenda",
-                  "Finalizar atendimentos concluídos",
-                  "Marcar cancelados e não compareceu",
-                  "Verificar mensagens dos clientes",
-                ].map((item, index) => (
+                {copy.checklistItems.map((item, index) => (
                   <label
                     key={item}
                     className="flex items-center gap-3 text-sm font-bold text-[#555]"
@@ -478,7 +710,7 @@ export function DashboardPage() {
                     <input
                       type="checkbox"
                       defaultChecked={index === 0}
-                      className="h-4 w-4 rounded border-[#999] accent-[#171717]"
+                      className="h-4 w-4 rounded border-[#999] accent-[var(--yggdra-primary)]"
                     />
                     {item}
                   </label>
@@ -486,37 +718,37 @@ export function DashboardPage() {
               </div>
             </article>
 
-            <article className="rounded-[30px] bg-white/82 p-7 shadow-[0_18px_45px_rgba(0,0,0,0.08)] backdrop-blur-xl">
+            <article className="rounded-[30px] bg-[var(--yggdra-card)] p-7 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h2 className="text-xl font-black text-[#171717]">
-                    Próximos atendimentos
+                    {copy.upcomingTitle}
                   </h2>
                   <p className="mt-2 text-sm font-medium text-[#666]">
-                    Atendimentos ativos da data selecionada.
+                    {copy.upcomingSubtitle}
                   </p>
                 </div>
 
-                <span className="rounded-full border border-[#171717] px-4 py-2 text-xs font-black text-[#171717]">
-                  {upcomingAppointments.length} na agenda
+                <span className="rounded-full border border-[var(--yggdra-primary)] px-4 py-2 text-xs font-black text-[var(--yggdra-primary)]">
+                  {upcomingAppointments.length} {copy.upcomingCountLabel}
                 </span>
               </div>
 
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 {upcomingAppointments.length === 0 ? (
                   <div className="rounded-[26px] border border-dashed border-[#999] p-6 text-sm font-bold text-[#666]">
-                    Nenhum atendimento ativo para esta data.
+                    {copy.emptyUpcoming}
                   </div>
                 ) : (
                   upcomingAppointments.map((appointment) => (
                     <div
                       key={appointment.id}
-                      className="rounded-[26px] bg-white p-5 shadow-[0_16px_34px_rgba(0,0,0,0.08)]"
+                      className="rounded-[26px] bg-white/88 p-5 shadow-[0_16px_34px_var(--yggdra-shadow)]"
                     >
                       <div className="flex items-start justify-between gap-4">
-                        <Clock3 size={22} />
+                        <Clock3 size={22} className="text-[var(--yggdra-primary)]" />
 
-                        <span className="rounded-full bg-[#171717] px-3 py-1.5 text-xs font-black text-white">
+                        <span className="rounded-full bg-[var(--yggdra-primary)] px-3 py-1.5 text-xs font-black text-[var(--yggdra-primary-text)]">
                           {getAppointmentStatusLabel(appointment.status)}
                         </span>
                       </div>
@@ -532,13 +764,13 @@ export function DashboardPage() {
                       </p>
 
                       <p className="mt-2 text-sm text-[#666]">
-                        Profissional:{" "}
+                        {copy.professionalLabel}:{" "}
                         <span className="font-black text-[#171717]">
                           {appointment.professionalName}
                         </span>
                       </p>
 
-                      <div className="mt-5 rounded-2xl bg-[#f2f2f2] p-4">
+                      <div className="mt-5 rounded-2xl bg-[var(--yggdra-muted)] p-4">
                         <strong className="block text-sm font-black text-[#171717]">
                           {appointment.clientName}
                         </strong>
@@ -546,7 +778,7 @@ export function DashboardPage() {
                         <p className="mt-1 text-sm font-medium text-[#666]">
                           {appointment.clientPhone ||
                             appointment.clientEmail ||
-                            "Contato não informado"}
+                            `${copy.contactLabel} sem contato informado`}
                         </p>
                       </div>
                     </div>
@@ -559,7 +791,7 @@ export function DashboardPage() {
           <section>
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-xl font-black text-[#171717]">
-                Status da agenda
+                {copy.statusTitle}
               </h2>
 
               <p className="text-xs font-black uppercase tracking-[0.2em] text-[#777]">
@@ -576,8 +808,10 @@ export function DashboardPage() {
                   <div
                     key={item.label}
                     className={[
-                      "rounded-[26px] p-5 shadow-[0_16px_34px_rgba(0,0,0,0.08)]",
-                      isDark ? "bg-[#1f1f1f] text-white" : "bg-white/82 text-[#171717]",
+                      "rounded-[26px] p-5 shadow-[0_16px_34px_var(--yggdra-shadow)]",
+                      isDark
+                        ? "bg-[var(--yggdra-primary)] text-[var(--yggdra-primary-text)]"
+                        : "bg-[var(--yggdra-card)] text-[#171717]",
                     ].join(" ")}
                   >
                     <div className="flex items-start justify-between gap-4">
@@ -588,7 +822,7 @@ export function DashboardPage() {
                         <p
                           className={[
                             "mt-2 text-xs font-bold",
-                            isDark ? "text-white/55" : "text-[#777]",
+                            isDark ? "opacity-65" : "text-[#777]",
                           ].join(" ")}
                         >
                           Total no dia
@@ -607,11 +841,11 @@ export function DashboardPage() {
             </div>
           </section>
 
-          <section className="rounded-[30px] bg-[#1f1f1f] p-7 text-white shadow-[0_24px_60px_rgba(0,0,0,0.26)]">
+          <section className="rounded-[30px] bg-[var(--yggdra-primary)] p-7 text-[var(--yggdra-primary-text)] shadow-[0_24px_60px_var(--yggdra-shadow)]">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <h2 className="text-xl font-black">Resumo do negócio</h2>
-                <p className="mt-2 text-sm font-bold text-white/55">
+                <h2 className="text-xl font-black">{copy.businessSummaryTitle}</h2>
+                <p className="mt-2 text-sm font-bold opacity-65">
                   {selectedBusiness?.name || "Nenhum negócio selecionado"}
                 </p>
               </div>
@@ -622,18 +856,18 @@ export function DashboardPage() {
                   <strong className="mt-4 block text-2xl font-black">
                     {services.length}
                   </strong>
-                  <span className="text-xs font-bold text-white/55">
-                    Serviços
+                  <span className="text-xs font-bold opacity-65">
+                    {copy.servicesSummaryLabel}
                   </span>
                 </div>
 
                 <div className="rounded-2xl bg-white/10 px-5 py-4">
-                  <Scissors size={20} />
+                  <CheckCircle2 size={20} />
                   <strong className="mt-4 block text-2xl font-black">
                     {activeServices}
                   </strong>
-                  <span className="text-xs font-bold text-white/55">
-                    Ativos
+                  <span className="text-xs font-bold opacity-65">
+                    {copy.activeServicesSummaryLabel}
                   </span>
                 </div>
 
@@ -642,8 +876,8 @@ export function DashboardPage() {
                   <strong className="mt-4 block text-2xl font-black">
                     {clients.length}
                   </strong>
-                  <span className="text-xs font-bold text-white/55">
-                    Clientes
+                  <span className="text-xs font-bold opacity-65">
+                    {copy.clientsLabel}
                   </span>
                 </div>
               </div>
