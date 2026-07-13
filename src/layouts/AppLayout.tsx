@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useEffect, useState, type ReactNode } from "react";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   Bell,
   BriefcaseBusiness,
@@ -12,7 +12,13 @@ import {
   Users,
 } from "lucide-react";
 
-import { clearAuthStorage } from "../services/api";
+import { api, clearAuthStorage } from "../services/api";
+import type { Business } from "../types/business";
+import {
+  defaultBusinessTheme,
+  getBusinessTheme,
+  type BusinessTheme,
+} from "../utils/businessTheme";
 
 type AppLayoutProps = {
   children?: ReactNode;
@@ -76,9 +82,81 @@ function getStoredUserLabel() {
   }
 }
 
+function getStoredBusinessTheme(): BusinessTheme {
+  const rawTheme = localStorage.getItem("@yggdraflow:business-theme");
+
+  if (!rawTheme) {
+    return defaultBusinessTheme;
+  }
+
+  try {
+    const theme = JSON.parse(rawTheme) as {
+      segment?: Business["segment"];
+      specialty?: Business["specialty"];
+    };
+
+    return getBusinessTheme(theme.segment, theme.specialty);
+  } catch {
+    return defaultBusinessTheme;
+  }
+}
+
 export function AppLayout({ children }: AppLayoutProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const userLabel = getStoredUserLabel();
+  const [businessTheme, setBusinessTheme] = useState<BusinessTheme>(
+    getStoredBusinessTheme
+  );
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadBusinessTheme() {
+      try {
+        const response = await api.get<Business[]>("/businesses");
+        const businessWithSegment =
+          response.data.find((business) => business.segment) || response.data[0];
+
+        const theme = getBusinessTheme(
+          businessWithSegment?.segment,
+          businessWithSegment?.specialty
+        );
+
+        if (!isMounted) {
+          return;
+        }
+
+        setBusinessTheme(theme);
+
+        localStorage.setItem(
+          "@yggdraflow:business-theme",
+          JSON.stringify({
+            segment: businessWithSegment?.segment || null,
+            specialty: businessWithSegment?.specialty || null,
+            brandName: theme.brandName,
+          })
+        );
+      } catch {
+        if (isMounted) {
+          setBusinessTheme(getStoredBusinessTheme());
+        }
+      }
+    }
+
+    function handleThemeUpdated() {
+      loadBusinessTheme();
+    }
+
+    loadBusinessTheme();
+
+    window.addEventListener("yggdraflow:theme-updated", handleThemeUpdated);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener("yggdraflow:theme-updated", handleThemeUpdated);
+    };
+  }, [location.pathname]);
 
   function handleLogout() {
     clearAuthStorage();
@@ -98,7 +176,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           <Link
             to="/dashboard"
             className="mb-10 flex items-center gap-3 px-2"
-            title="YggdraFlow"
+            title={businessTheme.brandName}
           >
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#171717] text-white">
               <CalendarDays size={24} />
@@ -106,10 +184,10 @@ export function AppLayout({ children }: AppLayoutProps) {
 
             <div>
               <strong className="block text-lg font-black tracking-tight text-[#171717]">
-                YggdraFlow
+                {businessTheme.brandName}
               </strong>
               <span className="text-xs font-bold text-[#7a7a7a]">
-                Gestão de beleza
+                {businessTheme.subtitle}
               </span>
             </div>
           </Link>
@@ -153,7 +231,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           <NavLink
             to="/dashboard"
             className="mb-8 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#171717] text-white shadow-[0_18px_42px_rgba(0,0,0,0.22)]"
-            title="YggdraFlow"
+            title={businessTheme.brandName}
           >
             <CalendarDays size={24} />
           </NavLink>

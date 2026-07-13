@@ -1,5 +1,11 @@
-import type { ReactNode } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { useEffect, useState, type ReactNode } from "react";
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
 import { AppLayout } from "../layouts/AppLayout";
 import { AdminLayout } from "../layouts/AdminLayout";
@@ -8,6 +14,7 @@ import { LoginPage } from "../pages/LoginPage";
 import { RegisterPage } from "../pages/RegisterPage";
 import { DashboardPage } from "../pages/DashboardPage";
 import { BusinessesPage } from "../pages/BusinessesPage";
+import { BusinessOnboardingPage } from "../pages/BusinessOnboardingPage";
 import { ClientsPage } from "../pages/ClientsPage";
 import { ServicesPage } from "../pages/ServicesPage";
 import { ProfessionalsPage } from "../pages/ProfessionalsPage";
@@ -19,8 +26,10 @@ import { SettingsPage } from "../pages/SettingsPage";
 import { ClientLoginPage } from "../pages/ClientLoginPage";
 import { ClientRegisterPage } from "../pages/ClientRegisterPage";
 import { ClientAppointmentsPage } from "../pages/ClientAppointmentsPage";
+import { api } from "../services/api";
 import { getToken, getUser } from "../services/authStorage";
 import type { User } from "../types/auth";
+import type { Business } from "../types/business";
 
 function getHomePath(user: User) {
   if (user.role === "ADMIN") {
@@ -32,6 +41,70 @@ function getHomePath(user: User) {
   }
 
   return "/dashboard";
+}
+
+function BusinessOnboardingGate({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [isChecking, setIsChecking] = useState(
+    location.pathname !== "/business-onboarding"
+  );
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function checkBusinessSegment() {
+      if (
+        location.pathname === "/business-onboarding" ||
+        location.pathname === "/businesses"
+      ) {
+        setIsChecking(false);
+        return;
+      }
+
+      try {
+        setIsChecking(true);
+
+        const response = await api.get<Business[]>("/businesses");
+        const needsOnboarding = response.data.some(
+          (business) => !business.segment
+        );
+
+        if (!isMounted) {
+          return;
+        }
+
+        if (needsOnboarding) {
+          navigate("/business-onboarding", { replace: true });
+          return;
+        }
+      } catch {
+        if (!isMounted) {
+          return;
+        }
+      }
+
+      setIsChecking(false);
+    }
+
+    checkBusinessSegment();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [location.pathname, navigate]);
+
+  if (isChecking) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="rounded-[28px] bg-white/90 px-8 py-6 text-sm font-black text-[#171717] shadow-[0_20px_60px_rgba(0,0,0,0.10)]">
+          Carregando configuração do negócio...
+        </div>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
 }
 
 function CustomerPage({ children }: { children: ReactNode }) {
@@ -50,7 +123,11 @@ function CustomerPage({ children }: { children: ReactNode }) {
     return <Navigate to="/cliente/agendamentos" replace />;
   }
 
-  return <AppLayout>{children}</AppLayout>;
+  return (
+    <AppLayout>
+      <BusinessOnboardingGate>{children}</BusinessOnboardingGate>
+    </AppLayout>
+  );
 }
 
 function AdminProtectedPage({ children }: { children: ReactNode }) {
@@ -137,6 +214,15 @@ export function AppRoutes() {
           <AdminProtectedPage>
             <AccountPage />
           </AdminProtectedPage>
+        }
+      />
+
+      <Route
+        path="/business-onboarding"
+        element={
+          <CustomerPage>
+            <BusinessOnboardingPage />
+          </CustomerPage>
         }
       />
 
