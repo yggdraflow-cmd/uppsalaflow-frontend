@@ -488,22 +488,22 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-7 pb-4">
-      <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(680px,0.95fr)]">
+      <section className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
         <div className="flex min-h-[110px] flex-col justify-end">
           <div className="mb-4 inline-flex w-fit rounded-full bg-[var(--yggdra-accent)] px-4 py-2 text-xs font-black text-[var(--yggdra-accent-text)] shadow-[0_12px_34px_var(--yggdra-shadow)]">
             {copy.theme.brandName}
           </div>
 
-          <h1 className="text-4xl font-black tracking-tight text-[#171717] md:text-5xl">
+          <h1 className="text-[clamp(2.4rem,4vw,4.6rem)] font-black leading-[0.98] tracking-tight text-[#171717]">
             Olá, {userName}!
           </h1>
 
-          <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-[#5f6368]">
+          <p className="mt-3 max-w-xl text-sm font-medium leading-6 text-[#5f6368]">
             {copy.description}
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-[minmax(390px,1.35fr)_minmax(220px,0.65fr)]">
+        <div className="grid gap-4 self-start sm:grid-cols-2 xl:w-full xl:max-w-[560px] xl:justify-self-end">
           <label className="min-w-0 rounded-[24px] bg-[var(--yggdra-card)] p-5 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
             <span className="mb-3 block text-xs font-black uppercase tracking-[0.28em] text-[#777]">
               {copy.businessSelectLabel}
@@ -512,7 +512,7 @@ export function DashboardPage() {
             <select
               value={selectedBusinessId}
               onChange={(event) => setSelectedBusinessId(event.target.value)}
-              className="w-full rounded-2xl border border-[#d7d7d7] bg-white px-4 py-3 text-base font-black text-[#171717] outline-none transition focus:border-[var(--yggdra-primary)]"
+              className="w-full rounded-2xl border border-[#d7d7d7] bg-white px-4 py-3 text-sm font-black text-[#171717] outline-none transition focus:border-[var(--yggdra-primary)] sm:text-base"
             >
               {businesses.length === 0 ? (
                 <option value="">{copy.emptyBusinessLabel}</option>
@@ -555,7 +555,7 @@ export function DashboardPage() {
         </section>
       ) : (
         <>
-          <section className="grid gap-5 xl:grid-cols-[1fr_1fr_0.8fr]">
+          <section className="grid gap-5 xl:grid-cols-2">
             <article className="rounded-[30px] bg-[var(--yggdra-primary)] p-7 text-[var(--yggdra-primary-text)] shadow-[0_24px_60px_var(--yggdra-shadow)]">
               <div className="flex items-start justify-between">
                 <div>
@@ -586,7 +586,7 @@ export function DashboardPage() {
                 </div>
               </div>
 
-              <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3 xl:grid-cols-1 2xl:grid-cols-3">
                 <div className="min-w-0 overflow-hidden rounded-2xl bg-white/95 p-3 text-[#171717]">
                   <UsersRound size={20} />
                   <strong className="mt-4 block truncate text-2xl font-black">
