@@ -1123,7 +1123,7 @@ export function AppointmentsPage() {
     return (
       <div
         key={appointment.id}
-        className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4"
+        className="rounded-2xl border border-white/80 bg-[var(--yggdra-card)] p-4 shadow-[0_16px_34px_var(--yggdra-shadow)] backdrop-blur-xl"
       >
         <div className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
           <div className="min-w-0 flex-1">
@@ -1132,12 +1132,12 @@ export function AppointmentsPage() {
                 {appointment.client.name}
               </h2>
 
-              <span className="rounded-full bg-[#f3f3f3] px-3 py-1 text-xs font-semibold text-[#171717]">
+              <span className="rounded-full bg-[var(--yggdra-accent)] px-3 py-1 text-xs font-black text-[var(--yggdra-accent-text)]">
                 {appointmentStatusLabels[appointment.status]}
               </span>
 
               {pendingProposal ? (
-                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                <span className="rounded-full bg-[var(--yggdra-muted)] px-3 py-1 text-xs font-black text-[var(--yggdra-primary)]">
                   Proposta enviada
                 </span>
               ) : null}
@@ -1178,8 +1178,8 @@ export function AppointmentsPage() {
             )}
 
             {proposals.length > 0 ? (
-              <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50/70 p-4">
-                <h3 className="text-sm font-black text-blue-900">
+              <div className="mt-4 rounded-2xl border border-white/80 bg-[var(--yggdra-muted)] p-4">
+                <h3 className="text-sm font-black text-[var(--yggdra-primary)]">
                   Sugestões de horário
                 </h3>
 
@@ -1187,7 +1187,7 @@ export function AppointmentsPage() {
                   {proposals.map((proposal) => (
                     <div
                       key={proposal.id}
-                      className="rounded-xl bg-white/80 p-3 text-sm text-blue-900 ring-1 ring-blue-100"
+                      className="rounded-xl bg-white/88 p-3 text-sm text-[#171717] ring-1 ring-white/80"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <strong>
@@ -1196,13 +1196,13 @@ export function AppointmentsPage() {
                           {proposal.suggestedEndTime}
                         </strong>
 
-                        <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-black text-blue-700">
+                        <span className="rounded-full bg-[var(--yggdra-accent)] px-3 py-1 text-xs font-black text-[var(--yggdra-accent-text)]">
                           {proposalStatusLabels[proposal.status]}
                         </span>
                       </div>
 
                       {proposal.message ? (
-                        <p className="mt-2 text-blue-800">{proposal.message}</p>
+                        <p className="mt-2 text-[#555]">{proposal.message}</p>
                       ) : null}
                     </div>
                   ))}
@@ -1211,7 +1211,7 @@ export function AppointmentsPage() {
             ) : null}
 
             {messages.length > 0 ? (
-              <div className="mt-4 rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="mt-4 rounded-2xl border border-white/80 bg-white/88 p-4 shadow-[0_12px_30px_var(--yggdra-shadow)]">
                 <h3 className="text-sm font-black text-zinc-950">
                   {appointmentCopy.conversationTitle}
                 </h3>
@@ -1223,7 +1223,7 @@ export function AppointmentsPage() {
                       className={[
                         "rounded-xl px-3 py-2 text-sm ring-1",
                         appointmentMessage.sender === "OWNER"
-                          ? "bg-[#f3f3f3] text-[#171717] ring-[#dedede]"
+                          ? "bg-[var(--yggdra-muted)] text-[#171717] ring-white/80"
                           : "bg-zinc-50 text-zinc-700 ring-zinc-200",
                       ].join(" ")}
                     >
@@ -1240,7 +1240,7 @@ export function AppointmentsPage() {
             ) : null}
 
             {proposalAppointmentId === appointment.id ? (
-              <div className="mt-4 rounded-2xl border border-[#dedede] bg-[#f3f3f3] p-4">
+              <div className="mt-4 rounded-2xl border border-white/80 bg-[var(--yggdra-muted)] p-4">
                 <h3 className="text-sm font-black text-[#171717]">
                   Sugerir outro horário
                 </h3>
@@ -1261,7 +1261,7 @@ export function AppointmentsPage() {
                       onChange={(event) =>
                         setProposalStartTime(event.target.value)
                       }
-                      className="upp-input w-full"
+                      className="upp-input w-full focus:border-[var(--yggdra-primary)] focus:ring-2 focus:ring-[var(--yggdra-accent)]"
                     >
                       {availableTimes.map((time) => (
                         <option key={time} value={time}>
@@ -1281,7 +1281,7 @@ export function AppointmentsPage() {
                     value={proposalMessage}
                     onChange={(event) => setProposalMessage(event.target.value)}
                     rows={4}
-                    className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#dedede]"
+                    className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[var(--yggdra-primary)] focus:ring-2 focus:ring-[var(--yggdra-accent)]"
                   />
                 </label>
 
@@ -1305,7 +1305,7 @@ export function AppointmentsPage() {
             ) : null}
 
             {messageAppointmentId === appointment.id ? (
-              <div className="mt-4 rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="mt-4 rounded-2xl border border-white/80 bg-white/88 p-4 shadow-[0_12px_30px_var(--yggdra-shadow)]">
                 <h3 className="text-sm font-black text-zinc-950">
                   Enviar mensagem
                 </h3>
@@ -1315,7 +1315,7 @@ export function AppointmentsPage() {
                   onChange={(event) => setOwnerMessage(event.target.value)}
                   rows={3}
                   placeholder={appointmentCopy.sendMessagePlaceholder}
-                  className="mt-3 w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#dedede]"
+                  className="mt-3 w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[var(--yggdra-primary)] focus:ring-2 focus:ring-[var(--yggdra-accent)]"
                 />
 
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -1352,7 +1352,7 @@ export function AppointmentsPage() {
                     event.target.value as AppointmentStatus
                   )
                 }
-                className="upp-input w-full"
+                className="upp-input w-full focus:border-[var(--yggdra-primary)] focus:ring-2 focus:ring-[var(--yggdra-accent)]"
               >
                 {appointmentStatusOptions.map((status) => (
                   <option key={status} value={status}>
@@ -1432,7 +1432,7 @@ export function AppointmentsPage() {
               <select
                 value={selectedBusinessId}
                 onChange={(event) => setSelectedBusinessId(event.target.value)}
-                className="upp-input w-full"
+                className="upp-input w-full focus:border-[var(--yggdra-primary)] focus:ring-2 focus:ring-[var(--yggdra-accent)]"
               >
                 {businesses.map((business) => (
                   <option key={business.id} value={business.id}>
@@ -1465,7 +1465,7 @@ export function AppointmentsPage() {
               <select
                 value={selectedClientId}
                 onChange={(event) => setSelectedClientId(event.target.value)}
-                className="upp-input w-full"
+                className="upp-input w-full focus:border-[var(--yggdra-primary)] focus:ring-2 focus:ring-[var(--yggdra-accent)]"
               >
                 {clients.length === 0 ? (
                   <option value="">{appointmentCopy.emptyCustomer}</option>
@@ -1487,7 +1487,7 @@ export function AppointmentsPage() {
               <select
                 value={selectedServiceId}
                 onChange={(event) => setSelectedServiceId(event.target.value)}
-                className="upp-input w-full"
+                className="upp-input w-full focus:border-[var(--yggdra-primary)] focus:ring-2 focus:ring-[var(--yggdra-accent)]"
               >
                 {services.length === 0 ? (
                   <option value="">{appointmentCopy.emptyService}</option>
@@ -1511,7 +1511,7 @@ export function AppointmentsPage() {
                 onChange={(event) =>
                   setSelectedProfessionalId(event.target.value)
                 }
-                className="upp-input w-full"
+                className="upp-input w-full focus:border-[var(--yggdra-primary)] focus:ring-2 focus:ring-[var(--yggdra-accent)]"
               >
                 {professionals.length === 0 ? (
                   <option value="">{appointmentCopy.emptyProfessional}</option>
@@ -1533,7 +1533,7 @@ export function AppointmentsPage() {
               <select
                 value={startTime}
                 onChange={(event) => setStartTime(event.target.value)}
-                className="upp-input w-full"
+                className="upp-input w-full focus:border-[var(--yggdra-primary)] focus:ring-2 focus:ring-[var(--yggdra-accent)]"
                 required
               >
                 {timeOptions.length === 0 ? (
@@ -1554,7 +1554,7 @@ export function AppointmentsPage() {
               </select>
             </label>
 
-            <div className="rounded-xl bg-zinc-50 p-3 text-sm text-zinc-600 ring-1 ring-zinc-200">
+            <div className="rounded-xl bg-[var(--yggdra-muted)] p-3 text-sm text-zinc-700 ring-1 ring-white/80">
               <p>
                 Horário final:{" "}
                 <span className="font-semibold text-zinc-950">
@@ -1582,7 +1582,7 @@ export function AppointmentsPage() {
                 onChange={(event) => setNotes(event.target.value)}
                 rows={4}
                 placeholder={appointmentCopy.notesPlaceholder}
-                className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#dedede]"
+                className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[var(--yggdra-primary)] focus:ring-2 focus:ring-[var(--yggdra-accent)]"
               />
             </label>
 
@@ -1603,7 +1603,7 @@ export function AppointmentsPage() {
 
         <div className="space-y-6">
           <Card title={appointmentCopy.pendingTitle}>
-            <div className="mb-5 rounded-2xl border border-[#dedede] bg-[#f3f3f3] p-4">
+            <div className="mb-5 rounded-2xl border border-white/80 bg-[var(--yggdra-muted)] p-4">
               <h2 className="text-base font-semibold text-zinc-950">
                 {appointmentCopy.pendingHeader}
               </h2>
@@ -1618,7 +1618,7 @@ export function AppointmentsPage() {
             </div>
 
             {pendingAppointments.length === 0 ? (
-              <p className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-500">
+              <p className="rounded-2xl border border-dashed border-[var(--yggdra-primary)] bg-[var(--yggdra-muted)] p-4 text-sm font-bold text-zinc-600">
                 {appointmentCopy.emptyPending}
               </p>
             ) : (
@@ -1632,7 +1632,7 @@ export function AppointmentsPage() {
 
           <Card title={appointmentCopy.dayTitle}>
             <div className="mb-5 grid gap-3 sm:grid-cols-2">
-              <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="min-w-0 rounded-2xl border border-white/80 bg-white/88 p-4 shadow-[0_12px_30px_var(--yggdra-shadow)]">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   {appointmentCopy.dayTotalLabel}
                 </p>
@@ -1641,7 +1641,7 @@ export function AppointmentsPage() {
                 </strong>
               </div>
 
-              <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="min-w-0 rounded-2xl border border-white/80 bg-white/88 p-4 shadow-[0_12px_30px_var(--yggdra-shadow)]">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   {appointmentCopy.activeLabel}
                 </p>
@@ -1650,7 +1650,7 @@ export function AppointmentsPage() {
                 </strong>
               </div>
 
-              <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="min-w-0 rounded-2xl border border-white/80 bg-white/88 p-4 shadow-[0_12px_30px_var(--yggdra-shadow)]">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Finalizados no dia
                 </p>
@@ -1659,7 +1659,7 @@ export function AppointmentsPage() {
                 </strong>
               </div>
 
-              <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="min-w-0 rounded-2xl border border-white/80 bg-white/88 p-4 shadow-[0_12px_30px_var(--yggdra-shadow)]">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Cancelados no dia
                 </p>
@@ -1669,7 +1669,7 @@ export function AppointmentsPage() {
               </div>
             </div>
 
-            <div className="mb-6 rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+            <div className="mb-6 rounded-2xl border border-white/80 bg-[var(--yggdra-muted)] p-4">
               <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <div>
                   <h2 className="text-base font-semibold text-zinc-950">
@@ -1697,7 +1697,7 @@ export function AppointmentsPage() {
                   {appointments.map((appointment) => (
                     <span
                       key={appointment.id}
-                      className="rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700"
+                      className="rounded-full border border-white/80 bg-white/88 px-4 py-2 text-sm font-black text-zinc-700 shadow-[0_10px_24px_var(--yggdra-shadow)]"
                     >
                       {appointment.startTime} até {appointment.endTime} •{" "}
                       {appointment.client.name} •{" "}
@@ -1714,7 +1714,7 @@ export function AppointmentsPage() {
               </h2>
 
               {activeDayAppointments.length === 0 ? (
-                <p className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-500">
+                <p className="rounded-2xl border border-dashed border-[var(--yggdra-primary)] bg-[var(--yggdra-muted)] p-4 text-sm font-bold text-zinc-600">
                   {appointmentCopy.emptyActive}
                 </p>
               ) : (
@@ -1729,7 +1729,7 @@ export function AppointmentsPage() {
 
           <Card title={appointmentCopy.historyTitle}>
             <div className="mb-5 grid gap-3 sm:grid-cols-2">
-              <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="min-w-0 rounded-2xl border border-white/80 bg-white/88 p-4 shadow-[0_12px_30px_var(--yggdra-shadow)]">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Total histórico
                 </p>
@@ -1738,7 +1738,7 @@ export function AppointmentsPage() {
                 </strong>
               </div>
 
-              <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="min-w-0 rounded-2xl border border-white/80 bg-white/88 p-4 shadow-[0_12px_30px_var(--yggdra-shadow)]">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Finalizados
                 </p>
@@ -1747,7 +1747,7 @@ export function AppointmentsPage() {
                 </strong>
               </div>
 
-              <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="min-w-0 rounded-2xl border border-white/80 bg-white/88 p-4 shadow-[0_12px_30px_var(--yggdra-shadow)]">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Cancelados / faltas
                 </p>
@@ -1756,7 +1756,7 @@ export function AppointmentsPage() {
                 </strong>
               </div>
 
-              <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="min-w-0 rounded-2xl border border-white/80 bg-white/88 p-4 shadow-[0_12px_30px_var(--yggdra-shadow)]">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Receita realizada
                 </p>
@@ -1766,7 +1766,7 @@ export function AppointmentsPage() {
               </div>
             </div>
 
-            <div className="mb-5 rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+            <div className="mb-5 rounded-2xl border border-white/80 bg-[var(--yggdra-muted)] p-4">
               <h2 className="text-base font-semibold text-zinc-950">
                 {appointmentCopy.historyBusinessTitle}
               </h2>
@@ -1776,7 +1776,7 @@ export function AppointmentsPage() {
             </div>
 
             {historyAppointments.length === 0 ? (
-              <p className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-500">
+              <p className="rounded-2xl border border-dashed border-[var(--yggdra-primary)] bg-[var(--yggdra-muted)] p-4 text-sm font-bold text-zinc-600">
                 {appointmentCopy.emptyHistory}
               </p>
             ) : (
