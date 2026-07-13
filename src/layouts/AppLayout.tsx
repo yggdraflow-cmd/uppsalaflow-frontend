@@ -91,15 +91,9 @@ function getQuickActionItems(theme: BusinessTheme) {
     return [
       {
         label: "Nova consulta",
-        description: "Criar consulta na agenda",
+        description: "Agendar paciente existente",
         path: "/appointments",
         icon: CalendarDays,
-      },
-      {
-        label: "Novo paciente",
-        description: "Cadastrar paciente",
-        path: "/clients",
-        icon: Users,
       },
       {
         label: "Novo procedimento",
@@ -120,15 +114,9 @@ function getQuickActionItems(theme: BusinessTheme) {
     return [
       {
         label: "Novo atendimento",
-        description: "Criar atendimento na agenda",
+        description: "Agendar tutor existente",
         path: "/appointments",
         icon: CalendarDays,
-      },
-      {
-        label: "Novo tutor",
-        description: "Cadastrar tutor",
-        path: "/clients",
-        icon: Users,
       },
       {
         label: "Novo serviço",
@@ -149,15 +137,9 @@ function getQuickActionItems(theme: BusinessTheme) {
     return [
       {
         label: "Novo horário",
-        description: "Criar horário na agenda",
+        description: "Agendar cliente existente",
         path: "/appointments",
         icon: CalendarDays,
-      },
-      {
-        label: "Novo cliente",
-        description: "Cadastrar cliente",
-        path: "/clients",
-        icon: Users,
       },
       {
         label: "Novo serviço",
@@ -178,15 +160,9 @@ function getQuickActionItems(theme: BusinessTheme) {
     return [
       {
         label: "Novo horário",
-        description: "Criar horário no studio",
+        description: "Agendar cliente existente",
         path: "/appointments",
         icon: CalendarDays,
-      },
-      {
-        label: "Nova cliente",
-        description: "Cadastrar cliente",
-        path: "/clients",
-        icon: Users,
       },
       {
         label: "Serviço de unhas",
@@ -207,15 +183,9 @@ function getQuickActionItems(theme: BusinessTheme) {
     return [
       {
         label: "Nova sessão",
-        description: "Criar sessão na agenda",
+        description: "Agendar cliente existente",
         path: "/appointments",
         icon: CalendarDays,
-      },
-      {
-        label: "Novo cliente",
-        description: "Cadastrar cliente",
-        path: "/clients",
-        icon: Users,
       },
       {
         label: "Novo serviço",
@@ -238,12 +208,6 @@ function getQuickActionItems(theme: BusinessTheme) {
       description: "Criar horário na agenda",
       path: "/appointments",
       icon: CalendarDays,
-    },
-    {
-      label: "Novo cliente",
-      description: "Cadastrar cliente",
-      path: "/clients",
-      icon: Users,
     },
     {
       label: "Novo serviço",
