@@ -1,7 +1,9 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
+  ArrowLeft,
   Brush,
   Building2,
+  Check,
   HeartPulse,
   Leaf,
   Scissors,
@@ -18,6 +20,8 @@ import type {
   BusinessSpecialty,
 } from "../types/business";
 import { getBusinessTheme } from "../utils/businessTheme";
+
+type OnboardingStep = "segment" | "specialty" | "details";
 
 type SegmentOption = {
   segment: BusinessSegment;
@@ -135,6 +139,7 @@ function makeSlug(value: string) {
 }
 
 export function BusinessOnboardingPage() {
+  const [step, setStep] = useState<OnboardingStep>("segment");
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [selectedSegment, setSelectedSegment] =
     useState<BusinessSegment | null>(null);
@@ -145,7 +150,6 @@ export function BusinessOnboardingPage() {
   const [businessSlug, setBusinessSlug] = useState("");
   const [phone, setPhone] = useState("");
 
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -186,26 +190,31 @@ export function BusinessOnboardingPage() {
 
   function chooseSegment(segment: BusinessSegment) {
     setSelectedSegment(segment);
-    setMessage("");
+    setSelectedSpecialty(null);
     setError("");
 
-    if (segment !== "BEAUTY") {
-      setSelectedSpecialty(null);
+    if (segment === "BEAUTY") {
+      setStep("specialty");
+      return;
     }
 
-    if (segment === "BEAUTY") {
-      setSelectedSpecialty("BEAUTY_GENERAL");
-    }
+    setStep("details");
+  }
+
+  function chooseSpecialty(specialty: BusinessSpecialty) {
+    setSelectedSpecialty(specialty);
+    setError("");
+    setStep("details");
   }
 
   async function saveExistingBusinessSegment() {
     if (!targetBusiness || !selectedSegment) {
-      return;
+      return null;
     }
 
     if (selectedSegment === "BEAUTY" && !selectedSpecialty) {
       setError("Escolha uma área de estética.");
-      return;
+      return null;
     }
 
     const response = await api.patch<Business>(
@@ -257,7 +266,6 @@ export function BusinessOnboardingPage() {
 
     try {
       setIsSaving(true);
-      setMessage("");
       setError("");
 
       const business = hasBusiness
@@ -280,9 +288,6 @@ export function BusinessOnboardingPage() {
       );
 
       window.dispatchEvent(new Event("yggdraflow:theme-updated"));
-
-      setMessage(`Ramo configurado como ${theme.segmentLabel}.`);
-
       window.location.href = "/dashboard";
     } catch {
       setError(
@@ -293,222 +298,316 @@ export function BusinessOnboardingPage() {
     }
   }
 
+  function goBack() {
+    setError("");
+
+    if (step === "specialty") {
+      setStep("segment");
+      setSelectedSegment(null);
+      setSelectedSpecialty(null);
+      return;
+    }
+
+    if (step === "details") {
+      if (selectedSegment === "BEAUTY") {
+        setStep("specialty");
+        setSelectedSpecialty(null);
+        return;
+      }
+
+      setStep("segment");
+      setSelectedSegment(null);
+    }
+  }
+
   if (isLoading) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center">
-        <div className="rounded-[28px] bg-white/90 px-8 py-6 text-sm font-black text-[#171717] shadow-[0_20px_60px_rgba(0,0,0,0.10)]">
-          Carregando configuração inicial...
+      <main className="flex min-h-screen items-center justify-center bg-[#eeeeee] px-6 text-[#171717]">
+        <div className="rounded-[30px] bg-white px-8 py-6 text-sm font-black shadow-[0_24px_80px_rgba(0,0,0,0.12)]">
+          Preparando configuração inicial...
         </div>
-      </div>
+      </main>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="mb-8">
-        <p className="text-sm font-black text-[#171717]">Primeiro acesso</p>
-        <h1 className="text-3xl font-black tracking-tight text-[#171717]">
-          Qual é o ramo do seu negócio?
-        </h1>
-        <p className="mt-2 max-w-3xl text-sm font-medium text-[#666]">
-          Escolha o tipo de negócio para adaptar marca, textos e experiência do
-          painel. O sistema continua sendo o YggdraFlow, mas a vitrine muda para
-          o seu ramo.
-        </p>
-
-        {targetBusiness && (
-          <div className="mt-4 inline-flex rounded-full bg-white/80 px-4 py-2 text-xs font-black text-[#171717] shadow-[0_12px_30px_rgba(0,0,0,0.08)]">
-            Negócio: {targetBusiness.name}
-          </div>
-        )}
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {segmentOptions.map((option) => {
-          const Icon = option.icon;
-          const isActive = selectedSegment === option.segment;
-
-          return (
-            <button
-              key={option.segment}
-              type="button"
-              disabled={isSaving}
-              onClick={() => chooseSegment(option.segment)}
-              className={[
-                "group rounded-[28px] border p-5 text-left shadow-[0_20px_60px_rgba(0,0,0,0.08)] transition",
-                isActive
-                  ? "border-[#171717] bg-[#171717] text-white"
-                  : "border-white/80 bg-white/86 text-[#171717] hover:-translate-y-1 hover:bg-white",
-              ].join(" ")}
-            >
-              <div
-                className={[
-                  "mb-5 flex h-13 w-13 items-center justify-center rounded-2xl",
-                  isActive ? "bg-white text-[#171717]" : "bg-[#171717] text-white",
-                ].join(" ")}
-              >
-                <Icon size={24} />
-              </div>
-
-              <h2 className="text-lg font-black">{option.title}</h2>
-
-              <p
-                className={[
-                  "mt-2 text-sm font-medium",
-                  isActive ? "text-white/78" : "text-[#666]",
-                ].join(" ")}
-              >
-                {option.description}
-              </p>
-
-              <div
-                className={[
-                  "mt-5 inline-flex rounded-full px-3 py-1 text-xs font-black",
-                  isActive
-                    ? "bg-white text-[#171717]"
-                    : "bg-[#f2f2f2] text-[#171717]",
-                ].join(" ")}
-              >
-                {option.brandName}
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      {selectedSegment === "BEAUTY" && (
-        <div className="mt-8 rounded-[32px] border border-white/80 bg-white/60 p-5 shadow-[0_24px_70px_rgba(0,0,0,0.08)] backdrop-blur-2xl">
-          <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-white">
-              <Brush size={22} />
+    <main
+      className="min-h-screen px-6 py-8 text-[#171717]"
+      style={{
+        background:
+          "radial-gradient(circle at 15% 10%, rgba(255,255,255,0.96), transparent 28%), radial-gradient(circle at 85% 0%, rgba(255,255,255,0.72), transparent 28%), linear-gradient(135deg, #d7d7d7 0%, #eeeeee 48%, #cfd4d6 100%)",
+      }}
+    >
+      <div className="mx-auto flex min-h-[calc(100vh-64px)] max-w-[1280px] flex-col rounded-[42px] border border-white/80 bg-white/30 p-6 shadow-[0_34px_110px_rgba(0,0,0,0.16)] backdrop-blur-3xl md:p-10">
+        <header className="mb-10 flex items-center justify-between gap-5">
+          <div className="flex items-center gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#171717] text-white shadow-[0_18px_42px_rgba(0,0,0,0.24)]">
+              <Sparkles size={26} />
             </div>
 
             <div>
-              <h2 className="text-xl font-black text-[#171717]">
-                Escolha a área de estética
-              </h2>
-              <p className="text-sm font-medium text-[#666]">
-                Se atende várias áreas, escolha estética completa.
-              </p>
+              <strong className="block text-2xl font-black tracking-tight">
+                YggdraFlow
+              </strong>
+              <span className="text-sm font-bold text-[#666]">
+                Configuração inicial do seu negócio
+              </span>
             </div>
           </div>
 
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            {beautySpecialtyOptions.map((option) => {
-              const isActive = selectedSpecialty === option.specialty;
+          <div className="hidden rounded-full bg-white/80 px-4 py-2 text-xs font-black text-[#171717] shadow-[0_12px_34px_rgba(0,0,0,0.08)] md:block">
+            Etapa{" "}
+            {step === "segment" ? "1 de 3" : step === "specialty" ? "2 de 3" : "3 de 3"}
+          </div>
+        </header>
 
-              return (
-                <button
-                  key={option.specialty}
-                  type="button"
-                  disabled={isSaving}
-                  onClick={() => setSelectedSpecialty(option.specialty)}
-                  className={[
-                    "rounded-[24px] border p-4 text-left transition hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(0,0,0,0.10)]",
-                    isActive
-                      ? "border-[#171717] bg-[#171717] text-white"
-                      : "border-zinc-200 bg-white text-[#171717] hover:border-[#171717]",
-                  ].join(" ")}
-                >
-                  <div
-                    className={[
-                      "mb-4 flex h-10 w-10 items-center justify-center rounded-2xl",
-                      isActive
-                        ? "bg-white text-[#171717]"
-                        : "bg-[#f2f2f2] text-[#171717]",
-                    ].join(" ")}
-                  >
-                    <WandSparkles size={20} />
+        <section className="grid flex-1 gap-8 lg:grid-cols-[0.9fr_1.4fr] lg:items-center">
+          <aside className="rounded-[34px] bg-[#171717] p-7 text-white shadow-[0_28px_90px_rgba(0,0,0,0.22)]">
+            <p className="text-sm font-black uppercase tracking-[0.22em] text-white/50">
+              Primeiro acesso
+            </p>
+
+            <h1 className="mt-5 text-4xl font-black leading-tight md:text-5xl">
+              Vamos adaptar o sistema ao seu ramo.
+            </h1>
+
+            <p className="mt-5 text-base font-medium leading-7 text-white/70">
+              Antes de abrir o painel, escolha o tipo de negócio. Depois disso,
+              o sistema ajusta marca, textos e experiência para a sua área.
+            </p>
+
+            <div className="mt-8 space-y-3">
+              <div className="flex items-center gap-3 text-sm font-black">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[#171717]">
+                  {step !== "segment" ? <Check size={16} /> : "1"}
+                </span>
+                Escolher ramo
+              </div>
+
+              <div className="flex items-center gap-3 text-sm font-black">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[#171717]">
+                  {step === "details" ? <Check size={16} /> : "2"}
+                </span>
+                Ajustar especialidade
+              </div>
+
+              <div className="flex items-center gap-3 text-sm font-black">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[#171717]">
+                  3
+                </span>
+                Cadastrar dados iniciais
+              </div>
+            </div>
+
+            {selectedSegment && (
+              <div className="mt-10 rounded-[26px] bg-white/10 p-5 ring-1 ring-white/10">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-white/45">
+                  Marca selecionada
+                </p>
+                <h2 className="mt-2 text-2xl font-black">
+                  {selectedTheme.brandName}
+                </h2>
+                <p className="mt-1 text-sm font-medium text-white/62">
+                  {selectedTheme.subtitle}
+                </p>
+              </div>
+            )}
+          </aside>
+
+          <form onSubmit={handleSubmit} className="min-w-0">
+            {step !== "segment" && (
+              <button
+                type="button"
+                onClick={goBack}
+                className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/82 px-4 py-2 text-sm font-black text-[#171717] shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition hover:bg-white"
+              >
+                <ArrowLeft size={17} />
+                Voltar
+              </button>
+            )}
+
+            {step === "segment" && (
+              <div>
+                <p className="text-sm font-black text-[#171717]">
+                  Etapa 1
+                </p>
+                <h2 className="mt-2 text-3xl font-black tracking-tight">
+                  Qual é o ramo do seu negócio?
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm font-medium text-[#666]">
+                  Clique em uma opção para continuar. O painel ainda não será
+                  aberto enquanto essa configuração não terminar.
+                </p>
+
+                <div className="mt-7 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                  {segmentOptions.map((option) => {
+                    const Icon = option.icon;
+
+                    return (
+                      <button
+                        key={option.segment}
+                        type="button"
+                        disabled={isSaving}
+                        onClick={() => chooseSegment(option.segment)}
+                        className="group rounded-[30px] border border-white/85 bg-white/88 p-5 text-left shadow-[0_20px_70px_rgba(0,0,0,0.09)] transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_28px_90px_rgba(0,0,0,0.14)]"
+                      >
+                        <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#171717] text-white">
+                          <Icon size={24} />
+                        </div>
+
+                        <h3 className="text-lg font-black">
+                          {option.title}
+                        </h3>
+
+                        <p className="mt-2 min-h-[48px] text-sm font-medium leading-6 text-[#666]">
+                          {option.description}
+                        </p>
+
+                        <span className="mt-5 inline-flex rounded-full bg-[#f2f2f2] px-3 py-1 text-xs font-black text-[#171717]">
+                          {option.brandName}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {step === "specialty" && (
+              <div>
+                <p className="text-sm font-black text-[#171717]">
+                  Etapa 2
+                </p>
+                <h2 className="mt-2 text-3xl font-black tracking-tight">
+                  Qual área de estética você atende?
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm font-medium text-[#666]">
+                  Escolha uma área principal. Se o negócio atende várias áreas,
+                  use estética completa. Sim, até o sistema precisa entender que
+                  cílios e unha não são o mesmo planeta.
+                </p>
+
+                <div className="mt-7 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                  {beautySpecialtyOptions.map((option) => (
+                    <button
+                      key={option.specialty}
+                      type="button"
+                      disabled={isSaving}
+                      onClick={() => chooseSpecialty(option.specialty)}
+                      className="rounded-[30px] border border-white/85 bg-white/88 p-5 text-left shadow-[0_20px_70px_rgba(0,0,0,0.09)] transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_28px_90px_rgba(0,0,0,0.14)]"
+                    >
+                      <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#171717] text-white">
+                        <WandSparkles size={24} />
+                      </div>
+
+                      <h3 className="text-lg font-black">
+                        {option.title}
+                      </h3>
+
+                      <p className="mt-2 min-h-[48px] text-sm font-medium leading-6 text-[#666]">
+                        {option.description}
+                      </p>
+
+                      <span className="mt-5 inline-flex rounded-full bg-[#f2f2f2] px-3 py-1 text-xs font-black text-[#171717]">
+                        {option.brandName}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {step === "details" && (
+              <div>
+                <p className="text-sm font-black text-[#171717]">
+                  Etapa 3
+                </p>
+                <h2 className="mt-2 text-3xl font-black tracking-tight">
+                  {hasBusiness
+                    ? "Confirmar configuração do negócio"
+                    : "Dados iniciais do negócio"}
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm font-medium text-[#666]">
+                  {hasBusiness
+                    ? "Vamos salvar o ramo escolhido no negócio já cadastrado."
+                    : "Preencha o básico agora. O restante você ajusta depois no painel."}
+                </p>
+
+                <div className="mt-7 rounded-[34px] border border-white/85 bg-white/88 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.10)]">
+                  <div className="mb-6 rounded-[26px] bg-[#171717] p-5 text-white">
+                    <p className="text-xs font-black uppercase tracking-[0.18em] text-white/45">
+                      Experiência escolhida
+                    </p>
+                    <h3 className="mt-2 text-2xl font-black">
+                      {selectedTheme.brandName}
+                    </h3>
+                    <p className="mt-1 text-sm font-medium text-white/65">
+                      {selectedTheme.subtitle}
+                    </p>
                   </div>
 
-                  <h3 className="font-black">{option.title}</h3>
+                  {hasBusiness ? (
+                    <div className="rounded-[24px] bg-[#f6f6f6] p-5">
+                      <p className="text-sm font-black text-[#171717]">
+                        Negócio encontrado
+                      </p>
+                      <p className="mt-2 text-lg font-black text-[#171717]">
+                        {targetBusiness?.name}
+                      </p>
+                      <p className="mt-1 text-sm font-medium text-[#666]">
+                        O ramo será salvo nesse negócio.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid gap-4">
+                      <Input
+                        label="Nome do negócio"
+                        value={businessName}
+                        onChange={(event) =>
+                          handleBusinessNameChange(event.target.value)
+                        }
+                        placeholder="Ex: Clínica Vet Aurora"
+                        required
+                      />
 
-                  <p
-                    className={[
-                      "mt-2 text-sm font-medium",
-                      isActive ? "text-white/75" : "text-[#666]",
-                    ].join(" ")}
+                      <Input
+                        label="Slug público"
+                        value={businessSlug}
+                        onChange={(event) =>
+                          setBusinessSlug(makeSlug(event.target.value))
+                        }
+                        placeholder="clinica-vet-aurora"
+                        required
+                      />
+
+                      <Input
+                        label="Telefone"
+                        value={phone}
+                        onChange={(event) => setPhone(event.target.value)}
+                        placeholder="(11) 99999-9999"
+                      />
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={isSaving}
+                    className="mt-6 w-full rounded-full bg-[#171717] px-6 py-4 text-sm font-black text-white shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {option.description}
-                  </p>
+                    {isSaving ? "Salvando..." : "Entrar no painel"}
+                  </button>
+                </div>
+              </div>
+            )}
 
-                  <span
-                    className={[
-                      "mt-4 inline-flex rounded-full px-3 py-1 text-xs font-black",
-                      isActive
-                        ? "bg-white text-[#171717]"
-                        : "bg-[#171717] text-white",
-                    ].join(" ")}
-                  >
-                    {option.brandName}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {!hasBusiness && (
-        <div className="mt-8 rounded-[32px] border border-white/80 bg-white/86 p-6 shadow-[0_24px_70px_rgba(0,0,0,0.08)] backdrop-blur-2xl">
-          <div className="mb-5">
-            <h2 className="text-xl font-black text-[#171717]">
-              Dados iniciais do negócio
-            </h2>
-            <p className="mt-1 text-sm font-medium text-[#666]">
-              Depois você pode completar endereço, e-mail, serviços e
-              profissionais na área Negócio.
-            </p>
-          </div>
-
-          <div className="grid gap-4 lg:grid-cols-3">
-            <Input
-              label="Nome do negócio"
-              value={businessName}
-              onChange={(event) => handleBusinessNameChange(event.target.value)}
-              placeholder="Ex: Clínica Vet Aurora"
-              required
-            />
-
-            <Input
-              label="Slug público"
-              value={businessSlug}
-              onChange={(event) => setBusinessSlug(makeSlug(event.target.value))}
-              placeholder="clinica-vet-aurora"
-              required
-            />
-
-            <Input
-              label="Telefone"
-              value={phone}
-              onChange={(event) => setPhone(event.target.value)}
-              placeholder="(11) 99999-9999"
-            />
-          </div>
-        </div>
-      )}
-
-      <div className="mt-8 flex flex-col gap-3 rounded-[28px] border border-white/80 bg-white/70 p-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)] backdrop-blur-2xl md:flex-row md:items-center md:justify-between">
-        <div>
-          <p className="text-sm font-black text-[#171717]">
-            Marca selecionada: {selectedTheme.brandName}
-          </p>
-          <p className="mt-1 text-sm font-medium text-[#666]">
-            {selectedTheme.subtitle}
-          </p>
-        </div>
-
-        <button
-          type="submit"
-          disabled={isSaving || !selectedSegment}
-          className="rounded-full bg-[#171717] px-6 py-3 text-sm font-black text-white shadow-[0_14px_34px_rgba(0,0,0,0.22)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {isSaving ? "Salvando..." : "Continuar para o painel"}
-        </button>
+            {error && (
+              <p className="mt-5 rounded-2xl bg-red-50 px-4 py-3 text-sm font-black text-red-700 ring-1 ring-red-100">
+                {error}
+              </p>
+            )}
+          </form>
+        </section>
       </div>
-
-      {message && <p className="mt-5 text-sm font-black text-green-700">{message}</p>}
-      {error && <p className="mt-5 text-sm font-black text-red-600">{error}</p>}
-    </form>
+    </main>
   );
 }

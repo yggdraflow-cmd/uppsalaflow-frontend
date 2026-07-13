@@ -46,19 +46,12 @@ function getHomePath(user: User) {
 function BusinessOnboardingGate({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isChecking, setIsChecking] = useState(
-    location.pathname !== "/business-onboarding"
-  );
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
 
     async function checkBusinessSegment() {
-      if (location.pathname === "/business-onboarding") {
-        setIsChecking(false);
-        return;
-      }
-
       try {
         setIsChecking(true);
 
@@ -127,6 +120,25 @@ function CustomerPage({ children }: { children: ReactNode }) {
   );
 }
 
+function OnboardingProtectedPage({ children }: { children: ReactNode }) {
+  const token = getToken();
+  const user = getUser();
+
+  if (!token || !user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user.role === "ADMIN") {
+    return <Navigate to="/admin" replace />;
+  }
+
+  if (user.role === "CLIENT") {
+    return <Navigate to="/cliente/agendamentos" replace />;
+  }
+
+  return <>{children}</>;
+}
+
 function AdminProtectedPage({ children }: { children: ReactNode }) {
   const token = getToken();
   const user = getUser();
@@ -179,6 +191,15 @@ export function AppRoutes() {
       <Route path="/cliente/cadastro" element={<ClientRegisterPage />} />
 
       <Route
+        path="/business-onboarding"
+        element={
+          <OnboardingProtectedPage>
+            <BusinessOnboardingPage />
+          </OnboardingProtectedPage>
+        }
+      />
+
+      <Route
         path="/cliente/agendamentos"
         element={
           <ClientProtectedPage>
@@ -211,15 +232,6 @@ export function AppRoutes() {
           <AdminProtectedPage>
             <AccountPage />
           </AdminProtectedPage>
-        }
-      />
-
-      <Route
-        path="/business-onboarding"
-        element={
-          <CustomerPage>
-            <BusinessOnboardingPage />
-          </CustomerPage>
         }
       />
 
