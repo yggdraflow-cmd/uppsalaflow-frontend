@@ -61,32 +61,179 @@ const menuItems = [
   },
 ];
 
-const quickActionItems = [
-  {
-    label: "Novo agendamento",
-    description: "Criar horário na agenda",
-    path: "/appointments",
-    icon: CalendarDays,
-  },
-  {
-    label: "Novo cliente",
-    description: "Cadastrar cliente",
-    path: "/clients",
-    icon: Users,
-  },
-  {
-    label: "Novo serviço",
-    description: "Cadastrar serviço",
-    path: "/services",
-    icon: Scissors,
-  },
-  {
-    label: "Novo profissional",
-    description: "Cadastrar profissional",
-    path: "/professionals",
-    icon: UserRound,
-  },
-];
+function getQuickActionItems(theme: BusinessTheme) {
+  if (theme.brandName === "YggdraOdonto") {
+    return [
+      {
+        label: "Nova consulta",
+        description: "Criar consulta na agenda",
+        path: "/appointments",
+        icon: CalendarDays,
+      },
+      {
+        label: "Novo paciente",
+        description: "Cadastrar paciente",
+        path: "/clients",
+        icon: Users,
+      },
+      {
+        label: "Novo procedimento",
+        description: "Cadastrar procedimento",
+        path: "/services",
+        icon: Scissors,
+      },
+      {
+        label: "Novo profissional",
+        description: "Cadastrar profissional",
+        path: "/professionals",
+        icon: UserRound,
+      },
+    ];
+  }
+
+  if (theme.brandName === "YggdraVet") {
+    return [
+      {
+        label: "Novo atendimento",
+        description: "Criar atendimento na agenda",
+        path: "/appointments",
+        icon: CalendarDays,
+      },
+      {
+        label: "Novo tutor",
+        description: "Cadastrar tutor",
+        path: "/clients",
+        icon: Users,
+      },
+      {
+        label: "Novo serviço",
+        description: "Cadastrar serviço",
+        path: "/services",
+        icon: Scissors,
+      },
+      {
+        label: "Novo profissional",
+        description: "Cadastrar profissional",
+        path: "/professionals",
+        icon: UserRound,
+      },
+    ];
+  }
+
+  if (theme.brandName === "YggdraBarber") {
+    return [
+      {
+        label: "Novo horário",
+        description: "Criar horário na agenda",
+        path: "/appointments",
+        icon: CalendarDays,
+      },
+      {
+        label: "Novo cliente",
+        description: "Cadastrar cliente",
+        path: "/clients",
+        icon: Users,
+      },
+      {
+        label: "Novo serviço",
+        description: "Cadastrar serviço",
+        path: "/services",
+        icon: Scissors,
+      },
+      {
+        label: "Novo barbeiro",
+        description: "Cadastrar barbeiro",
+        path: "/professionals",
+        icon: UserRound,
+      },
+    ];
+  }
+
+  if (theme.brandName === "YggdraNails") {
+    return [
+      {
+        label: "Novo horário",
+        description: "Criar horário no studio",
+        path: "/appointments",
+        icon: CalendarDays,
+      },
+      {
+        label: "Nova cliente",
+        description: "Cadastrar cliente",
+        path: "/clients",
+        icon: Users,
+      },
+      {
+        label: "Serviço de unhas",
+        description: "Cadastrar serviço",
+        path: "/services",
+        icon: Scissors,
+      },
+      {
+        label: "Nail designer",
+        description: "Cadastrar profissional",
+        path: "/professionals",
+        icon: UserRound,
+      },
+    ];
+  }
+
+  if (theme.brandName === "YggdraWell") {
+    return [
+      {
+        label: "Nova sessão",
+        description: "Criar sessão na agenda",
+        path: "/appointments",
+        icon: CalendarDays,
+      },
+      {
+        label: "Novo cliente",
+        description: "Cadastrar cliente",
+        path: "/clients",
+        icon: Users,
+      },
+      {
+        label: "Novo serviço",
+        description: "Cadastrar serviço",
+        path: "/services",
+        icon: Scissors,
+      },
+      {
+        label: "Novo profissional",
+        description: "Cadastrar profissional",
+        path: "/professionals",
+        icon: UserRound,
+      },
+    ];
+  }
+
+  return [
+    {
+      label: "Novo agendamento",
+      description: "Criar horário na agenda",
+      path: "/appointments",
+      icon: CalendarDays,
+    },
+    {
+      label: "Novo cliente",
+      description: "Cadastrar cliente",
+      path: "/clients",
+      icon: Users,
+    },
+    {
+      label: "Novo serviço",
+      description: "Cadastrar serviço",
+      path: "/services",
+      icon: Scissors,
+    },
+    {
+      label: "Novo profissional",
+      description: "Cadastrar profissional",
+      path: "/professionals",
+      icon: UserRound,
+    },
+  ];
+}
 
 type StoredUserInfo = {
   label: string;
@@ -362,7 +509,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                   </p>
 
                   <div className="space-y-1">
-                    {quickActionItems.map((item) => {
+                    {getQuickActionItems(businessTheme).map((item) => {
                       const Icon = item.icon;
 
                       return (
