@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   Bell,
@@ -101,6 +101,20 @@ function getStoredBusinessTheme(): BusinessTheme {
   }
 }
 
+function createLayoutStyle(theme: BusinessTheme): CSSProperties {
+  return {
+    "--yggdra-primary": theme.styles.primary,
+    "--yggdra-primary-text": theme.styles.primaryText,
+    "--yggdra-accent": theme.styles.accent,
+    "--yggdra-accent-text": theme.styles.accentText,
+    "--yggdra-muted": theme.styles.muted,
+    "--yggdra-card": theme.styles.card,
+    "--yggdra-sidebar": theme.styles.sidebar,
+    "--yggdra-shadow": theme.styles.shadow,
+    background: theme.styles.background,
+  } as CSSProperties;
+}
+
 export function AppLayout({ children }: AppLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -166,19 +180,16 @@ export function AppLayout({ children }: AppLayoutProps) {
   return (
     <div
       className="min-h-screen p-5 text-[#171717]"
-      style={{
-        background:
-          "radial-gradient(circle at 20% 10%, rgba(255,255,255,0.95), transparent 28%), radial-gradient(circle at 80% 0%, rgba(255,255,255,0.7), transparent 30%), linear-gradient(135deg, #d7d7d7 0%, #eeeeee 45%, #cfd4d6 100%)",
-      }}
+      style={createLayoutStyle(businessTheme)}
     >
-      <div className="mx-auto flex min-h-[calc(100vh-40px)] max-w-[1540px] overflow-hidden rounded-[34px] border border-white/80 bg-white/20 shadow-[0_30px_100px_rgba(0,0,0,0.18)] backdrop-blur-3xl">
-        <aside className="m-5 hidden w-[255px] shrink-0 flex-col rounded-[32px] bg-white/88 px-5 py-6 shadow-[0_24px_70px_rgba(0,0,0,0.10)] backdrop-blur-2xl lg:flex">
+      <div className="mx-auto flex min-h-[calc(100vh-40px)] max-w-[1540px] overflow-hidden rounded-[34px] border border-white/80 bg-white/20 shadow-[0_30px_100px_var(--yggdra-shadow)] backdrop-blur-3xl">
+        <aside className="m-5 hidden w-[255px] shrink-0 flex-col rounded-[32px] bg-[var(--yggdra-sidebar)] px-5 py-6 shadow-[0_24px_70px_var(--yggdra-shadow)] backdrop-blur-2xl lg:flex">
           <Link
             to="/dashboard"
             className="mb-10 flex items-center gap-3 px-2"
             title={businessTheme.brandName}
           >
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#171717] text-white">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--yggdra-primary)] text-[var(--yggdra-primary-text)] shadow-[0_16px_38px_var(--yggdra-shadow)]">
               <CalendarDays size={24} />
             </span>
 
@@ -204,8 +215,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                     [
                       "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black transition-all duration-200",
                       isActive
-                        ? "bg-[#171717] text-white shadow-[0_18px_38px_rgba(0,0,0,0.22)]"
-                        : "text-[#4f4f4f] hover:bg-[#f2f2f2] hover:text-[#171717]",
+                        ? "bg-[var(--yggdra-primary)] text-[var(--yggdra-primary-text)] shadow-[0_18px_38px_var(--yggdra-shadow)]"
+                        : "text-[#4f4f4f] hover:bg-[var(--yggdra-muted)] hover:text-[#171717]",
                     ].join(" ")
                   }
                 >
@@ -216,10 +227,19 @@ export function AppLayout({ children }: AppLayoutProps) {
             })}
           </nav>
 
+          <div className="mt-8 rounded-[24px] bg-[var(--yggdra-muted)] p-4">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#8a8a8a]">
+              Tema ativo
+            </p>
+            <p className="mt-1 text-sm font-black text-[#171717]">
+              {businessTheme.segmentLabel}
+            </p>
+          </div>
+
           <button
             type="button"
             onClick={handleLogout}
-            className="mt-8 flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black text-[#4f4f4f] transition hover:bg-[#f2f2f2] hover:text-[#171717]"
+            className="mt-4 flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black text-[#4f4f4f] transition hover:bg-[var(--yggdra-muted)] hover:text-[#171717]"
             title="Sair"
           >
             <LogOut size={19} />
@@ -227,10 +247,10 @@ export function AppLayout({ children }: AppLayoutProps) {
           </button>
         </aside>
 
-        <aside className="flex w-[82px] shrink-0 flex-col items-center bg-white/80 px-3 py-5 backdrop-blur-2xl lg:hidden">
+        <aside className="flex w-[82px] shrink-0 flex-col items-center bg-[var(--yggdra-sidebar)] px-3 py-5 backdrop-blur-2xl lg:hidden">
           <NavLink
             to="/dashboard"
-            className="mb-8 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#171717] text-white shadow-[0_18px_42px_rgba(0,0,0,0.22)]"
+            className="mb-8 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--yggdra-primary)] text-[var(--yggdra-primary-text)] shadow-[0_18px_42px_var(--yggdra-shadow)]"
             title={businessTheme.brandName}
           >
             <CalendarDays size={24} />
@@ -249,8 +269,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                     [
                       "flex h-14 w-14 items-center justify-center rounded-2xl transition-all duration-200",
                       isActive
-                        ? "bg-[#171717] text-white shadow-[0_16px_34px_rgba(0,0,0,0.18)]"
-                        : "text-[#4f4f4f] hover:bg-[#f2f2f2] hover:text-[#171717]",
+                        ? "bg-[var(--yggdra-primary)] text-[var(--yggdra-primary-text)] shadow-[0_16px_34px_var(--yggdra-shadow)]"
+                        : "text-[#4f4f4f] hover:bg-[var(--yggdra-muted)] hover:text-[#171717]",
                     ].join(" ")
                   }
                 >
@@ -263,7 +283,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           <button
             type="button"
             onClick={handleLogout}
-            className="mt-5 flex h-14 w-14 items-center justify-center rounded-2xl text-[#4f4f4f] transition hover:bg-[#f2f2f2] hover:text-[#171717]"
+            className="mt-5 flex h-14 w-14 items-center justify-center rounded-2xl text-[#4f4f4f] transition hover:bg-[var(--yggdra-muted)] hover:text-[#171717]"
             title="Sair"
           >
             <LogOut size={22} />
@@ -274,14 +294,14 @@ export function AppLayout({ children }: AppLayoutProps) {
           <header className="flex min-h-[86px] items-center justify-end gap-3 px-6 md:px-8">
             <button
               type="button"
-              className="hidden rounded-full bg-[#171717] px-5 py-3 text-xs font-black text-white shadow-[0_14px_34px_rgba(0,0,0,0.22)] md:block"
+              className="hidden rounded-full bg-[var(--yggdra-primary)] px-5 py-3 text-xs font-black text-[var(--yggdra-primary-text)] shadow-[0_14px_34px_var(--yggdra-shadow)] md:block"
               title="Ação rápida em breve"
             >
               + Criar
             </button>
 
             <div
-              className="flex h-12 w-12 items-center justify-center rounded-full bg-white/88 text-[#171717] shadow-[0_12px_34px_rgba(0,0,0,0.10)] backdrop-blur-xl"
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--yggdra-card)] text-[var(--yggdra-primary)] shadow-[0_12px_34px_var(--yggdra-shadow)] backdrop-blur-xl"
               title="Notificações em breve"
             >
               <Bell size={21} />
@@ -289,10 +309,10 @@ export function AppLayout({ children }: AppLayoutProps) {
 
             <Link
               to="/account"
-              className="flex items-center gap-3 rounded-full bg-white/88 px-3 py-2 text-sm font-black text-[#171717] shadow-[0_12px_34px_rgba(0,0,0,0.10)] backdrop-blur-xl transition hover:bg-white"
+              className="flex items-center gap-3 rounded-full bg-[var(--yggdra-card)] px-3 py-2 text-sm font-black text-[#171717] shadow-[0_12px_34px_var(--yggdra-shadow)] backdrop-blur-xl transition hover:bg-white"
               title="Minha conta"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#171717] text-xs font-black text-white">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--yggdra-primary)] text-xs font-black text-[var(--yggdra-primary-text)]">
                 {userLabel.slice(0, 1).toUpperCase()}
               </span>
 
