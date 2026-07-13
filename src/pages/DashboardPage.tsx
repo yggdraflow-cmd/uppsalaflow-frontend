@@ -488,7 +488,7 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-7 pb-4">
-      <section className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(680px,0.95fr)]">
         <div className="flex min-h-[110px] flex-col justify-end">
           <div className="mb-4 inline-flex w-fit rounded-full bg-[var(--yggdra-accent)] px-4 py-2 text-xs font-black text-[var(--yggdra-accent-text)] shadow-[0_12px_34px_var(--yggdra-shadow)]">
             {copy.theme.brandName}
@@ -503,7 +503,7 @@ export function DashboardPage() {
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-[1.25fr_0.75fr]">
+        <div className="grid gap-4 md:grid-cols-[minmax(390px,1.35fr)_minmax(220px,0.65fr)]">
           <label className="min-w-0 rounded-[24px] bg-[var(--yggdra-card)] p-5 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
             <span className="mb-3 block text-xs font-black uppercase tracking-[0.28em] text-[#777]">
               {copy.businessSelectLabel}
@@ -512,7 +512,7 @@ export function DashboardPage() {
             <select
               value={selectedBusinessId}
               onChange={(event) => setSelectedBusinessId(event.target.value)}
-              className="w-full min-w-0 truncate rounded-2xl border border-[#d7d7d7] bg-white px-4 py-3 text-sm font-black text-[#171717] outline-none transition focus:border-[var(--yggdra-primary)]"
+              className="w-full rounded-2xl border border-[#d7d7d7] bg-white px-4 py-3 text-base font-black text-[#171717] outline-none transition focus:border-[var(--yggdra-primary)]"
             >
               {businesses.length === 0 ? (
                 <option value="">{copy.emptyBusinessLabel}</option>
