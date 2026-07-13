@@ -58,7 +58,7 @@ const menuItems = [
 
 function getStoredUserLabel() {
   const rawUser =
-    localStorage.getItem("@uppsalaflow:user") || localStorage.getItem("user");
+    localStorage.getItem("@yggdraflow:user") || localStorage.getItem("user");
 
   if (!rawUser) {
     return "Usuário logado";
@@ -98,7 +98,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           <Link
             to="/dashboard"
             className="mb-10 flex items-center gap-3 px-2"
-            title="Uppsalaflow"
+            title="YggdraFlow"
           >
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#171717] text-white">
               <CalendarDays size={24} />
@@ -106,7 +106,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
             <div>
               <strong className="block text-lg font-black tracking-tight text-[#171717]">
-                Uppsalaflow
+                YggdraFlow
               </strong>
               <span className="text-xs font-bold text-[#7a7a7a]">
                 Gestão de beleza
@@ -153,7 +153,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           <NavLink
             to="/dashboard"
             className="mb-8 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#171717] text-white shadow-[0_18px_42px_rgba(0,0,0,0.22)]"
-            title="Uppsalaflow"
+            title="YggdraFlow"
           >
             <CalendarDays size={24} />
           </NavLink>

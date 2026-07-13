@@ -131,7 +131,7 @@ button {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(249, 115, 22, 0.5);
-}\n\n/* Uppsalaflow monochrome legacy overrides */
+}\n\n/* YggdraFlow monochrome legacy overrides */
 .upp-card,
 .upp-card-soft {
   border-radius: 30px;

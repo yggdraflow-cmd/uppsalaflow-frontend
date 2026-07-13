@@ -1,12 +1,12 @@
 import axios from "axios";
 
-export const TOKEN_STORAGE_KEY = "@uppsalaflow:token";
-export const USER_STORAGE_KEY = "@uppsalaflow:user";
+export const TOKEN_STORAGE_KEY = "@yggdraflow:token";
+export const USER_STORAGE_KEY = "@yggdraflow:user";
 
 function getAuthToken() {
   return (
     localStorage.getItem(TOKEN_STORAGE_KEY) ||
-    localStorage.getItem("uppsalaflow_token") ||
+    localStorage.getItem("yggdraflow_token") ||
     localStorage.getItem("token")
   );
 }
@@ -14,7 +14,7 @@ function getAuthToken() {
 export function clearAuthStorage() {
   localStorage.removeItem(TOKEN_STORAGE_KEY);
   localStorage.removeItem(USER_STORAGE_KEY);
-  localStorage.removeItem("uppsalaflow_token");
+  localStorage.removeItem("yggdraflow_token");
   localStorage.removeItem("token");
   localStorage.removeItem("user");
 }

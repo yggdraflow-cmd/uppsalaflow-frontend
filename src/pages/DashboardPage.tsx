@@ -107,7 +107,7 @@ function getAppointmentStatusLabel(status: string) {
 
 function getStoredUserName() {
   const rawUser =
-    localStorage.getItem("@uppsalaflow:user") || localStorage.getItem("user");
+    localStorage.getItem("@yggdraflow:user") || localStorage.getItem("user");
 
   if (!rawUser) {
     return "usuário";

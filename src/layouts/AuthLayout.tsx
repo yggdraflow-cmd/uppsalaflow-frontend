@@ -14,7 +14,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
       <div className="relative z-10 w-full max-w-md">
         <div className="mb-8 text-center">
           <p className="inline-flex rounded-full border border-slate-200 bg-white/70 px-5 py-2 text-xs font-bold uppercase tracking-[0.32em] text-[#171717] shadow-sm backdrop-blur-xl">
-            Uppsalaflow
+            YggdraFlow
           </p>
 
           <h1 className="mt-6 text-4xl font-bold tracking-tight text-slate-950">

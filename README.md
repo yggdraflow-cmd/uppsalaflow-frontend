@@ -1,6 +1,6 @@
-# BeautyFlow Frontend
+# YggdraFlow Frontend
 
-Frontend inicial do BeautyFlow SaaS usando React, TypeScript, Vite, Tailwind CSS, React Router e Axios. Preparado para instalar dependências pelo Git Bash.
+Frontend inicial do YggdraFlow SaaS usando React, TypeScript, Vite, Tailwind CSS, React Router e Axios. Preparado para instalar dependências pelo Git Bash.
 
 Este pacote não inclui `node_modules`.
 

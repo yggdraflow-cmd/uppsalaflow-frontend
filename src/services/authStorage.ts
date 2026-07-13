@@ -1,7 +1,7 @@
 import type { User } from "../types/auth";
 
-const TOKEN_KEY = "@uppsalaflow:token";
-const USER_KEY = "@uppsalaflow:user";
+const TOKEN_KEY = "@yggdraflow:token";
+const USER_KEY = "@yggdraflow:user";
 
 export function saveAuth(token: string, user: User) {
   localStorage.setItem(TOKEN_KEY, token);

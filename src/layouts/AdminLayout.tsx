@@ -29,7 +29,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
             <div>
               <div className="flex items-center gap-3 text-sm font-bold text-[#6a7a89]">
-                <span>Uppsalaflow</span>
+                <span>YggdraFlow</span>
                 <span className="h-1 w-1 rounded-full bg-[#aab8c3]" />
                 <span className="text-[#171717]">Admin da plataforma</span>
               </div>

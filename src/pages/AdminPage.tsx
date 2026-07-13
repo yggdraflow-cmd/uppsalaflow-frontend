@@ -170,7 +170,7 @@ export function AdminPage() {
           Admin da plataforma
         </p>
         <h1 className="text-3xl font-bold text-zinc-950">
-          Visão geral do Uppsalaflow
+          Visão geral do YggdraFlow
         </h1>
         <p className="mt-2 max-w-3xl text-zinc-600">
           Área interna para acompanhar usuários, empresas cadastradas,

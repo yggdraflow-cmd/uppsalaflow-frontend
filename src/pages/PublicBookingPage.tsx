@@ -427,7 +427,7 @@ export function PublicBookingPage() {
         <section className="mx-auto flex min-h-[calc(100vh-64px)] max-w-5xl items-center justify-center rounded-[36px] border border-white/80 bg-white/35 p-8 text-center shadow-[0_30px_100px_rgba(0,0,0,0.14)] backdrop-blur-3xl">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.32em] text-[#171717]">
-              Uppsalaflow
+              YggdraFlow
             </p>
 
             <h1 className="mt-4 text-4xl font-black tracking-tight text-[#101828]">
@@ -451,7 +451,7 @@ export function PublicBookingPage() {
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.35em] text-[#171717]">
-                Uppsalaflow
+                YggdraFlow
               </p>
 
               <h1 className="mt-3 text-4xl font-black tracking-tight text-[#101828] md:text-5xl">
@@ -861,7 +861,7 @@ export function PublicBookingPage() {
             <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2 text-sm font-bold text-[#667789]">
                 <Clock size={18} className="text-[#171717]" />
-                <span>Confirmação rápida pelo Uppsalaflow.</span>
+                <span>Confirmação rápida pelo YggdraFlow.</span>
               </div>
 
               <Button
