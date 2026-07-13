@@ -23,43 +23,68 @@ type AppLayoutProps = {
   children?: ReactNode;
 };
 
-const menuItems = [
-  {
-    label: "Dashboard",
-    path: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    label: "Negócio",
-    path: "/businesses",
-    icon: BriefcaseBusiness,
-  },
-  {
-    label: "Clientes",
-    path: "/clients",
-    icon: Users,
-  },
-  {
-    label: "Serviços",
-    path: "/services",
-    icon: Scissors,
-  },
-  {
-    label: "Profissionais",
-    path: "/professionals",
-    icon: UserRound,
-  },
-  {
-    label: "Agenda",
-    path: "/appointments",
-    icon: CalendarDays,
-  },
-  {
-    label: "Configurações",
-    path: "/settings",
-    icon: Settings,
-  },
-];
+function getMenuItems(theme: BusinessTheme) {
+  const customerLabel =
+    theme.brandName === "YggdraOdonto"
+      ? "Pacientes"
+      : theme.brandName === "YggdraVet"
+        ? "Tutores"
+        : "Clientes";
+
+  const servicesLabel =
+    theme.brandName === "YggdraOdonto"
+      ? "Procedimentos"
+      : theme.brandName === "YggdraNails"
+        ? "Serviços de unhas"
+        : "Serviços";
+
+  const professionalsLabel =
+    theme.brandName === "YggdraBarber"
+      ? "Barbeiros"
+      : theme.brandName === "YggdraNails"
+        ? "Nail designers"
+        : theme.brandName === "YggdraVet"
+          ? "Veterinários"
+          : "Profissionais";
+
+  return [
+    {
+      label: "Dashboard",
+      path: "/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      label: "Negócio",
+      path: "/businesses",
+      icon: BriefcaseBusiness,
+    },
+    {
+      label: customerLabel,
+      path: "/clients",
+      icon: Users,
+    },
+    {
+      label: servicesLabel,
+      path: "/services",
+      icon: Scissors,
+    },
+    {
+      label: professionalsLabel,
+      path: "/professionals",
+      icon: UserRound,
+    },
+    {
+      label: "Agenda",
+      path: "/appointments",
+      icon: CalendarDays,
+    },
+    {
+      label: "Configurações",
+      path: "/settings",
+      icon: Settings,
+    },
+  ];
+}
 
 function getQuickActionItems(theme: BusinessTheme) {
   if (theme.brandName === "YggdraOdonto") {
@@ -392,18 +417,18 @@ export function AppLayout({ children }: AppLayoutProps) {
               <CalendarDays size={24} />
             </span>
 
-            <div>
-              <strong className="block text-lg font-black tracking-tight text-[#171717]">
+            <div className="min-w-0">
+              <strong className="block truncate text-lg font-black tracking-tight text-[#171717]">
                 {businessTheme.brandName}
               </strong>
-              <span className="text-xs font-bold text-[#7a7a7a]">
+              <span className="block max-w-[150px] text-xs font-bold leading-5 text-[#7a7a7a]">
                 {businessTheme.subtitle}
               </span>
             </div>
           </Link>
 
           <nav className="flex flex-1 flex-col gap-2">
-            {menuItems.map((item) => {
+            {getMenuItems(businessTheme).map((item) => {
               const Icon = item.icon;
 
               return (
@@ -420,7 +445,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                   }
                 >
                   <Icon size={19} />
-                  <span>{item.label}</span>
+                  <span className="min-w-0 truncate">{item.label}</span>
                 </NavLink>
               );
             })}
@@ -456,7 +481,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           </NavLink>
 
           <nav className="flex flex-1 flex-col items-center gap-2 sm:gap-3">
-            {menuItems.map((item) => {
+            {getMenuItems(businessTheme).map((item) => {
               const Icon = item.icon;
 
               return (
