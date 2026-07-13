@@ -8,6 +8,7 @@ import type { Business } from "../types/business";
 import type { Client } from "../types/client";
 import type { Professional } from "../types/professional";
 import type { BeautyService } from "../types/service";
+import { getBusinessTheme } from "../utils/businessTheme";
 
 type AppointmentProposalStatus = "PENDING" | "ACCEPTED" | "DECLINED" | "CANCELED";
 
@@ -198,6 +199,258 @@ function isCanceledStatus(status: AppointmentStatus) {
   return status === "CANCELED" || status === "NO_SHOW";
 }
 
+function getAppointmentsCopy(business?: Business) {
+  const theme = getBusinessTheme(business?.segment, business?.specialty);
+
+  if (business?.segment === "ODONTOLOGY") {
+    return {
+      theme,
+      eyebrow: "Agenda do consultório",
+      title: "Consultas",
+      description: "Crie consultas, acompanhe a agenda do dia e consulte o histórico geral do consultório.",
+      businessCardTitle: "Consultório selecionado",
+      businessSelectLabel: "Escolha o consultório",
+      emptyBusiness: "Nenhum consultório cadastrado. Cadastre um consultório primeiro.",
+      dateCardTitle: "Dia da agenda",
+      createTitle: "Criar consulta",
+      customerLabel: "Paciente",
+      customerSingular: "Paciente",
+      emptyCustomer: "Nenhum paciente cadastrado",
+      serviceLabel: "Procedimento",
+      serviceSingularLabel: "Procedimento",
+      emptyService: "Nenhum procedimento cadastrado",
+      professionalLabel: "Profissional",
+      emptyProfessional: "Nenhum profissional cadastrado",
+      notesPlaceholder: "Observações da consulta...",
+      submitLabel: "Criar consulta",
+      createdMessage: "Consulta criada com sucesso.",
+      pendingTitle: "Pendências de confirmação",
+      pendingHeader: "Pacientes aguardando confirmação",
+      pendingDescription: "Aqui aparecem todas as consultas solicitadas pelos pacientes, independente da data selecionada.",
+      pendingTotalLabel: "Total pendente",
+      emptyPending: "Nenhum paciente aguardando confirmação no momento.",
+      dayTitle: "Agenda do dia",
+      dayTotalLabel: "Consultas do dia",
+      activeLabel: "Ativas",
+      bookedHeader: "Consultas agendadas no dia",
+      bookedDescription: "Aqui aparecem somente as consultas reais marcadas na data selecionada.",
+      emptyBooked: "Nenhuma consulta agendada para este dia.",
+      activeDayTitle: "Consultas ativas do dia",
+      emptyActive: "Nenhuma consulta ativa para este dia.",
+      historyTitle: "Histórico geral",
+      historyBusinessTitle: "Histórico do consultório",
+      historyDescription: "Lista geral de consultas finalizadas, canceladas e marcadas como não compareceu, independente da data selecionada.",
+      emptyHistory: "Nenhuma consulta no histórico geral ainda.",
+      conversationTitle: "Conversa com o paciente",
+      businessSenderLabel: "Consultório",
+      messageToCustomerLabel: "Mensagem para o paciente",
+      sendMessagePlaceholder: "Digite uma mensagem para o paciente...",
+      createMissingDataError: "Cadastre paciente, procedimento e profissional antes de criar consultas.",
+      createBusinessError: "Cadastre um consultório antes de criar consultas.",
+      createFailedError: "Não foi possível criar a consulta.",
+      statusUpdatedMessage: "Status da consulta atualizado.",
+    };
+  }
+
+  if (business?.segment === "VETERINARY") {
+    return {
+      theme,
+      eyebrow: "Agenda da clínica",
+      title: "Atendimentos",
+      description: "Crie atendimentos, acompanhe a agenda do dia e consulte o histórico geral da clínica veterinária.",
+      businessCardTitle: "Clínica selecionada",
+      businessSelectLabel: "Escolha a clínica",
+      emptyBusiness: "Nenhuma clínica cadastrada. Cadastre uma clínica primeiro.",
+      dateCardTitle: "Dia da agenda",
+      createTitle: "Criar atendimento",
+      customerLabel: "Tutor",
+      customerSingular: "Tutor",
+      emptyCustomer: "Nenhum tutor cadastrado",
+      serviceLabel: "Serviço",
+      serviceSingularLabel: "Serviço",
+      emptyService: "Nenhum serviço cadastrado",
+      professionalLabel: "Profissional",
+      emptyProfessional: "Nenhum profissional cadastrado",
+      notesPlaceholder: "Observações do atendimento...",
+      submitLabel: "Criar atendimento",
+      createdMessage: "Atendimento criado com sucesso.",
+      pendingTitle: "Pendências de confirmação",
+      pendingHeader: "Tutores aguardando confirmação",
+      pendingDescription: "Aqui aparecem todos os atendimentos solicitados pelos tutores, independente da data selecionada.",
+      pendingTotalLabel: "Total pendente",
+      emptyPending: "Nenhum tutor aguardando confirmação no momento.",
+      dayTitle: "Agenda do dia",
+      dayTotalLabel: "Atendimentos do dia",
+      activeLabel: "Ativos",
+      bookedHeader: "Atendimentos agendados no dia",
+      bookedDescription: "Aqui aparecem somente os atendimentos reais marcados na data selecionada.",
+      emptyBooked: "Nenhum atendimento agendado para este dia.",
+      activeDayTitle: "Atendimentos ativos do dia",
+      emptyActive: "Nenhum atendimento ativo para este dia.",
+      historyTitle: "Histórico geral",
+      historyBusinessTitle: "Histórico da clínica",
+      historyDescription: "Lista geral de atendimentos finalizados, cancelados e marcados como não compareceu, independente da data selecionada.",
+      emptyHistory: "Nenhum atendimento no histórico geral ainda.",
+      conversationTitle: "Conversa com o tutor",
+      businessSenderLabel: "Clínica",
+      messageToCustomerLabel: "Mensagem para o tutor",
+      sendMessagePlaceholder: "Digite uma mensagem para o tutor...",
+      createMissingDataError: "Cadastre tutor, serviço e profissional antes de criar atendimentos.",
+      createBusinessError: "Cadastre uma clínica antes de criar atendimentos.",
+      createFailedError: "Não foi possível criar o atendimento.",
+      statusUpdatedMessage: "Status do atendimento atualizado.",
+    };
+  }
+
+  if (business?.segment === "BARBERSHOP") {
+    return {
+      theme,
+      eyebrow: "Agenda da barbearia",
+      title: "Horários",
+      description: "Crie horários, acompanhe a agenda do dia e consulte o histórico geral da barbearia.",
+      businessCardTitle: "Barbearia selecionada",
+      businessSelectLabel: "Escolha a barbearia",
+      emptyBusiness: "Nenhuma barbearia cadastrada. Cadastre uma barbearia primeiro.",
+      dateCardTitle: "Dia da agenda",
+      createTitle: "Criar horário",
+      customerLabel: "Cliente",
+      customerSingular: "Cliente",
+      emptyCustomer: "Nenhum cliente cadastrado",
+      serviceLabel: "Serviço",
+      serviceSingularLabel: "Serviço",
+      emptyService: "Nenhum serviço cadastrado",
+      professionalLabel: "Barbeiro",
+      emptyProfessional: "Nenhum barbeiro cadastrado",
+      notesPlaceholder: "Observações do horário...",
+      submitLabel: "Criar horário",
+      createdMessage: "Horário criado com sucesso.",
+      pendingTitle: "Pendências de confirmação",
+      pendingHeader: "Clientes aguardando confirmação",
+      pendingDescription: "Aqui aparecem todos os horários solicitados pelos clientes, independente da data selecionada.",
+      pendingTotalLabel: "Total pendente",
+      emptyPending: "Nenhum cliente aguardando confirmação no momento.",
+      dayTitle: "Agenda do dia",
+      dayTotalLabel: "Horários do dia",
+      activeLabel: "Ativos",
+      bookedHeader: "Horários agendados no dia",
+      bookedDescription: "Aqui aparecem somente os horários reais marcados na data selecionada.",
+      emptyBooked: "Nenhum horário agendado para este dia.",
+      activeDayTitle: "Horários ativos do dia",
+      emptyActive: "Nenhum horário ativo para este dia.",
+      historyTitle: "Histórico geral",
+      historyBusinessTitle: "Histórico da barbearia",
+      historyDescription: "Lista geral de horários finalizados, cancelados e marcados como não compareceu, independente da data selecionada.",
+      emptyHistory: "Nenhum horário no histórico geral ainda.",
+      conversationTitle: "Conversa com o cliente",
+      businessSenderLabel: "Barbearia",
+      messageToCustomerLabel: "Mensagem para o cliente",
+      sendMessagePlaceholder: "Digite uma mensagem para o cliente...",
+      createMissingDataError: "Cadastre cliente, serviço e barbeiro antes de criar horários.",
+      createBusinessError: "Cadastre uma barbearia antes de criar horários.",
+      createFailedError: "Não foi possível criar o horário.",
+      statusUpdatedMessage: "Status do horário atualizado.",
+    };
+  }
+
+  if (business?.segment === "BEAUTY" && business.specialty === "NAILS") {
+    return {
+      theme,
+      eyebrow: "Agenda do studio",
+      title: "Horários do studio",
+      description: "Crie horários, acompanhe a agenda do studio e consulte o histórico geral de serviços de unhas.",
+      businessCardTitle: "Studio selecionado",
+      businessSelectLabel: "Escolha o studio",
+      emptyBusiness: "Nenhum studio cadastrado. Cadastre um studio primeiro.",
+      dateCardTitle: "Dia da agenda",
+      createTitle: "Criar horário",
+      customerLabel: "Cliente",
+      customerSingular: "Cliente",
+      emptyCustomer: "Nenhuma cliente cadastrada",
+      serviceLabel: "Serviço de unhas",
+      serviceSingularLabel: "Serviço de unhas",
+      emptyService: "Nenhum serviço de unhas cadastrado",
+      professionalLabel: "Nail designer",
+      emptyProfessional: "Nenhuma nail designer cadastrada",
+      notesPlaceholder: "Observações do serviço de unhas...",
+      submitLabel: "Criar horário",
+      createdMessage: "Horário criado com sucesso.",
+      pendingTitle: "Pendências de confirmação",
+      pendingHeader: "Clientes aguardando confirmação",
+      pendingDescription: "Aqui aparecem todos os horários solicitados pelas clientes, independente da data selecionada.",
+      pendingTotalLabel: "Total pendente",
+      emptyPending: "Nenhuma cliente aguardando confirmação no momento.",
+      dayTitle: "Agenda do studio",
+      dayTotalLabel: "Horários do dia",
+      activeLabel: "Ativos",
+      bookedHeader: "Horários agendados no dia",
+      bookedDescription: "Aqui aparecem somente os horários reais marcados na data selecionada.",
+      emptyBooked: "Nenhum horário agendado para este dia.",
+      activeDayTitle: "Horários ativos do dia",
+      emptyActive: "Nenhum horário ativo para este dia.",
+      historyTitle: "Histórico geral",
+      historyBusinessTitle: "Histórico do studio",
+      historyDescription: "Lista geral de serviços finalizados, cancelados e marcados como não compareceu, independente da data selecionada.",
+      emptyHistory: "Nenhum serviço no histórico geral ainda.",
+      conversationTitle: "Conversa com a cliente",
+      businessSenderLabel: "Studio",
+      messageToCustomerLabel: "Mensagem para a cliente",
+      sendMessagePlaceholder: "Digite uma mensagem para a cliente...",
+      createMissingDataError: "Cadastre cliente, serviço de unhas e nail designer antes de criar horários.",
+      createBusinessError: "Cadastre um studio antes de criar horários.",
+      createFailedError: "Não foi possível criar o horário.",
+      statusUpdatedMessage: "Status do horário atualizado.",
+    };
+  }
+
+  return {
+    theme,
+    eyebrow: "Agenda",
+    title: "Agendamentos",
+    description: "Crie atendimentos, acompanhe a agenda do dia e consulte o histórico geral do negócio.",
+    businessCardTitle: "Negócio selecionado",
+    businessSelectLabel: "Escolha o negócio",
+    emptyBusiness: "Nenhum negócio cadastrado. Cadastre um negócio primeiro.",
+    dateCardTitle: "Dia da agenda",
+    createTitle: "Criar agendamento",
+    customerLabel: "Cliente",
+    customerSingular: "Cliente",
+    emptyCustomer: "Nenhum cliente cadastrado",
+    serviceLabel: "Serviço",
+    serviceSingularLabel: "Serviço",
+    emptyService: "Nenhum serviço cadastrado",
+    professionalLabel: "Profissional",
+    emptyProfessional: "Nenhum profissional cadastrado",
+    notesPlaceholder: "Observações do atendimento...",
+    submitLabel: "Criar agendamento",
+    createdMessage: "Agendamento criado com sucesso.",
+    pendingTitle: "Pendências de confirmação",
+    pendingHeader: "Clientes aguardando confirmação",
+    pendingDescription: "Aqui aparecem todos os agendamentos solicitados pelos clientes, independente da data selecionada na agenda do dia.",
+    pendingTotalLabel: "Total pendente",
+    emptyPending: "Nenhum cliente aguardando confirmação no momento.",
+    dayTitle: "Agenda do dia",
+    dayTotalLabel: "Horários do dia",
+    activeLabel: "Ativos",
+    bookedHeader: "Horários agendados no dia",
+    bookedDescription: "Aqui aparecem somente os horários reais marcados na data selecionada.",
+    emptyBooked: "Nenhum horário agendado para este dia.",
+    activeDayTitle: "Atendimentos ativos do dia",
+    emptyActive: "Nenhum atendimento ativo para este dia.",
+    historyTitle: "Histórico geral",
+    historyBusinessTitle: "Histórico do negócio",
+    historyDescription: "Lista geral de atendimentos finalizados, cancelados e marcados como não compareceu, independente da data selecionada na agenda.",
+    emptyHistory: "Nenhum atendimento no histórico geral ainda.",
+    conversationTitle: "Conversa com o cliente",
+    businessSenderLabel: "Equipe",
+    messageToCustomerLabel: "Mensagem para o cliente",
+    sendMessagePlaceholder: "Digite uma mensagem para o cliente...",
+    createMissingDataError: "Cadastre cliente, serviço e profissional antes de criar agendamentos.",
+    createBusinessError: "Cadastre um negócio antes de criar agendamentos.",
+    createFailedError: "Não foi possível criar o agendamento.",
+    statusUpdatedMessage: "Status do agendamento atualizado.",
+  };
+}
+
 export function AppointmentsPage() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
@@ -233,6 +486,12 @@ export function AppointmentsPage() {
 
   const [messageAppointmentId, setMessageAppointmentId] = useState("");
   const [ownerMessage, setOwnerMessage] = useState("");
+
+  const selectedBusiness = useMemo(() => {
+    return businesses.find((business) => business.id === selectedBusinessId);
+  }, [businesses, selectedBusinessId]);
+
+  const appointmentCopy = getAppointmentsCopy(selectedBusiness);
 
   const selectedService = useMemo(() => {
     return services.find((service) => service.id === selectedServiceId);
@@ -706,14 +965,12 @@ export function AppointmentsPage() {
     event.preventDefault();
 
     if (!selectedBusinessId) {
-      setError("Cadastre um negócio antes de criar agendamentos.");
+      setError(appointmentCopy.createBusinessError);
       return;
     }
 
     if (!selectedClientId || !selectedServiceId || !selectedProfessionalId) {
-      setError(
-        "Cadastre cliente, serviço e profissional antes de criar agendamentos."
-      );
+      setError(appointmentCopy.createMissingDataError);
       return;
     }
 
@@ -760,11 +1017,11 @@ export function AppointmentsPage() {
         sortHistoryAppointments([response.data, ...currentPendingAppointments])
       );
 
-      setMessage("Agendamento criado com sucesso.");
+      setMessage(appointmentCopy.createdMessage);
       setNotes("");
     } catch (error) {
       setError(
-        getApiErrorMessage(error, "Não foi possível criar o agendamento.")
+        getApiErrorMessage(error, appointmentCopy.createFailedError)
       );
     } finally {
       setIsSaving(false);
@@ -842,7 +1099,7 @@ export function AppointmentsPage() {
         ]);
       });
 
-      setMessage("Status do agendamento atualizado.");
+      setMessage(appointmentCopy.statusUpdatedMessage);
     } catch (error) {
       setError(
         getApiErrorMessage(
@@ -896,14 +1153,14 @@ export function AppointmentsPage() {
             )}
 
             <p className="mt-1 break-words text-sm text-zinc-500">
-              Serviço:{" "}
+              {appointmentCopy.serviceSingularLabel}:{" "}
               <span className="font-medium text-zinc-900">
                 {appointment.service.name}
               </span>
             </p>
 
             <p className="mt-1 break-words text-sm text-zinc-500">
-              Profissional: {appointment.professional.name}
+              {appointmentCopy.professionalLabel}: {appointment.professional.name}
             </p>
 
             <p className="mt-1 break-words text-sm text-zinc-500">
@@ -956,7 +1213,7 @@ export function AppointmentsPage() {
             {messages.length > 0 ? (
               <div className="mt-4 rounded-2xl border border-zinc-200 bg-white p-4">
                 <h3 className="text-sm font-black text-zinc-950">
-                  Conversa com o cliente
+                  {appointmentCopy.conversationTitle}
                 </h3>
 
                 <div className="mt-3 space-y-2">
@@ -972,8 +1229,8 @@ export function AppointmentsPage() {
                     >
                       <strong className="block text-xs uppercase tracking-wide">
                         {appointmentMessage.sender === "OWNER"
-                          ? "Salão"
-                          : "Cliente"}
+                          ? appointmentCopy.businessSenderLabel
+                          : appointmentCopy.customerSingular}
                       </strong>
                       <span>{appointmentMessage.message}</span>
                     </div>
@@ -1017,7 +1274,7 @@ export function AppointmentsPage() {
 
                 <label className="mt-3 block">
                   <span className="mb-1 block text-sm font-medium text-zinc-700">
-                    Mensagem para o cliente
+                    {appointmentCopy.messageToCustomerLabel}
                   </span>
 
                   <textarea
@@ -1057,7 +1314,7 @@ export function AppointmentsPage() {
                   value={ownerMessage}
                   onChange={(event) => setOwnerMessage(event.target.value)}
                   rows={3}
-                  placeholder="Digite uma mensagem para o cliente..."
+                  placeholder={appointmentCopy.sendMessagePlaceholder}
                   className="mt-3 w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#dedede]"
                 />
 
@@ -1155,24 +1412,21 @@ export function AppointmentsPage() {
   return (
     <div>
       <div className="mb-8">
-        <p className="text-sm font-medium text-[#171717]">Agenda</p>
-        <h1 className="text-3xl font-bold text-zinc-950">Agendamentos</h1>
-        <p className="mt-2 text-zinc-600">
-          Crie atendimentos, acompanhe a agenda do dia e consulte o histórico
-          geral do negócio.
-        </p>
+        <p className="text-sm font-black text-[var(--yggdra-primary)]">{appointmentCopy.eyebrow}</p>
+        <h1 className="text-3xl font-black text-zinc-950">{appointmentCopy.title}</h1>
+        <p className="mt-2 max-w-3xl text-zinc-600">{appointmentCopy.description}</p>
       </div>
 
       <div className="mb-6 grid gap-4 xl:grid-cols-2">
-        <Card title="Negócio selecionado">
+        <Card title={appointmentCopy.businessCardTitle}>
           {businesses.length === 0 ? (
             <p className="text-sm text-red-600">
-              Nenhum negócio cadastrado. Cadastre um negócio primeiro.
+              {appointmentCopy.emptyBusiness}
             </p>
           ) : (
             <label className="block">
               <span className="mb-1 block text-sm font-medium text-zinc-700">
-                Escolha o negócio
+                {appointmentCopy.businessSelectLabel}
               </span>
 
               <select
@@ -1190,7 +1444,7 @@ export function AppointmentsPage() {
           )}
         </Card>
 
-        <Card title="Dia da agenda">
+        <Card title={appointmentCopy.dateCardTitle}>
           <Input
             label="Data"
             type="date"
@@ -1201,11 +1455,11 @@ export function AppointmentsPage() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
-        <Card title="Criar agendamento">
+        <Card title={appointmentCopy.createTitle}>
           <form onSubmit={handleSubmit} className="space-y-4">
             <label className="block">
               <span className="mb-1 block text-sm font-medium text-zinc-700">
-                Cliente
+                {appointmentCopy.customerLabel}
               </span>
 
               <select
@@ -1214,7 +1468,7 @@ export function AppointmentsPage() {
                 className="upp-input w-full"
               >
                 {clients.length === 0 ? (
-                  <option value="">Nenhum cliente cadastrado</option>
+                  <option value="">{appointmentCopy.emptyCustomer}</option>
                 ) : (
                   clients.map((client) => (
                     <option key={client.id} value={client.id}>
@@ -1227,7 +1481,7 @@ export function AppointmentsPage() {
 
             <label className="block">
               <span className="mb-1 block text-sm font-medium text-zinc-700">
-                Serviço
+                {appointmentCopy.serviceLabel}
               </span>
 
               <select
@@ -1236,7 +1490,7 @@ export function AppointmentsPage() {
                 className="upp-input w-full"
               >
                 {services.length === 0 ? (
-                  <option value="">Nenhum serviço cadastrado</option>
+                  <option value="">{appointmentCopy.emptyService}</option>
                 ) : (
                   services.map((service) => (
                     <option key={service.id} value={service.id}>
@@ -1249,7 +1503,7 @@ export function AppointmentsPage() {
 
             <label className="block">
               <span className="mb-1 block text-sm font-medium text-zinc-700">
-                Profissional
+                {appointmentCopy.professionalLabel}
               </span>
 
               <select
@@ -1260,7 +1514,7 @@ export function AppointmentsPage() {
                 className="upp-input w-full"
               >
                 {professionals.length === 0 ? (
-                  <option value="">Nenhum profissional cadastrado</option>
+                  <option value="">{appointmentCopy.emptyProfessional}</option>
                 ) : (
                   professionals.map((professional) => (
                     <option key={professional.id} value={professional.id}>
@@ -1327,7 +1581,7 @@ export function AppointmentsPage() {
                 value={notes}
                 onChange={(event) => setNotes(event.target.value)}
                 rows={4}
-                placeholder="Observações do atendimento..."
+                placeholder={appointmentCopy.notesPlaceholder}
                 className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#dedede]"
               />
             </label>
@@ -1339,7 +1593,7 @@ export function AppointmentsPage() {
               }
               className="w-full"
             >
-              {isSaving ? "Salvando..." : "Criar agendamento"}
+              {isSaving ? "Salvando..." : appointmentCopy.submitLabel}
             </Button>
           </form>
 
@@ -1348,25 +1602,24 @@ export function AppointmentsPage() {
         </Card>
 
         <div className="space-y-6">
-          <Card title="Pendências de confirmação">
+          <Card title={appointmentCopy.pendingTitle}>
             <div className="mb-5 rounded-2xl border border-[#dedede] bg-[#f3f3f3] p-4">
               <h2 className="text-base font-semibold text-zinc-950">
-                Clientes aguardando confirmação
+                {appointmentCopy.pendingHeader}
               </h2>
 
               <p className="mt-1 text-sm text-zinc-600">
-                Aqui aparecem todos os agendamentos solicitados pelos clientes,
-                independente da data selecionada na agenda do dia.
+                {appointmentCopy.pendingDescription}
               </p>
 
               <strong className="mt-3 block text-sm text-[#171717]">
-                Total pendente: {pendingAppointments.length}
+                {appointmentCopy.pendingTotalLabel}: {pendingAppointments.length}
               </strong>
             </div>
 
             {pendingAppointments.length === 0 ? (
               <p className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-500">
-                Nenhum cliente aguardando confirmação no momento.
+                {appointmentCopy.emptyPending}
               </p>
             ) : (
               <div className="space-y-3">
@@ -1377,11 +1630,11 @@ export function AppointmentsPage() {
             )}
           </Card>
 
-          <Card title="Agenda do dia">
+          <Card title={appointmentCopy.dayTitle}>
             <div className="mb-5 grid gap-3 sm:grid-cols-2">
               <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                  Horários do dia
+                  {appointmentCopy.dayTotalLabel}
                 </p>
                 <strong className="mt-2 block text-2xl text-zinc-950">
                   {daySummary.total}
@@ -1390,7 +1643,7 @@ export function AppointmentsPage() {
 
               <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                  Ativos
+                  {appointmentCopy.activeLabel}
                 </p>
                 <strong className="mt-2 block text-2xl text-zinc-950">
                   {daySummary.active}
@@ -1420,11 +1673,10 @@ export function AppointmentsPage() {
               <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <div>
                   <h2 className="text-base font-semibold text-zinc-950">
-                    Horários agendados no dia
+                    {appointmentCopy.bookedHeader}
                   </h2>
                   <p className="mt-1 break-words text-sm text-zinc-500">
-                    Aqui aparecem somente os horários reais marcados na data
-                    selecionada.
+                    {appointmentCopy.bookedDescription}
                   </p>
                 </div>
 
@@ -1438,7 +1690,7 @@ export function AppointmentsPage() {
 
               {appointments.length === 0 ? (
                 <p className="mt-4 text-sm text-zinc-500">
-                  Nenhum horário agendado para este dia.
+                  {appointmentCopy.emptyBooked}
                 </p>
               ) : (
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -1458,12 +1710,12 @@ export function AppointmentsPage() {
 
             <div>
               <h2 className="mb-3 text-lg font-semibold text-zinc-950">
-                Atendimentos ativos do dia
+                {appointmentCopy.activeDayTitle}
               </h2>
 
               {activeDayAppointments.length === 0 ? (
                 <p className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-500">
-                  Nenhum atendimento ativo para este dia.
+                  {appointmentCopy.emptyActive}
                 </p>
               ) : (
                 <div className="space-y-3">
@@ -1475,7 +1727,7 @@ export function AppointmentsPage() {
             </div>
           </Card>
 
-          <Card title="Histórico geral">
+          <Card title={appointmentCopy.historyTitle}>
             <div className="mb-5 grid gap-3 sm:grid-cols-2">
               <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
@@ -1516,17 +1768,16 @@ export function AppointmentsPage() {
 
             <div className="mb-5 rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
               <h2 className="text-base font-semibold text-zinc-950">
-                Histórico do negócio
+                {appointmentCopy.historyBusinessTitle}
               </h2>
               <p className="mt-1 break-words text-sm text-zinc-500">
-                Lista geral de atendimentos finalizados, cancelados e marcados
-                como não compareceu, independente da data selecionada na agenda.
+                {appointmentCopy.historyDescription}
               </p>
             </div>
 
             {historyAppointments.length === 0 ? (
               <p className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-500">
-                Nenhum atendimento no histórico geral ainda.
+                {appointmentCopy.emptyHistory}
               </p>
             ) : (
               <div className="space-y-3">
