@@ -586,33 +586,33 @@ export function DashboardPage() {
                 </div>
               </div>
 
-              <div className="mt-8 grid grid-cols-3 gap-3">
-                <div className="rounded-2xl bg-white/95 p-4 text-[#171717]">
+              <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div className="min-w-0 overflow-hidden rounded-2xl bg-white/95 p-3 text-[#171717]">
                   <UsersRound size={20} />
-                  <strong className="mt-5 block text-2xl font-black">
+                  <strong className="mt-4 block truncate text-2xl font-black">
                     {clients.length}
                   </strong>
-                  <span className="text-xs font-bold text-[#777]">
+                  <span className="block truncate text-[11px] font-bold leading-4 text-[#777]">
                     {copy.clientsLabel}
                   </span>
                 </div>
 
-                <div className="rounded-2xl bg-white/95 p-4 text-[#171717]">
+                <div className="min-w-0 overflow-hidden rounded-2xl bg-white/95 p-3 text-[#171717]">
                   <CheckCircle2 size={20} />
-                  <strong className="mt-5 block text-2xl font-black">
+                  <strong className="mt-4 block truncate text-2xl font-black">
                     {summary?.appointmentsByStatus.confirmed || 0}
                   </strong>
-                  <span className="text-xs font-bold text-[#777]">
+                  <span className="block truncate text-[11px] font-bold leading-4 text-[#777]">
                     Confirmados
                   </span>
                 </div>
 
-                <div className="rounded-2xl bg-white/95 p-4 text-[#171717]">
+                <div className="min-w-0 overflow-hidden rounded-2xl bg-white/95 p-3 text-[#171717]">
                   <CircleDollarSign size={20} />
-                  <strong className="mt-5 block text-xl font-black">
+                  <strong className="mt-4 block truncate text-lg font-black">
                     {formatCurrency(summary?.estimatedRevenue || 0)}
                   </strong>
-                  <span className="text-xs font-bold text-[#777]">Receita</span>
+                  <span className="block truncate text-[11px] font-bold leading-4 text-[#777]">Receita</span>
                 </div>
               </div>
             </article>
@@ -686,7 +686,7 @@ export function DashboardPage() {
                     <strong className="text-3xl font-black text-[#171717]">
                       {progressPercentage}%
                     </strong>
-                    <span className="text-xs font-bold text-[#777]">
+                    <span className="block truncate text-[11px] font-bold leading-4 text-[#777]">
                       concluído
                     </span>
                   </div>
