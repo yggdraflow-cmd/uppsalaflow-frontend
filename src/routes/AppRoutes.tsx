@@ -54,10 +54,7 @@ function BusinessOnboardingGate({ children }: { children: ReactNode }) {
     let isMounted = true;
 
     async function checkBusinessSegment() {
-      if (
-        location.pathname === "/business-onboarding" ||
-        location.pathname === "/businesses"
-      ) {
+      if (location.pathname === "/business-onboarding") {
         setIsChecking(false);
         return;
       }
@@ -66,9 +63,9 @@ function BusinessOnboardingGate({ children }: { children: ReactNode }) {
         setIsChecking(true);
 
         const response = await api.get<Business[]>("/businesses");
-        const needsOnboarding = response.data.some(
-          (business) => !business.segment
-        );
+        const needsOnboarding =
+          response.data.length === 0 ||
+          response.data.some((business) => !business.segment);
 
         if (!isMounted) {
           return;
