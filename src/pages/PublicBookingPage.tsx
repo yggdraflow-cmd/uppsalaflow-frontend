@@ -164,6 +164,8 @@ export function PublicBookingPage() {
 
   const authUser = getUser();
   const isClientLoggedIn = Boolean(getToken() && authUser?.role === "CLIENT");
+  const authRedirectPath = slug ? `/agendar/${slug}` : "/cliente/agendamentos";
+  const authRedirectQuery = `?redirect=${encodeURIComponent(authRedirectPath)}`;
 
   const [business, setBusiness] = useState<PublicBusiness | null>(null);
   const [bookedAppointments, setBookedAppointments] = useState<
@@ -349,6 +351,11 @@ export function PublicBookingPage() {
 
     if (!slug) {
       setErrorMessage("Link de agendamento inválido.");
+      return;
+    }
+
+    if (!isClientLoggedIn) {
+      setErrorMessage("Para agendar, entre ou crie sua conta de cliente.");
       return;
     }
 
@@ -838,7 +845,36 @@ export function PublicBookingPage() {
               </p>
             ) : null}
 
-            {successMessage ? (
+            {!isClientLoggedIn ? (
+        <div className="mx-6 mt-6 rounded-[28px] border border-white/80 bg-white/70 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.10)] md:mx-10">
+          <h2 className="text-xl font-black text-[#101828]">
+            Entre ou crie sua conta para agendar
+          </h2>
+
+          <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-[#667789]">
+            Seu cadastro fica ligado ao seu e-mail e seus agendamentos aparecem
+            no portal do cliente.
+          </p>
+
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+            <Link
+              to={`/cliente/login${authRedirectQuery}`}
+              className="inline-flex h-12 items-center justify-center rounded-2xl bg-[#171717] px-5 text-sm font-black text-white transition hover:bg-black"
+            >
+              Entrar como cliente
+            </Link>
+
+            <Link
+              to={`/cliente/cadastro${authRedirectQuery}`}
+              className="inline-flex h-12 items-center justify-center rounded-2xl border border-[#171717] bg-white px-5 text-sm font-black text-[#171717] transition hover:bg-[#f3f3f3]"
+            >
+              Criar conta de cliente
+            </Link>
+          </div>
+        </div>
+      ) : null}
+
+      {successMessage ? (
               <div className="mt-5 rounded-3xl border border-emerald-200 bg-emerald-50/80 px-5 py-4 text-sm font-bold text-emerald-700">
                 <p>{successMessage}</p>
 

@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   CalendarDays,
   Clock,
   MapPin,
   MessageCircle,
-  PlusCircle,
   Scissors,
   UserRound,
 } from "lucide-react";
@@ -284,13 +282,10 @@ export function ClientAppointmentsPage() {
               agendamento, ele aparecerá aqui.
             </p>
 
-            <Link
-              to="/agendar/salao-da-mayara"
-              className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-[#171717] bg-[#171717] px-5 text-sm font-black text-white transition hover:bg-[#000000]"
-            >
-              <PlusCircle size={18} />
-              Agendar no Salão da Mayara
-            </Link>
+            <p className="mt-6 rounded-2xl bg-white/70 px-5 py-4 text-sm font-bold leading-6 text-[#667789] ring-1 ring-white/80">
+              Para marcar um horário, acesse o link público enviado pela clínica,
+              estúdio, barbearia ou profissional.
+            </p>
           </div>
         </Card>
       ) : null}

@@ -1,6 +1,6 @@
 import { FormEvent, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
@@ -59,6 +59,13 @@ function PasswordField({ value, onChange }: PasswordFieldProps) {
 
 export function ClientLoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectTo = new URLSearchParams(location.search).get("redirect");
+  const safeRedirectTo = redirectTo?.startsWith("/") ? redirectTo : "";
+  const redirectQuery = safeRedirectTo
+    ? `?redirect=${encodeURIComponent(safeRedirectTo)}`
+    : "";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -79,6 +86,12 @@ export function ClientLoginPage() {
       });
 
       saveAuth(response.data.token, response.data.user);
+
+      if (response.data.user.role === "CLIENT" && safeRedirectTo) {
+        navigate(safeRedirectTo);
+        return;
+      }
+
       navigate(getRouteForRole(response.data.user.role));
     } catch {
       setError("E-mail ou senha inválidos.");
@@ -111,7 +124,7 @@ export function ClientLoginPage() {
         <p className="mt-4 text-center text-sm text-zinc-600">
           Ainda não tem conta?{" "}
           <Link
-            to="/cliente/cadastro"
+            to={`/cliente/cadastro${redirectQuery}`}
             className="font-semibold text-[#171717]"
           >
             Criar conta de cliente

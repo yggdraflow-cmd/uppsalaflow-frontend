@@ -1,6 +1,6 @@
 import { FormEvent, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
@@ -48,6 +48,13 @@ function PasswordField({ value, onChange }: PasswordFieldProps) {
 
 export function ClientRegisterPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectTo = new URLSearchParams(location.search).get("redirect");
+  const safeRedirectTo = redirectTo?.startsWith("/") ? redirectTo : "";
+  const redirectQuery = safeRedirectTo
+    ? `?redirect=${encodeURIComponent(safeRedirectTo)}`
+    : "";
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -72,7 +79,7 @@ export function ClientRegisterPage() {
       });
 
       saveAuth(response.data.token, response.data.user);
-      navigate("/cliente/agendamentos");
+      navigate(safeRedirectTo || "/cliente/agendamentos");
     } catch {
       setError("Não foi possível criar sua conta de cliente.");
     } finally {
@@ -118,7 +125,10 @@ export function ClientRegisterPage() {
 
         <p className="mt-4 text-center text-sm text-zinc-600">
           Já tem conta?{" "}
-          <Link to="/cliente/login" className="font-semibold text-[#171717]">
+          <Link
+            to={`/cliente/login${redirectQuery}`}
+            className="font-semibold text-[#171717]"
+          >
             Entrar como cliente
           </Link>
         </p>
