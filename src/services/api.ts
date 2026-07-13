@@ -32,3 +32,19 @@ api.interceptors.request.use((config) => {
 
   return config;
 });
+
+
+export function getApiAssetUrl(path?: string | null) {
+  if (!path) {
+    return "";
+  }
+
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+
+  const baseUrl = String(api.defaults.baseURL || "").replace(/\/$/, "");
+  const normalizedPath = path.replace(/^\//, "");
+
+  return `${baseUrl}/${normalizedPath}`;
+}

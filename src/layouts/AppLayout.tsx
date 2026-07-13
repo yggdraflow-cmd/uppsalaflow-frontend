@@ -11,7 +11,7 @@ import {
   Users,
 } from "lucide-react";
 
-import { api, clearAuthStorage } from "../services/api";
+import { api, clearAuthStorage, getApiAssetUrl } from "../services/api";
 import type { Business } from "../types/business";
 import {
   defaultBusinessTheme,
@@ -88,23 +88,38 @@ const quickActionItems = [
   },
 ];
 
-function getStoredUserLabel() {
+type StoredUserInfo = {
+  label: string;
+  profileImageUrl: string;
+};
+
+function getStoredUserInfo(): StoredUserInfo {
   const rawUser =
     localStorage.getItem("@yggdraflow:user") || localStorage.getItem("user");
 
   if (!rawUser) {
-    return "Usuário logado";
+    return {
+      label: "Usuário logado",
+      profileImageUrl: "",
+    };
   }
 
   try {
     const user = JSON.parse(rawUser) as {
       name?: string;
       email?: string;
+      profileImageUrl?: string | null;
     };
 
-    return user.name || user.email || "Usuário logado";
+    return {
+      label: user.name || user.email || "Usuário logado",
+      profileImageUrl: getApiAssetUrl(user.profileImageUrl),
+    };
   } catch {
-    return "Usuário logado";
+    return {
+      label: "Usuário logado",
+      profileImageUrl: "",
+    };
   }
 }
 
@@ -144,7 +159,9 @@ function createLayoutStyle(theme: BusinessTheme): CSSProperties {
 export function AppLayout({ children }: AppLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const userLabel = getStoredUserLabel();
+  const [storedUserInfo, setStoredUserInfo] = useState<StoredUserInfo>(
+    getStoredUserInfo
+  );
   const [businessTheme, setBusinessTheme] = useState<BusinessTheme>(
     getStoredBusinessTheme
   );
@@ -189,14 +206,21 @@ export function AppLayout({ children }: AppLayoutProps) {
       loadBusinessTheme();
     }
 
+    function handleUserUpdated() {
+      setStoredUserInfo(getStoredUserInfo());
+    }
+
+    setStoredUserInfo(getStoredUserInfo());
     setIsQuickActionsOpen(false);
     loadBusinessTheme();
 
     window.addEventListener("yggdraflow:theme-updated", handleThemeUpdated);
+    window.addEventListener("yggdraflow:user-updated", handleUserUpdated);
 
     return () => {
       isMounted = false;
       window.removeEventListener("yggdraflow:theme-updated", handleThemeUpdated);
+      window.removeEventListener("yggdraflow:user-updated", handleUserUpdated);
     };
   }, [location.pathname]);
 
@@ -371,12 +395,20 @@ export function AppLayout({ children }: AppLayoutProps) {
               className="flex min-w-0 items-center gap-3 rounded-full bg-[var(--yggdra-card)] px-3 py-2 text-sm font-black text-[#171717] shadow-[0_12px_34px_var(--yggdra-shadow)] backdrop-blur-xl transition hover:bg-white"
               title="Minha conta"
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--yggdra-primary)] text-xs font-black text-[var(--yggdra-primary-text)]">
-                {userLabel.slice(0, 1).toUpperCase()}
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--yggdra-primary)] text-xs font-black text-[var(--yggdra-primary-text)]">
+                {storedUserInfo.profileImageUrl ? (
+                  <img
+                    src={storedUserInfo.profileImageUrl}
+                    alt={storedUserInfo.label}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  storedUserInfo.label.slice(0, 1).toUpperCase()
+                )}
               </span>
 
               <span className="hidden max-w-[170px] truncate sm:block">
-                {userLabel}
+                {storedUserInfo.label}
               </span>
             </Link>
           </header>

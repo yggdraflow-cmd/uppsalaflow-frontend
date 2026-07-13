@@ -1,10 +1,11 @@
-import { FormEvent, useState } from "react";
-import { Eye, EyeOff, LockKeyhole, UserRound } from "lucide-react";
+import { ChangeEvent, FormEvent, useState } from "react";
+import { Camera, Eye, EyeOff, LockKeyhole, UserRound } from "lucide-react";
 
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
-import { api } from "../services/api";
-import { getUser } from "../services/authStorage";
+import { api, getApiAssetUrl } from "../services/api";
+import { getUser, updateStoredUser } from "../services/authStorage";
+import type { User } from "../types/auth";
 
 type PasswordFieldProps = {
   label: string;
@@ -69,7 +70,7 @@ function getApiErrorMessage(error: unknown, fallbackMessage: string) {
 }
 
 export function AccountPage() {
-  const user = getUser();
+  const [user, setUser] = useState<User | null>(() => getUser());
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -78,6 +79,55 @@ export function AccountPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  const profileImageUrl = getApiAssetUrl(user?.profileImageUrl);
+
+  async function handleProfileImageChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      setError("Envie uma imagem válida.");
+      setMessage("");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setError("A imagem precisa ter no máximo 2MB.");
+      setMessage("");
+      event.target.value = "";
+      return;
+    }
+
+    try {
+      setIsUploadingImage(true);
+      setError("");
+      setMessage("");
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const response = await api.patch<User>("/users/me/profile-image", formData);
+
+      setUser(response.data);
+      updateStoredUser(response.data);
+      window.dispatchEvent(new Event("yggdraflow:user-updated"));
+
+      setMessage("Foto de perfil atualizada com sucesso.");
+    } catch (error) {
+      setError(
+        getApiErrorMessage(error, "Não foi possível atualizar a foto de perfil.")
+      );
+    } finally {
+      setIsUploadingImage(false);
+      event.target.value = "";
+    }
+  }
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -115,34 +165,62 @@ export function AccountPage() {
     <div>
       <div className="mb-8">
         <p className="text-sm font-medium text-[#171717]">Minha conta</p>
-        <h1 className="text-3xl font-bold text-zinc-950">
-          Dados da conta
-        </h1>
+        <h1 className="text-3xl font-bold text-zinc-950">Dados da conta</h1>
         <p className="mt-2 max-w-3xl text-zinc-600">
-          Gerencie seus dados de acesso e altere sua senha com segurança.
+          Gerencie seus dados de acesso, foto de perfil e senha com segurança.
         </p>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
         <Card title="Usuário logado">
-          <div className="flex items-start gap-4">
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#171717] text-white">
-              <UserRound size={25} />
-            </span>
+          <div className="flex flex-col gap-5">
+            <div className="flex items-start gap-4">
+              <span className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-3xl bg-[var(--yggdra-primary)] text-[var(--yggdra-primary-text)] shadow-[0_16px_38px_var(--yggdra-shadow)]">
+                {profileImageUrl ? (
+                  <img
+                    src={profileImageUrl}
+                    alt={user?.name || "Foto do usuário"}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <UserRound size={32} />
+                )}
+              </span>
 
-            <div className="min-w-0">
-              <h2 className="truncate text-lg font-bold text-zinc-950">
-                {user?.name || "Usuário"}
-              </h2>
+              <div className="min-w-0">
+                <h2 className="truncate text-lg font-bold text-zinc-950">
+                  {user?.name || "Usuário"}
+                </h2>
 
-              <p className="mt-1 truncate text-sm text-zinc-500">
-                {user?.email || "E-mail não encontrado"}
-              </p>
+                <p className="mt-1 truncate text-sm text-zinc-500">
+                  {user?.email || "E-mail não encontrado"}
+                </p>
 
-              <p className="mt-3 inline-flex rounded-full bg-[#f3f3f3] px-3 py-1 text-xs font-bold text-[#171717]">
-                {user?.role || "Sem perfil"}
-              </p>
+                <p className="mt-3 inline-flex rounded-full bg-[var(--yggdra-muted)] px-3 py-1 text-xs font-bold text-[#171717]">
+                  {user?.role || "Sem perfil"}
+                </p>
+              </div>
             </div>
+
+            <label className="flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-white/80 bg-[var(--yggdra-muted)] px-4 py-3 text-sm font-black text-[#171717] transition hover:bg-white">
+              <Camera size={18} />
+              <span>
+                {isUploadingImage ? "Enviando..." : "Enviar ou trocar foto"}
+              </span>
+
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                onChange={handleProfileImageChange}
+                disabled={isUploadingImage}
+                className="hidden"
+              />
+            </label>
+
+            <p className="text-xs font-medium leading-5 text-zinc-500">
+              Use JPG, PNG ou WEBP com até 2MB. Essa foto aparece no topo do
+              sistema enquanto você estiver logado.
+            </p>
           </div>
         </Card>
 

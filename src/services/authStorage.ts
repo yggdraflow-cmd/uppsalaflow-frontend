@@ -22,6 +22,10 @@ export function getUser(): User | null {
   return JSON.parse(storedUser) as User;
 }
 
+export function updateStoredUser(user: User) {
+  localStorage.setItem(USER_KEY, JSON.stringify(user));
+}
+
 export function clearAuth() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
