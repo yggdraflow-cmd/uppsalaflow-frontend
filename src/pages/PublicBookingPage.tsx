@@ -11,7 +11,7 @@ import {
   UserRound,
 } from "lucide-react";
 
-import { api } from "../services/api";
+import { api, getApiAssetUrl } from "../services/api";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { getToken, getUser } from "../services/authStorage";
@@ -164,6 +164,7 @@ export function PublicBookingPage() {
 
   const authUser = getUser();
   const isClientLoggedIn = Boolean(getToken() && authUser?.role === "CLIENT");
+  const clientProfileImageUrl = getApiAssetUrl(authUser?.profileImageUrl);
   const authRedirectPath = slug ? `/agendar/${slug}` : "/cliente/agendamentos";
   const authRedirectQuery = `?redirect=${encodeURIComponent(authRedirectPath)}`;
 
@@ -508,13 +509,35 @@ export function PublicBookingPage() {
                       Cliente logado
                     </p>
 
-                    <p className="mt-2 text-[#171717]">
-                      Agendando como {authUser?.name || authUser?.email}.
-                    </p>
+                    <div className="mt-3 flex items-center gap-3">
+                      {clientProfileImageUrl ? (
+                        <img
+                          src={clientProfileImageUrl}
+                          alt={authUser?.name || "Foto do cliente"}
+                          className="h-11 w-11 shrink-0 rounded-full object-cover"
+                        />
+                      ) : (
+                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#171717] text-sm font-black text-white">
+                          {(authUser?.name || authUser?.email || "C")
+                            .slice(0, 1)
+                            .toUpperCase()}
+                        </span>
+                      )}
+
+                      <div className="min-w-0">
+                        <p className="truncate font-black text-[#171717]">
+                          {authUser?.name || authUser?.email}
+                        </p>
+
+                        <p className="text-xs font-semibold text-[#667789]">
+                          Cliente autenticado
+                        </p>
+                      </div>
+                    </div>
 
                     <Link
                       to="/cliente/agendamentos"
-                      className="mt-3 inline-flex font-black text-[#171717] transition hover:text-[#171717]"
+                      className="mt-4 inline-flex font-black text-[#171717] transition hover:opacity-70"
                     >
                       Ver meus agendamentos
                     </Link>
