@@ -80,7 +80,7 @@ export function ClientLoginPage() {
       setIsSaving(true);
       setError("");
 
-      const response = await api.post<AuthResponse>("/auth/login", {
+      const response = await api.post<AuthResponse>("/auth/client/login", {
         email,
         password,
       });
@@ -93,8 +93,10 @@ export function ClientLoginPage() {
       }
 
       navigate(getRouteForRole(response.data.user.role));
-    } catch {
-      setError("E-mail ou senha inválidos.");
+    } catch (error: any) {
+      setError(
+        error?.response?.data?.message || "E-mail ou senha inválidos."
+      );
     } finally {
       setIsSaving(false);
     }

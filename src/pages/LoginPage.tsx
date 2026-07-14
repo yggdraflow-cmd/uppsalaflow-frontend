@@ -80,8 +80,10 @@ export function LoginPage() {
 
       saveAuth(response.data.token, response.data.user);
       navigate(getRouteForRole(response.data.user.role));
-    } catch {
-      setError("E-mail ou senha inválidos.");
+    } catch (error: any) {
+      setError(
+        error?.response?.data?.message || "E-mail ou senha inválidos."
+      );
     } finally {
       setIsSaving(false);
     }
