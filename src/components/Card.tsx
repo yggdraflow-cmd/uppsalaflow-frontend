@@ -10,15 +10,13 @@ export function Card({ title, children, className = "" }: CardProps) {
   return (
     <section
       className={[
-        "h-fit min-w-0 self-start rounded-[28px] border border-white/80",
-        "bg-[var(--yggdra-card,#ffffff)] p-5 text-[#171717]",
-        "shadow-[0_18px_45px_var(--yggdra-shadow,rgba(0,0,0,0.08))]",
-        "backdrop-blur-xl sm:p-6",
+        "rounded-[30px] bg-white/82 p-7 text-[#171717]",
+        "shadow-[0_18px_45px_rgba(0,0,0,0.08)] backdrop-blur-xl",
         className,
       ].join(" ")}
     >
       {title ? (
-        <h2 className="mb-5 text-2xl font-black tracking-tight text-[#171717]">
+        <h2 className="mb-6 text-2xl font-black tracking-tight text-[#171717]">
           {title}
         </h2>
       ) : null}
