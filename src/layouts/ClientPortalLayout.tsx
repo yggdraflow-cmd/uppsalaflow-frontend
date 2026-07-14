@@ -12,6 +12,9 @@ type ClientPortalLayoutProps = {
 export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
   const navigate = useNavigate();
   const user = getUser();
+  const lastPublicBookingPath = window.localStorage.getItem(
+    "@yggdraflow:last-public-booking"
+  );
 
   function handleLogout() {
     clearAuthStorage();
@@ -45,13 +48,15 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <Link
-              to="/agendar/salao-da-mayara"
-              className="inline-flex items-center gap-2 rounded-full border border-[#171717] bg-[#171717] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#000000]"
-            >
-              <PlusCircle size={18} />
-              Agendar horário
-            </Link>
+            {lastPublicBookingPath ? (
+              <Link
+                to={lastPublicBookingPath}
+                className="inline-flex items-center gap-2 rounded-full border border-[#171717] bg-[#171717] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#000000]"
+              >
+                <PlusCircle size={18} />
+                Agendar horário
+              </Link>
+            ) : null}
 
             <NavLink
               to="/cliente/agendamentos"
