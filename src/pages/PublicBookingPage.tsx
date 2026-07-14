@@ -263,13 +263,13 @@ export function PublicBookingPage() {
       }
 
       try {
-        window.localStorage.setItem(
-          "@yggdraflow:last-public-booking",
-          `/agendar/${slug}`
-        );
-
         const response = await api.get<PublicBusiness>(
           `/public/businesses/${slug}`
+        );
+
+        window.localStorage.setItem(
+          "@yggdraflow:last-public-booking",
+          `/agendar/${response.data.slug}`
         );
 
         setBusiness(response.data);

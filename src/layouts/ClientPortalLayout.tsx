@@ -12,9 +12,21 @@ type ClientPortalLayoutProps = {
 export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
   const navigate = useNavigate();
   const user = getUser();
-  const lastPublicBookingPath = window.localStorage.getItem(
+  const storedPublicBookingPath = window.localStorage.getItem(
     "@yggdraflow:last-public-booking"
   );
+
+  const lastPublicBookingPath =
+    storedPublicBookingPath &&
+    storedPublicBookingPath !== "/agendar/salao-da-mayara"
+      ? storedPublicBookingPath
+      : null;
+
+  if (
+    storedPublicBookingPath === "/agendar/salao-da-mayara"
+  ) {
+    window.localStorage.removeItem("@yggdraflow:last-public-booking");
+  }
 
   function handleLogout() {
     clearAuthStorage();
