@@ -531,14 +531,14 @@ export function PublicBookingPage() {
 
                     <div className="mt-3 flex flex-wrap gap-3">
                       <Link
-                        to="/cliente/login"
+                        to={`/cliente/login${authRedirectQuery}`}
                         className="font-black text-[#171717] transition hover:text-[#171717]"
                       >
                         Entrar
                       </Link>
 
                       <Link
-                        to="/cliente/cadastro"
+                        to={`/cliente/cadastro${authRedirectQuery}`}
                         className="font-black text-[#171717] transition hover:text-[#171717]"
                       >
                         Criar conta

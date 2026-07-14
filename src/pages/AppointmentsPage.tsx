@@ -1125,7 +1125,7 @@ export function AppointmentsPage() {
         key={appointment.id}
         className="rounded-2xl border border-white/80 bg-[var(--yggdra-card)] p-4 shadow-[0_16px_34px_var(--yggdra-shadow)] backdrop-blur-xl"
       >
-        <div className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
+        <div className="flex min-w-0 flex-col gap-5">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-lg font-semibold text-zinc-950">
@@ -1211,20 +1211,20 @@ export function AppointmentsPage() {
             ) : null}
 
             {messages.length > 0 ? (
-              <div className="mt-4 rounded-2xl border border-white/80 bg-white/88 p-4 shadow-[0_12px_30px_var(--yggdra-shadow)]">
+              <div className="mt-4 w-full rounded-2xl border border-white/80 bg-white/88 p-5 shadow-[0_12px_30px_var(--yggdra-shadow)]">
                 <h3 className="text-sm font-black text-zinc-950">
                   {appointmentCopy.conversationTitle}
                 </h3>
 
-                <div className="mt-3 space-y-2">
+                <div className="mt-3 max-h-80 space-y-3 overflow-y-auto pr-1">
                   {messages.map((appointmentMessage) => (
                     <div
                       key={appointmentMessage.id}
                       className={[
-                        "rounded-xl px-3 py-2 text-sm ring-1",
+                        "max-w-[90%] rounded-2xl px-4 py-3 text-sm leading-6 ring-1",
                         appointmentMessage.sender === "OWNER"
-                          ? "bg-[var(--yggdra-muted)] text-[#171717] ring-white/80"
-                          : "bg-zinc-50 text-zinc-700 ring-zinc-200",
+                          ? "ml-auto bg-[var(--yggdra-muted)] text-[#171717] ring-white/80"
+                          : "mr-auto bg-zinc-50 text-zinc-700 ring-zinc-200",
                       ].join(" ")}
                     >
                       <strong className="block text-xs uppercase tracking-wide">
@@ -1285,7 +1285,7 @@ export function AppointmentsPage() {
                   />
                 </label>
 
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="mt-4 flex flex-wrap gap-3">
                   <Button
                     type="button"
                     onClick={() => handleCreateProposal(appointment)}
@@ -1305,15 +1305,15 @@ export function AppointmentsPage() {
             ) : null}
 
             {messageAppointmentId === appointment.id ? (
-              <div className="mt-4 rounded-2xl border border-white/80 bg-white/88 p-4 shadow-[0_12px_30px_var(--yggdra-shadow)]">
-                <h3 className="text-sm font-black text-zinc-950">
+              <div className="mt-4 w-full rounded-2xl border border-white/80 bg-white/88 p-5 shadow-[0_12px_30px_var(--yggdra-shadow)]">
+                <h3 className="text-base font-black text-zinc-950">
                   Enviar mensagem
                 </h3>
 
                 <textarea
                   value={ownerMessage}
                   onChange={(event) => setOwnerMessage(event.target.value)}
-                  rows={3}
+                  rows={4}
                   placeholder={appointmentCopy.sendMessagePlaceholder}
                   className="mt-3 w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[var(--yggdra-primary)] focus:ring-2 focus:ring-[var(--yggdra-accent)]"
                 />
@@ -1338,7 +1338,7 @@ export function AppointmentsPage() {
             ) : null}
           </div>
 
-          <div className="flex w-full flex-col gap-3 lg:w-56 lg:shrink-0">
+          <div className="w-full rounded-2xl border border-white/80 bg-white/55 p-4 shadow-[0_12px_30px_var(--yggdra-shadow)]">
             <label className="block">
               <span className="mb-1 block text-sm font-medium text-zinc-700">
                 Status
@@ -1362,7 +1362,7 @@ export function AppointmentsPage() {
               </select>
             </label>
 
-            <div className="grid gap-2">
+            <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
               <Button
                 type="button"
                 variant="secondary"
@@ -1454,8 +1454,9 @@ export function AppointmentsPage() {
         </Card>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
-        <Card title={appointmentCopy.createTitle}>
+      <div className="grid items-start gap-6 xl:grid-cols-[420px_minmax(0,1fr)]">
+        <div className="self-start">
+          <Card title={appointmentCopy.createTitle}>
           <form onSubmit={handleSubmit} className="space-y-4">
             <label className="block">
               <span className="mb-1 block text-sm font-medium text-zinc-700">
@@ -1599,9 +1600,10 @@ export function AppointmentsPage() {
 
           {message && <p className="mt-4 text-sm text-green-700">{message}</p>}
           {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
-        </Card>
+          </Card>
+        </div>
 
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <Card title={appointmentCopy.pendingTitle}>
             <div className="mb-5 rounded-2xl border border-white/80 bg-[var(--yggdra-muted)] p-4">
               <h2 className="text-base font-semibold text-zinc-950">
