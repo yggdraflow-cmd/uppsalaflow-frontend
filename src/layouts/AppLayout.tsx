@@ -413,6 +413,16 @@ export function AppLayout({ children }: AppLayoutProps) {
                 </NavLink>
               );
             })}
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black text-[#4f4f4f] transition hover:bg-[var(--yggdra-muted)] hover:text-[#171717]"
+              title="Sair"
+            >
+              <LogOut size={19} />
+              <span>Sair</span>
+            </button>
           </nav>
 
           <div className="mt-8 rounded-[24px] bg-[var(--yggdra-muted)] p-4">
@@ -424,15 +434,6 @@ export function AppLayout({ children }: AppLayoutProps) {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="mt-4 flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black text-[#4f4f4f] transition hover:bg-[var(--yggdra-muted)] hover:text-[#171717]"
-            title="Sair"
-          >
-            <LogOut size={19} />
-            <span>Sair</span>
-          </button>
         </aside>
 
         <aside className="flex w-[74px] shrink-0 flex-col items-center bg-[var(--yggdra-sidebar)] px-2 py-4 backdrop-blur-2xl sm:w-[82px] sm:px-3 sm:py-5 lg:hidden">
@@ -466,16 +467,16 @@ export function AppLayout({ children }: AppLayoutProps) {
                 </NavLink>
               );
             })}
-          </nav>
 
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="mt-4 flex h-12 w-12 items-center justify-center rounded-2xl text-[#4f4f4f] transition hover:bg-[var(--yggdra-muted)] hover:text-[#171717] sm:mt-5 sm:h-14 sm:w-14"
-            title="Sair"
-          >
-            <LogOut size={22} />
-          </button>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex h-12 w-12 items-center justify-center rounded-2xl text-[#4f4f4f] transition hover:bg-[var(--yggdra-muted)] hover:text-[#171717] sm:h-14 sm:w-14"
+              title="Sair"
+            >
+              <LogOut size={22} />
+            </button>
+          </nav>
         </aside>
 
         <section className="flex min-w-0 flex-1 flex-col">
