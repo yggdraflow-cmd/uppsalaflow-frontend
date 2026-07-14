@@ -546,6 +546,40 @@ export function PublicBookingPage() {
           </div>
         </header>
 
+        {!isClientLoggedIn ? (
+          <section className="mx-auto max-w-xl px-6 py-12">
+            <div className="rounded-[34px] border border-white/80 bg-white/60 p-8 text-center shadow-[0_20px_60px_rgba(0,0,0,0.10)] backdrop-blur-xl">
+              <p className="text-xs font-black uppercase tracking-[0.28em] text-[#171717]">
+                Portal do Cliente
+              </p>
+
+              <h2 className="mt-4 text-3xl font-black text-[#101828]">
+                Entre para agendar
+              </h2>
+
+              <p className="mt-4 text-base leading-7 text-[#667789]">
+                Para realizar um agendamento na <strong>{business.name}</strong>,
+                primeiro entre na sua conta ou crie um cadastro de cliente.
+              </p>
+
+              <div className="mt-8 flex flex-col gap-4">
+                <Link
+                  to={`/cliente/login${authRedirectQuery}`}
+                  className="inline-flex h-12 items-center justify-center rounded-2xl bg-[#171717] px-5 text-sm font-black text-white transition hover:bg-black"
+                >
+                  Entrar como cliente
+                </Link>
+
+                <Link
+                  to={`/cliente/cadastro${authRedirectQuery}`}
+                  className="inline-flex h-12 items-center justify-center rounded-2xl border border-[#171717] bg-white px-5 text-sm font-black text-[#171717] transition hover:bg-[#f3f3f3]"
+                >
+                  Criar conta de cliente
+                </Link>
+              </div>
+            </div>
+          </section>
+        ) : (
         <div className="grid gap-8 p-6 md:p-10 lg:grid-cols-[0.9fr_1.1fr]">
           <aside className="space-y-6">
             <section className="upp-card rounded-[34px] p-6">
@@ -923,6 +957,7 @@ export function PublicBookingPage() {
             </div>
           </form>
         </div>
+        )}
       </section>
     </main>
   );
