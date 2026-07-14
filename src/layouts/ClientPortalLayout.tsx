@@ -1,8 +1,11 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { CalendarDays, LogOut, PlusCircle, UserRound } from "lucide-react";
 
-import { clearAuthStorage } from "../services/api";
+import {
+  clearAuthStorage,
+  getApiAssetUrl,
+} from "../services/api";
 import { getUser } from "../services/authStorage";
 
 type ClientPortalLayoutProps = {
@@ -11,7 +14,24 @@ type ClientPortalLayoutProps = {
 
 export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
   const navigate = useNavigate();
-  const user = getUser();
+  const [user, setUser] = useState(getUser);
+
+  useEffect(() => {
+    function handleUserUpdated() {
+      setUser(getUser());
+    }
+
+    window.addEventListener("yggdraflow:user-updated", handleUserUpdated);
+
+    return () => {
+      window.removeEventListener(
+        "yggdraflow:user-updated",
+        handleUserUpdated
+      );
+    };
+  }, []);
+
+  const profileImageUrl = getApiAssetUrl(user?.profileImageUrl);
   const storedPublicBookingPath = window.localStorage.getItem(
     "@yggdraflow:last-public-booking"
   );
@@ -95,7 +115,16 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
                 ].join(" ")
               }
             >
-              <UserRound size={18} />
+              {profileImageUrl ? (
+                <img
+                  src={profileImageUrl}
+                  alt={user?.name || "Foto do cliente"}
+                  className="h-8 w-8 shrink-0 rounded-full object-cover"
+                />
+              ) : (
+                <UserRound size={18} />
+              )}
+
               {user?.name || "Minha conta"}
             </NavLink>
 
