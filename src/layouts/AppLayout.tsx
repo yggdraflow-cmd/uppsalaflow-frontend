@@ -1,4 +1,10 @@
-import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   BriefcaseBusiness,
@@ -303,6 +309,9 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileNavigationRef = useRef<HTMLElement>(null);
+
   useEffect(() => {
     let isMounted = true;
 
@@ -349,6 +358,16 @@ export function AppLayout({ children }: AppLayoutProps) {
 
     setStoredUserInfo(getStoredUserInfo());
     setIsQuickActionsOpen(false);
+
+    const activeElement = document.activeElement;
+
+    if (
+      activeElement instanceof HTMLElement &&
+      mobileNavigationRef.current?.contains(activeElement)
+    ) {
+      activeElement.blur();
+    }
+
     setIsMobileMenuOpen(false);
     loadBusinessTheme();
 
@@ -379,7 +398,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        setIsMobileMenuOpen(false);
+        closeMobileMenu();
       }
     }
 
@@ -392,9 +411,42 @@ export function AppLayout({ children }: AppLayoutProps) {
     };
   }, [isMobileMenuOpen]);
 
+  useEffect(() => {
+    const mobileNavigation = mobileNavigationRef.current;
+
+    if (!mobileNavigation) {
+      return;
+    }
+
+    if (isMobileMenuOpen) {
+      mobileNavigation.removeAttribute("inert");
+    } else {
+      mobileNavigation.setAttribute("inert", "");
+    }
+  }, [isMobileMenuOpen]);
+
+  function closeMobileMenu(restoreFocus = true) {
+    const activeElement = document.activeElement;
+
+    if (
+      activeElement instanceof HTMLElement &&
+      mobileNavigationRef.current?.contains(activeElement)
+    ) {
+      activeElement.blur();
+    }
+
+    setIsMobileMenuOpen(false);
+
+    if (restoreFocus) {
+      window.requestAnimationFrame(() => {
+        mobileMenuButtonRef.current?.focus();
+      });
+    }
+  }
+
   function handleLogout() {
     clearAuthStorage();
-    setIsMobileMenuOpen(false);
+    closeMobileMenu(false);
     navigate("/login");
   }
 
@@ -463,7 +515,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         <button
           type="button"
           aria-label="Fechar menu"
-          onClick={() => setIsMobileMenuOpen(false)}
+          onClick={() => closeMobileMenu()}
           className={[
             "fixed inset-0 z-40 bg-black/35 backdrop-blur-[2px] transition-opacity duration-300 lg:hidden",
             isMobileMenuOpen
@@ -473,17 +525,20 @@ export function AppLayout({ children }: AppLayoutProps) {
         />
 
         <aside
+          ref={mobileNavigationRef}
           id="mobile-navigation"
           aria-hidden={!isMobileMenuOpen}
           className={[
             "fixed inset-y-0 left-0 z-50 flex h-[100dvh] w-[min(86vw,320px)] flex-col overflow-hidden bg-[var(--yggdra-sidebar)] px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))] shadow-[0_24px_80px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition-transform duration-300 lg:hidden",
-            isMobileMenuOpen ? "translate-x-0" : "-translate-x-full",
+            isMobileMenuOpen
+              ? "pointer-events-auto translate-x-0"
+              : "pointer-events-none -translate-x-full",
           ].join(" ")}
         >
           <div className="mb-8 flex items-start justify-between gap-4">
             <Link
               to="/dashboard"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={() => closeMobileMenu()}
               className="flex min-w-0 items-center gap-3"
               title={businessTheme.brandName}
             >
@@ -504,7 +559,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
             <button
               type="button"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={() => closeMobileMenu()}
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--yggdra-muted)] text-[#4f4f4f] transition hover:text-[#171717]"
               aria-label="Fechar menu"
               title="Fechar menu"
@@ -521,7 +576,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <NavLink
                   key={item.path}
                   to={item.path}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={() => closeMobileMenu()}
                   className={({ isActive }) =>
                     [
                       "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black transition-all duration-200",
@@ -552,6 +607,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         <section className="flex min-w-0 flex-1 flex-col">
           <header className="flex min-h-[72px] items-center justify-between gap-3 border-b border-white/40 px-3 sm:min-h-[86px] sm:px-5 md:px-8 lg:justify-end lg:border-b-0">
             <button
+              ref={mobileMenuButtonRef}
               type="button"
               onClick={() => setIsMobileMenuOpen(true)}
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--yggdra-card)] text-[#171717] shadow-[0_12px_34px_var(--yggdra-shadow)] backdrop-blur-xl transition hover:bg-white lg:hidden"
