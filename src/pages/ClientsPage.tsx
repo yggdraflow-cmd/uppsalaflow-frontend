@@ -291,7 +291,7 @@ export function ClientsPage() {
   }
 
   return (
-    <div>
+    <div className="min-w-0">
       <div className="mb-8">
         <p className="text-sm font-black text-[var(--yggdra-primary)]">
           {copy.eyebrow}
@@ -300,14 +300,14 @@ export function ClientsPage() {
         <p className="mt-2 max-w-3xl text-zinc-600">{copy.description}</p>
       </div>
 
-      <div className="mb-6 grid gap-4 xl:grid-cols-[1fr_1fr]">
+      <div className="mb-6 grid min-w-0 grid-cols-1 gap-4 [&>*]:min-w-0 xl:grid-cols-2">
         <Card title={copy.businessCardTitle}>
           {isLoadingBusinesses ? (
             <p className="text-sm text-zinc-500">{copy.loadingBusinesses}</p>
           ) : businesses.length === 0 ? (
             <p className="text-sm text-red-600">{copy.emptyBusiness}</p>
           ) : (
-            <label className="block">
+            <label className="block min-w-0 max-w-full">
               <span className="mb-1 block text-sm font-medium text-zinc-700">
                 {copy.businessSelectLabel}
               </span>
@@ -318,7 +318,7 @@ export function ClientsPage() {
                   setSelectedBusinessId(event.target.value);
                   resetForm();
                 }}
-                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[var(--yggdra-primary)] focus:ring-2 focus:ring-[var(--yggdra-accent)]"
+                className="min-w-0 max-w-full w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[var(--yggdra-primary)] focus:ring-2 focus:ring-[var(--yggdra-accent)]"
               >
                 {businesses.map((business) => (
                   <option key={business.id} value={business.id}>
@@ -331,22 +331,23 @@ export function ClientsPage() {
         </Card>
 
         <Card title={copy.publicLinkTitle}>
-          <div className="space-y-4">
-            <p className="text-sm text-zinc-600">
+          <div className="min-w-0 max-w-full space-y-4 overflow-hidden">
+            <p className="break-words text-sm text-zinc-600">
               {copy.publicLinkDescription}
             </p>
 
-            <div className="flex items-center gap-2 rounded-2xl bg-[var(--yggdra-muted)] px-4 py-3 text-sm font-bold text-zinc-700">
+            <div className="flex min-w-0 max-w-full items-center gap-2 overflow-hidden rounded-2xl bg-[var(--yggdra-muted)] px-3 py-3 text-sm font-bold text-zinc-700 sm:px-4">
               <LinkIcon size={18} className="shrink-0 text-[var(--yggdra-primary)]" />
-              <span className="min-w-0 truncate">
+              <span className="block min-w-0 flex-1 truncate">
                 {publicLink || "Link indisponível"}
               </span>
             </div>
 
-            <div className="flex flex-col gap-2 sm:flex-row">
+            <div className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-2">
               <Button
                 type="button"
                 variant="secondary"
+                className="w-full min-w-0"
                 disabled={!publicLink}
                 onClick={handleCopyPublicLink}
               >
@@ -358,7 +359,7 @@ export function ClientsPage() {
                 target="_blank"
                 rel="noreferrer"
                 className={[
-                  "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-black transition",
+                  "inline-flex min-w-0 w-full items-center justify-center gap-2 whitespace-normal rounded-xl px-4 py-2 text-center text-sm font-black transition",
                   publicLink
                     ? "bg-[var(--yggdra-primary)] text-[var(--yggdra-primary-text)]"
                     : "pointer-events-none bg-zinc-200 text-zinc-500",
