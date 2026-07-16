@@ -458,16 +458,6 @@ export function AppLayout({ children }: AppLayoutProps) {
               <span>Sair</span>
             </button>
           </nav>
-
-          <div className="mt-8 rounded-[24px] bg-[var(--yggdra-muted)] p-4">
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#8a8a8a]">
-              Tema ativo
-            </p>
-
-            <p className="mt-1 text-sm font-black text-[#171717]">
-              {businessTheme.segmentLabel}
-            </p>
-          </div>
         </aside>
 
         <button
@@ -523,7 +513,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             </button>
           </div>
 
-          <nav className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain pr-1">
+          <nav className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain pb-2 pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {getMenuItems(businessTheme).map((item) => {
               const Icon = item.icon;
 
@@ -557,16 +547,6 @@ export function AppLayout({ children }: AppLayoutProps) {
               <span>Sair</span>
             </button>
           </nav>
-
-          <div className="mt-5 shrink-0 rounded-[24px] bg-[var(--yggdra-muted)] p-4">
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#8a8a8a]">
-              Tema ativo
-            </p>
-
-            <p className="mt-1 text-sm font-black text-[#171717]">
-              {businessTheme.segmentLabel}
-            </p>
-          </div>
         </aside>
 
         <section className="flex min-w-0 flex-1 flex-col">
