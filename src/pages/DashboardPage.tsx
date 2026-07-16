@@ -487,14 +487,14 @@ export function DashboardPage() {
   }, 0);
 
   return (
-    <div className="space-y-7 pb-4">
-      <section className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
-        <div className="flex min-h-[110px] flex-col justify-end">
+    <div className="min-w-0 w-full max-w-full space-y-5 pb-4 sm:space-y-7">
+      <section className="grid min-w-0 grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
+        <div className="flex min-w-0 flex-col justify-end sm:min-h-[110px]">
           <div className="mb-4 inline-flex w-fit rounded-full bg-[var(--yggdra-accent)] px-4 py-2 text-xs font-black text-[var(--yggdra-accent-text)] shadow-[0_12px_34px_var(--yggdra-shadow)]">
             {copy.theme.brandName}
           </div>
 
-          <h1 className="text-[clamp(2.4rem,4vw,4.6rem)] font-black leading-[0.98] tracking-tight text-[#171717]">
+          <h1 className="break-words text-[clamp(2rem,10vw,4.6rem)] font-black leading-[0.98] tracking-tight text-[#171717]">
             Olá, {userName}!
           </h1>
 
@@ -503,8 +503,8 @@ export function DashboardPage() {
           </p>
         </div>
 
-        <div className="grid gap-4 self-start sm:grid-cols-2 xl:w-full xl:max-w-[560px] xl:justify-self-end">
-          <label className="min-w-0 rounded-[24px] bg-[var(--yggdra-card)] p-5 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
+        <div className="grid min-w-0 w-full grid-cols-1 gap-4 self-start sm:grid-cols-2 xl:max-w-[560px] xl:justify-self-end">
+          <label className="min-w-0 max-w-full rounded-[24px] bg-[var(--yggdra-card)] p-4 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl sm:p-5">
             <span className="mb-3 block text-xs font-black uppercase tracking-[0.28em] text-[#777]">
               {copy.businessSelectLabel}
             </span>
@@ -512,7 +512,7 @@ export function DashboardPage() {
             <select
               value={selectedBusinessId}
               onChange={(event) => setSelectedBusinessId(event.target.value)}
-              className="w-full rounded-2xl border border-[#d7d7d7] bg-white px-4 py-3 text-sm font-black text-[#171717] outline-none transition focus:border-[var(--yggdra-primary)] sm:text-base"
+              className="min-w-0 w-full max-w-full rounded-2xl border border-[#d7d7d7] bg-white px-4 py-3 text-base font-black text-[#171717] outline-none transition focus:border-[var(--yggdra-primary)] sm:text-sm"
             >
               {businesses.length === 0 ? (
                 <option value="">{copy.emptyBusinessLabel}</option>
@@ -548,15 +548,15 @@ export function DashboardPage() {
       )}
 
       {isLoading ? (
-        <section className="rounded-[30px] bg-[var(--yggdra-card)] p-7 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
+        <section className="min-w-0 w-full max-w-full rounded-[24px] bg-[var(--yggdra-card)] p-4 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl sm:rounded-[28px] sm:p-5 md:rounded-[30px] md:p-7">
           <p className="text-sm font-black text-[#5f6368]">
             Carregando dashboard...
           </p>
         </section>
       ) : (
         <>
-          <section className="grid gap-5 xl:grid-cols-2">
-            <article className="rounded-[30px] bg-[var(--yggdra-primary)] p-7 text-[var(--yggdra-primary-text)] shadow-[0_24px_60px_var(--yggdra-shadow)]">
+          <section className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-2">
+            <article className="min-w-0 w-full max-w-full rounded-[24px] bg-[var(--yggdra-primary)] p-4 text-[var(--yggdra-primary-text)] shadow-[0_24px_60px_var(--yggdra-shadow)] sm:rounded-[28px] sm:p-5 md:rounded-[30px] md:p-7">
               <div className="flex items-start justify-between">
                 <div>
                   <h2 className="text-xl font-black">{copy.mainTitle}</h2>
@@ -568,9 +568,9 @@ export function DashboardPage() {
                 <ClipboardCheck size={22} className="opacity-75" />
               </div>
 
-              <div className="mt-8 grid grid-cols-2 gap-6">
+              <div className="mt-6 grid min-w-0 grid-cols-2 gap-3 sm:mt-8 sm:gap-6">
                 <div>
-                  <strong className="text-5xl font-black">
+                  <strong className="text-4xl font-black sm:text-5xl">
                     {totalAppointments}
                   </strong>
                   <p className="mt-2 text-xs font-bold leading-5 opacity-65">
@@ -579,7 +579,7 @@ export function DashboardPage() {
                 </div>
 
                 <div>
-                  <strong className="text-5xl font-black">{activeServices}</strong>
+                  <strong className="text-4xl font-black sm:text-5xl">{activeServices}</strong>
                   <p className="mt-2 text-xs font-bold leading-5 opacity-65">
                     {copy.servicesLabel}
                   </p>
@@ -617,7 +617,7 @@ export function DashboardPage() {
               </div>
             </article>
 
-            <article className="rounded-[30px] bg-[var(--yggdra-card)] p-7 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
+            <article className="min-w-0 w-full max-w-full rounded-[24px] bg-[var(--yggdra-card)] p-4 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl sm:rounded-[28px] sm:p-5 md:rounded-[30px] md:p-7">
               <div className="flex items-start justify-between">
                 <div>
                   <h2 className="text-xl font-black text-[#171717]">
@@ -631,8 +631,12 @@ export function DashboardPage() {
                 <Activity size={22} className="text-[var(--yggdra-primary)]" />
               </div>
 
-              <div className="mt-8 h-[190px] rounded-[24px] border border-white/80 bg-[var(--yggdra-muted)] p-5">
-                <svg viewBox="0 0 420 150" className="h-full w-full">
+              <div className="mt-6 h-[170px] min-w-0 max-w-full overflow-hidden rounded-[24px] border border-white/80 bg-[var(--yggdra-muted)] p-3 sm:mt-8 sm:h-[190px] sm:p-5">
+                <svg
+                  viewBox="0 0 420 150"
+                  preserveAspectRatio="none"
+                  className="block h-full min-w-0 w-full max-w-full"
+                >
                   <path
                     d="M10 115 C 60 35, 100 45, 145 82 S 230 130, 270 55 S 350 15, 410 78"
                     fill="none"
@@ -651,7 +655,7 @@ export function DashboardPage() {
                 </svg>
               </div>
 
-              <div className="mt-5 grid grid-cols-6 gap-2 text-center text-xs font-black text-[#777]">
+              <div className="mt-4 grid min-w-0 grid-cols-6 gap-1 text-center text-[10px] font-black text-[#777] sm:mt-5 sm:gap-2 sm:text-xs">
                 <span>A</span>
                 <span>C</span>
                 <span>E</span>
@@ -661,7 +665,7 @@ export function DashboardPage() {
               </div>
             </article>
 
-            <article className="rounded-[30px] bg-[var(--yggdra-card)] p-7 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
+            <article className="min-w-0 w-full max-w-full rounded-[24px] bg-[var(--yggdra-card)] p-4 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl sm:rounded-[28px] sm:p-5 md:rounded-[30px] md:p-7">
               <div className="flex items-start justify-between">
                 <div>
                   <h2 className="text-xl font-black text-[#171717]">
@@ -696,7 +700,7 @@ export function DashboardPage() {
           </section>
 
           <section className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
-            <article className="rounded-[30px] bg-[var(--yggdra-card)] p-7 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
+            <article className="min-w-0 w-full max-w-full rounded-[24px] bg-[var(--yggdra-card)] p-4 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl sm:rounded-[28px] sm:p-5 md:rounded-[30px] md:p-7">
               <h2 className="text-xl font-black text-[#171717]">
                 {copy.checklistTitle}
               </h2>
@@ -718,7 +722,7 @@ export function DashboardPage() {
               </div>
             </article>
 
-            <article className="rounded-[30px] bg-[var(--yggdra-card)] p-7 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
+            <article className="min-w-0 w-full max-w-full rounded-[24px] bg-[var(--yggdra-card)] p-4 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl sm:rounded-[28px] sm:p-5 md:rounded-[30px] md:p-7">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h2 className="text-xl font-black text-[#171717]">
@@ -789,7 +793,7 @@ export function DashboardPage() {
           </section>
 
           <section>
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4 flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-xl font-black text-[#171717]">
                 {copy.statusTitle}
               </h2>
@@ -841,7 +845,7 @@ export function DashboardPage() {
             </div>
           </section>
 
-          <section className="rounded-[30px] bg-[var(--yggdra-primary)] p-7 text-[var(--yggdra-primary-text)] shadow-[0_24px_60px_var(--yggdra-shadow)]">
+          <section className="min-w-0 w-full max-w-full rounded-[24px] bg-[var(--yggdra-primary)] p-4 text-[var(--yggdra-primary-text)] shadow-[0_24px_60px_var(--yggdra-shadow)] sm:rounded-[28px] sm:p-5 md:rounded-[30px] md:p-7">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
                 <h2 className="text-xl font-black">{copy.businessSummaryTitle}</h2>
@@ -850,7 +854,7 @@ export function DashboardPage() {
                 </p>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid min-w-0 w-full grid-cols-1 gap-3 sm:grid-cols-3">
                 <div className="rounded-2xl bg-white/10 px-5 py-4">
                   <BriefcaseBusiness size={20} />
                   <strong className="mt-4 block text-2xl font-black">
