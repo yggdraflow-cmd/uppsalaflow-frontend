@@ -169,6 +169,33 @@ function ClientProtectedPage({ children }: { children: ReactNode }) {
   return <ClientPortalLayout>{children}</ClientPortalLayout>;
 }
 
+function ClientBookingProtectedPage({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const token = getToken();
+  const user = getUser();
+  const location = useLocation();
+
+  if (!token || !user) {
+    const redirectPath = encodeURIComponent(location.pathname);
+
+    return (
+      <Navigate
+        to={`/cliente/login?redirect=${redirectPath}`}
+        replace
+      />
+    );
+  }
+
+  if (user.role !== "CLIENT") {
+    return <Navigate to={getHomePath(user)} replace />;
+  }
+
+  return <ClientPortalLayout>{children}</ClientPortalLayout>;
+}
+
 function HomeRedirect() {
   const token = getToken();
   const user = getUser();
@@ -307,7 +334,14 @@ export function AppRoutes() {
         }
       />
 
-      <Route path="/agendar/:slug" element={<PublicBookingPage />} />
+      <Route
+        path="/agendar/:slug"
+        element={
+          <ClientBookingProtectedPage>
+            <PublicBookingPage />
+          </ClientBookingProtectedPage>
+        }
+      />
       <Route path="*" element={<HomeRedirect />} />
     </Routes>
   );
