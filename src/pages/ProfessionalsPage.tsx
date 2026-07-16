@@ -163,7 +163,7 @@ export function ProfessionalsPage() {
   }
 
   return (
-    <div>
+    <div className="yggdra-page">
       <div className="mb-8">
         <p className="text-sm font-medium text-[#171717]">Equipe</p>
         <h1 className="text-3xl font-bold text-zinc-950">Profissionais</h1>
@@ -204,7 +204,7 @@ export function ProfessionalsPage() {
         </Card>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
+      <div className="yggdra-split-grid">
         <Card
           title={
             editingProfessionalId

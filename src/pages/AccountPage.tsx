@@ -162,7 +162,7 @@ export function AccountPage() {
   }
 
   return (
-    <div>
+    <div className="yggdra-page">
       <div className="mb-8">
         <p className="text-sm font-medium text-[#171717]">Minha conta</p>
         <h1 className="text-3xl font-bold text-zinc-950">Dados da conta</h1>
@@ -171,7 +171,7 @@ export function AccountPage() {
         </p>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
+      <div className="yggdra-split-grid">
         <Card title="Usuário logado">
           <div className="flex flex-col gap-5">
             <div className="flex items-start gap-4">

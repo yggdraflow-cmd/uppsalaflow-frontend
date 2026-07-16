@@ -291,7 +291,7 @@ export function ClientsPage() {
   }
 
   return (
-    <div className="min-w-0">
+    <div className="yggdra-page">
       <div className="mb-8">
         <p className="text-sm font-black text-[var(--yggdra-primary)]">
           {copy.eyebrow}
@@ -373,7 +373,7 @@ export function ClientsPage() {
         </Card>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
+      <div className="yggdra-split-grid">
         <Card title={editingClientId ? copy.editTitle : "Edição administrativa"}>
           {editingClientId ? (
             <form onSubmit={handleSubmit} className="space-y-4">

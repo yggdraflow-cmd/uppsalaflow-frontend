@@ -215,3 +215,36 @@ button {
   }
 }
 
+/* YggdraFlow responsive page layouts */
+.yggdra-page {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.yggdra-split-grid {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 1rem;
+}
+
+.yggdra-split-grid > * {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (min-width: 640px) {
+  .yggdra-split-grid {
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .yggdra-split-grid {
+    grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+  }
+}
+

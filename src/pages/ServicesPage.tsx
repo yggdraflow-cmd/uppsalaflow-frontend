@@ -171,7 +171,7 @@ export function ServicesPage() {
   }
 
   return (
-    <div>
+    <div className="yggdra-page">
       <div className="mb-8">
         <p className="text-sm font-medium text-[#171717]">Cadastro</p>
         <h1 className="text-3xl font-bold text-zinc-950">Serviços</h1>
@@ -211,7 +211,7 @@ export function ServicesPage() {
         </Card>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
+      <div className="yggdra-split-grid">
         <Card title={editingServiceId ? "Editar serviço" : "Cadastrar serviço"}>
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input

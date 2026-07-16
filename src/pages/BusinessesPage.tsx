@@ -248,7 +248,7 @@ export function BusinessesPage() {
   }
 
   return (
-    <div>
+    <div className="yggdra-page">
       <div className="mb-8">
         <p className="text-sm font-black text-[var(--yggdra-primary)]">
           {copy.eyebrow}
@@ -263,7 +263,7 @@ export function BusinessesPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
+      <div className="yggdra-split-grid">
         <section className="rounded-[32px] border border-white/80 bg-[var(--yggdra-card)] p-6 shadow-[0_24px_70px_var(--yggdra-shadow)] backdrop-blur-2xl">
           <h2 className="mb-6 text-2xl font-black text-[#171717]">
             {editingBusinessId ? copy.editTitle : copy.formTitle}
