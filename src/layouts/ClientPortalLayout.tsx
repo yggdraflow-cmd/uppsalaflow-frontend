@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Link,
   NavLink,
@@ -29,6 +29,9 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
   const [user, setUser] = useState(getUser);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileNavigationRef = useRef<HTMLElement>(null);
+
   useEffect(() => {
     function handleUserUpdated() {
       setUser(getUser());
@@ -45,6 +48,15 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
   }, []);
 
   useEffect(() => {
+    const activeElement = document.activeElement;
+
+    if (
+      activeElement instanceof HTMLElement &&
+      mobileNavigationRef.current?.contains(activeElement)
+    ) {
+      activeElement.blur();
+    }
+
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
@@ -57,7 +69,7 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        setIsMobileMenuOpen(false);
+        closeMobileMenu();
       }
     }
 
@@ -68,6 +80,20 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    const mobileNavigation = mobileNavigationRef.current;
+
+    if (!mobileNavigation) {
+      return;
+    }
+
+    if (isMobileMenuOpen) {
+      mobileNavigation.removeAttribute("inert");
+    } else {
+      mobileNavigation.setAttribute("inert", "");
+    }
   }, [isMobileMenuOpen]);
 
   const profileImageUrl = getApiAssetUrl(user?.profileImageUrl);
@@ -86,9 +112,28 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
     window.localStorage.removeItem("@yggdraflow:last-public-booking");
   }
 
+  function closeMobileMenu(restoreFocus = true) {
+    const activeElement = document.activeElement;
+
+    if (
+      activeElement instanceof HTMLElement &&
+      mobileNavigationRef.current?.contains(activeElement)
+    ) {
+      activeElement.blur();
+    }
+
+    setIsMobileMenuOpen(false);
+
+    if (restoreFocus) {
+      window.requestAnimationFrame(() => {
+        mobileMenuButtonRef.current?.focus();
+      });
+    }
+  }
+
   function handleLogout() {
     clearAuthStorage();
-    setIsMobileMenuOpen(false);
+    closeMobileMenu(false);
     navigate("/cliente/login");
   }
 
@@ -98,7 +143,7 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
         <button
           type="button"
           aria-label="Fechar menu"
-          onClick={() => setIsMobileMenuOpen(false)}
+          onClick={() => closeMobileMenu()}
           className={[
             "fixed inset-0 z-40 bg-black/35 backdrop-blur-[2px] transition-opacity duration-300 md:hidden",
             isMobileMenuOpen
@@ -108,6 +153,7 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
         />
 
         <aside
+          ref={mobileNavigationRef}
           id="client-mobile-navigation"
           aria-hidden={!isMobileMenuOpen}
           className={[
@@ -120,7 +166,7 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
           <div className="mb-8 flex items-start justify-between gap-4">
             <Link
               to="/cliente/agendamentos"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={() => closeMobileMenu()}
               className="flex min-w-0 items-center gap-3"
               title="YggdraFlow"
             >
@@ -141,7 +187,7 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
 
             <button
               type="button"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={() => closeMobileMenu()}
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[#555555] shadow-sm transition hover:text-[#171717]"
               aria-label="Fechar menu"
               title="Fechar menu"
@@ -154,7 +200,7 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
             {lastPublicBookingPath ? (
               <Link
                 to={lastPublicBookingPath}
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={() => closeMobileMenu()}
                 className="flex items-center gap-3 rounded-2xl bg-[#171717] px-4 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(0,0,0,0.18)]"
               >
                 <PlusCircle size={20} />
@@ -164,7 +210,7 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
 
             <NavLink
               to="/cliente/agendamentos"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={() => closeMobileMenu()}
               className={({ isActive }) =>
                 [
                   "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black transition-all duration-200",
@@ -180,7 +226,7 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
 
             <NavLink
               to="/cliente/conta"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={() => closeMobileMenu()}
               className={({ isActive }) =>
                 [
                   "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black transition-all duration-200",
@@ -220,6 +266,7 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
         <header className="flex min-h-[72px] items-center justify-between gap-3 border-b border-white/70 px-3 py-3 sm:px-5 md:min-h-0 md:flex-row md:px-8 md:py-6">
           <div className="flex min-w-0 items-center gap-3 md:gap-4">
             <button
+              ref={mobileMenuButtonRef}
               type="button"
               onClick={() => setIsMobileMenuOpen(true)}
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/70 text-[#171717] shadow-sm backdrop-blur-xl transition hover:bg-white md:hidden"
