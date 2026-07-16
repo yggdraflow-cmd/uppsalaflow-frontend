@@ -7,7 +7,6 @@ import {
   LogOut,
   Menu,
   Scissors,
-  Settings,
   UserRound,
   Users,
   X,
@@ -79,11 +78,6 @@ function getMenuItems(theme: BusinessTheme) {
       label: "Agenda",
       path: "/appointments",
       icon: CalendarDays,
-    },
-    {
-      label: "Configurações",
-      path: "/settings",
-      icon: Settings,
     },
   ];
 }
@@ -492,7 +486,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           id="mobile-navigation"
           aria-hidden={!isMobileMenuOpen}
           className={[
-            "fixed inset-y-0 left-0 z-50 flex w-[min(86vw,320px)] flex-col overflow-y-auto bg-[var(--yggdra-sidebar)] px-5 py-5 shadow-[0_24px_80px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition-transform duration-300 lg:hidden",
+            "fixed inset-y-0 left-0 z-50 flex h-[100dvh] w-[min(86vw,320px)] flex-col overflow-hidden bg-[var(--yggdra-sidebar)] px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))] shadow-[0_24px_80px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition-transform duration-300 lg:hidden",
             isMobileMenuOpen ? "translate-x-0" : "-translate-x-full",
           ].join(" ")}
         >
@@ -529,7 +523,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             </button>
           </div>
 
-          <nav className="flex flex-1 flex-col gap-2">
+          <nav className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain pr-1">
             {getMenuItems(businessTheme).map((item) => {
               const Icon = item.icon;
 
@@ -564,7 +558,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             </button>
           </nav>
 
-          <div className="mt-8 rounded-[24px] bg-[var(--yggdra-muted)] p-4">
+          <div className="mt-5 shrink-0 rounded-[24px] bg-[var(--yggdra-muted)] p-4">
             <p className="text-xs font-black uppercase tracking-[0.18em] text-[#8a8a8a]">
               Tema ativo
             </p>
