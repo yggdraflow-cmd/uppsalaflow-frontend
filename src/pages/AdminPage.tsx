@@ -210,6 +210,7 @@ function planLabel(plan?: string | null) {
 
 function subscriptionLabel(status?: string | null) {
   const labels: Record<string, string> = {
+    PENDING: "Pendente",
     ACTIVE: "Ativa",
     PAST_DUE: "Pagamento atrasado",
     CANCELED: "Cancelada",
@@ -344,6 +345,9 @@ export function AdminPage() {
   const [dialog, setDialog] = useState<ActionDialog>(null);
   const [reason, setReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [confirmingPaymentId, setConfirmingPaymentId] = useState<
+    string | null
+  >(null);
 
   const loadData = useCallback(async (refresh = false) => {
     try {
@@ -465,6 +469,52 @@ export function AdminPage() {
       setError(message);
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  function getPaymentForBusiness(businessId: string) {
+    return payments.find(
+      (payment) => payment.business?.id === businessId
+    );
+  }
+
+  async function confirmPayment(payment: Payment) {
+    try {
+      setConfirmingPaymentId(payment.id);
+      setError("");
+      setSuccess("");
+
+      const response = await api.patch<{ message: string }>(
+        `/billing/admin/payments/${payment.id}/confirm`
+      );
+
+      setSuccess(response.data.message);
+      await loadData(true);
+    } catch (requestError: unknown) {
+      let message =
+        "Não foi possível confirmar o pagamento.";
+
+      if (
+        typeof requestError === "object" &&
+        requestError !== null &&
+        "response" in requestError
+      ) {
+        const response = (
+          requestError as {
+            response?: {
+              data?: {
+                message?: string;
+              };
+            };
+          }
+        ).response;
+
+        message = response?.data?.message || message;
+      }
+
+      setError(message);
+    } finally {
+      setConfirmingPaymentId(null);
     }
   }
 
@@ -720,14 +770,50 @@ export function AdminPage() {
                       </div>
 
                       <div className="flex flex-wrap gap-2 xl:justify-end">
-                        <button
-                          type="button"
-                          onClick={() => openDialog(business, "approve")}
-                          className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-black text-white hover:bg-emerald-700"
-                        >
-                          <CheckCircle2 size={17} />
-                          Aprovar
-                        </button>
+                        {business.status === "PAYMENT_PENDING" &&
+                        latestPayment?.status === "PENDING" ? (
+                          <button
+                            type="button"
+                            disabled={
+                              confirmingPaymentId === latestPayment.id
+                            }
+                            onClick={() =>
+                              confirmPayment(latestPayment)
+                            }
+                            className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-black text-white transition hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {confirmingPaymentId === latestPayment.id ? (
+                              <LoaderCircle
+                                className="animate-spin"
+                                size={17}
+                              />
+                            ) : (
+                              <CircleDollarSign size={17} />
+                            )}
+                            Confirmar pagamento
+                          </button>
+                        ) : null}
+
+                        {business.status === "UNDER_REVIEW" ? (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              openDialog(business, "approve")
+                            }
+                            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-black text-white hover:bg-emerald-700"
+                          >
+                            <CheckCircle2 size={17} />
+                            Aprovar e liberar
+                          </button>
+                        ) : null}
+
+                        {business.status === "PENDING" ? (
+                          <span className="inline-flex items-center gap-2 rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-black text-amber-700 ring-1 ring-amber-200">
+                            <Clock3 size={17} />
+                            Aguardando escolha do plano
+                          </span>
+                        ) : null}
+
                         <button
                           type="button"
                           onClick={() => openDialog(business, "reject")}
@@ -836,19 +922,56 @@ export function AdminPage() {
                     </div>
 
                     <div className="flex flex-wrap gap-2 xl:justify-end">
-                      {[
-                        "PENDING",
-                        "PAYMENT_PENDING",
-                        "UNDER_REVIEW",
-                      ].includes(business.status) ? (
+                      {business.status === "PAYMENT_PENDING" &&
+                      getPaymentForBusiness(business.id)?.status ===
+                        "PENDING" ? (
                         <button
                           type="button"
-                          onClick={() => openDialog(business, "approve")}
+                          disabled={
+                            confirmingPaymentId ===
+                            getPaymentForBusiness(business.id)?.id
+                          }
+                          onClick={() => {
+                            const payment =
+                              getPaymentForBusiness(business.id);
+
+                            if (payment) {
+                              void confirmPayment(payment);
+                            }
+                          }}
+                          className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-black text-white transition hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          {confirmingPaymentId ===
+                          getPaymentForBusiness(business.id)?.id ? (
+                            <LoaderCircle
+                              className="animate-spin"
+                              size={17}
+                            />
+                          ) : (
+                            <CircleDollarSign size={17} />
+                          )}
+                          Confirmar pagamento
+                        </button>
+                      ) : null}
+
+                      {business.status === "UNDER_REVIEW" ? (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            openDialog(business, "approve")
+                          }
                           className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-black text-white hover:bg-emerald-700"
                         >
                           <CheckCircle2 size={17} />
-                          Aprovar
+                          Aprovar e liberar
                         </button>
+                      ) : null}
+
+                      {business.status === "PENDING" ? (
+                        <span className="inline-flex items-center gap-2 rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-black text-amber-700 ring-1 ring-amber-200">
+                          <Clock3 size={17} />
+                          Aguardando plano
+                        </span>
                       ) : null}
 
                       {business.status === "ACTIVE" ? (
