@@ -84,7 +84,7 @@ export function AdminLoginPage() {
             </div>
 
             <h1 className="mt-10 max-w-md text-4xl font-black leading-tight">
-              Controle geral da plataforma YggdraTech
+              Controle geral da plataforma YggdraFlow
             </h1>
 
             <p className="mt-5 max-w-md text-base leading-7 text-slate-300">
@@ -122,7 +122,7 @@ export function AdminLoginPage() {
               </div>
 
               <p className="mt-6 text-xs font-black uppercase tracking-[0.24em] text-orange-600">
-                YggdraTech
+                YggdraFlow
               </p>
 
               <h2 className="mt-3 text-3xl font-black tracking-tight text-[#0f2233]">

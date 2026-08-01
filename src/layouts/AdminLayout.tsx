@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Building2,
@@ -11,7 +11,10 @@ import {
   UserRound,
 } from "lucide-react";
 
-import { clearAuthStorage } from "../services/api";
+import {
+  clearAuthStorage,
+  getApiAssetUrl,
+} from "../services/api";
 import { getUser } from "../services/authStorage";
 
 type AdminLayoutProps = {
@@ -48,13 +51,39 @@ const navigationItems = [
 export function AdminLayout({ children }: AdminLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const user = getUser();
+
+  const [user, setUser] = useState(() => getUser());
+
   const currentView =
     new URLSearchParams(location.search).get("view") || "overview";
 
+  const profileImageUrl = getApiAssetUrl(user?.profileImageUrl);
+
+  useEffect(() => {
+    function synchronizeUser() {
+      setUser(getUser());
+    }
+
+    window.addEventListener(
+      "yggdraflow:user-updated",
+      synchronizeUser
+    );
+
+    window.addEventListener("storage", synchronizeUser);
+
+    return () => {
+      window.removeEventListener(
+        "yggdraflow:user-updated",
+        synchronizeUser
+      );
+
+      window.removeEventListener("storage", synchronizeUser);
+    };
+  }, []);
+
   function handleLogout() {
     clearAuthStorage();
-    navigate("/login");
+    navigate("/admin/login", { replace: true });
   }
 
   return (
@@ -69,8 +98,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
               <div className="min-w-0">
                 <p className="truncate text-lg font-black tracking-tight">
-                  YggdraTech
+                  YggdraFlow
                 </p>
+
                 <p className="text-xs font-semibold text-slate-300">
                   Super Admin da plataforma
                 </p>
@@ -126,6 +156,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <p className="text-xs font-black uppercase tracking-[0.2em] text-[#d97706]">
                   Operação central
                 </p>
+
                 <p className="mt-1 text-sm font-semibold text-slate-500">
                   Empresas, pagamentos e liberações.
                 </p>
@@ -136,13 +167,23 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                   to="/admin/account"
                   className="flex min-w-0 items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm transition hover:border-slate-300 sm:px-4"
                 >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#e9f0f3] text-[#102b3a]">
-                    <UserRound size={18} />
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#e9f0f3] text-[#102b3a]">
+                    {profileImageUrl ? (
+                      <img
+                        src={profileImageUrl}
+                        alt={user?.name || "Foto do administrador"}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <UserRound size={18} />
+                    )}
                   </span>
+
                   <span className="hidden min-w-0 text-left sm:block">
                     <strong className="block max-w-40 truncate text-sm text-slate-900">
                       {user?.name || "Administrador"}
                     </strong>
+
                     <span className="block max-w-40 truncate text-xs text-slate-500">
                       {user?.email || "Conta administrativa"}
                     </span>
