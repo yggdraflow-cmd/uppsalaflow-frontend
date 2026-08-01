@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 
 import { Card } from "../components/Card";
+import { AdminPaymentSettings } from "../components/AdminPaymentSettings";
 import { api } from "../services/api";
 
 type CompanyStatus =
@@ -1016,7 +1017,10 @@ export function AdminPage() {
       ) : null}
 
       {currentView === "payments" ? (
-        <Card title={`Pagamentos (${filteredPayments.length})`}>
+        <div className="space-y-6">
+          <AdminPaymentSettings />
+
+          <Card title={`Pagamentos (${filteredPayments.length})`}>
           <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-slate-500">
               Histórico financeiro registrado pela plataforma.
@@ -1092,7 +1096,8 @@ export function AdminPage() {
               </table>
             </div>
           )}
-        </Card>
+          </Card>
+        </div>
       ) : null}
 
       {dialog ? (
