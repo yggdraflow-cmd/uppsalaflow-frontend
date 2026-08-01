@@ -15,6 +15,7 @@ import { RegisterPage } from "../pages/RegisterPage";
 import { DashboardPage } from "../pages/DashboardPage";
 import { BusinessesPage } from "../pages/BusinessesPage";
 import { BusinessOnboardingPage } from "../pages/BusinessOnboardingPage";
+import { PlanSelectionPage } from "../pages/PlanSelectionPage";
 import { ClientsPage } from "../pages/ClientsPage";
 import { ServicesPage } from "../pages/ServicesPage";
 import { ProfessionalsPage } from "../pages/ProfessionalsPage";
@@ -57,9 +58,10 @@ function BusinessOnboardingGate({ children }: { children: ReactNode }) {
         setIsChecking(true);
 
         const response = await api.get<Business[]>("/businesses");
+        const primaryBusiness = response.data[0];
         const needsOnboarding =
           response.data.length === 0 ||
-          response.data.some((business) => !business.segment);
+          !primaryBusiness?.segment;
 
         if (!isMounted) {
           return;
@@ -67,6 +69,18 @@ function BusinessOnboardingGate({ children }: { children: ReactNode }) {
 
         if (needsOnboarding) {
           navigate("/business-onboarding", { replace: true });
+          return;
+        }
+
+        const hasPlatformAccess =
+          primaryBusiness.status === "ACTIVE" &&
+          primaryBusiness.subscription?.status === "ACTIVE";
+
+        if (!hasPlatformAccess) {
+          navigate(
+            `/business-plans?businessId=${primaryBusiness.id}`,
+            { replace: true }
+          );
           return;
         }
       } catch {
@@ -248,6 +262,15 @@ export function AppRoutes() {
         element={
           <OnboardingProtectedPage>
             <BusinessOnboardingPage />
+          </OnboardingProtectedPage>
+        }
+      />
+
+      <Route
+        path="/business-plans"
+        element={
+          <OnboardingProtectedPage>
+            <PlanSelectionPage />
           </OnboardingProtectedPage>
         }
       />

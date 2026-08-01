@@ -287,7 +287,7 @@ export function BusinessOnboardingPage() {
       );
 
       window.dispatchEvent(new Event("yggdraflow:theme-updated"));
-      window.location.href = "/dashboard";
+      window.location.href = `/business-plans?businessId=${business.id}`;
     } catch {
       setError(
         "Não foi possível concluir a configuração. Verifique o slug e tente novamente."
@@ -356,7 +356,7 @@ export function BusinessOnboardingPage() {
 
           <div className="hidden rounded-full bg-white/80 px-4 py-2 text-xs font-black text-[#171717] shadow-[0_12px_34px_rgba(0,0,0,0.08)] md:block">
             Etapa{" "}
-            {step === "segment" ? "1 de 3" : step === "specialty" ? "2 de 3" : "3 de 3"}
+            {step === "segment" ? "1 de 4" : step === "specialty" ? "2 de 4" : "3 de 4"}
           </div>
         </header>
 
@@ -529,7 +529,7 @@ export function BusinessOnboardingPage() {
                 <p className="mt-2 max-w-2xl text-sm font-medium text-[#666]">
                   {hasBusiness
                     ? "Vamos salvar o ramo escolhido no negócio já cadastrado."
-                    : "Preencha o básico agora. O restante você ajusta depois no painel."}
+                    : "Preencha os dados agora. Na próxima etapa você escolherá o plano."}
                 </p>
 
                 <div className="mt-7 rounded-[34px] border border-white/85 bg-white/88 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.10)]">
@@ -593,7 +593,7 @@ export function BusinessOnboardingPage() {
                     disabled={isSaving}
                     className="mt-6 w-full rounded-full bg-[#171717] px-6 py-4 text-sm font-black text-white shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {isSaving ? "Salvando..." : "Entrar no painel"}
+                    {isSaving ? "Salvando..." : "Continuar para os planos"}
                   </button>
                 </div>
               </div>
