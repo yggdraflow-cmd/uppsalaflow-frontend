@@ -9,6 +9,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import { BusinessPaymentInstructions } from "../components/BusinessPaymentInstructions";
 import { api } from "../services/api";
 import type {
   BillingCycle,
@@ -183,7 +184,7 @@ export function PlanSelectionPage() {
           ? "A empresa está temporariamente suspensa. Entre em contato com o suporte."
           : business?.status === "CANCELED"
             ? "O cadastro desta empresa foi cancelado."
-            : "Seu plano foi escolhido. Aguarde a confirmação do pagamento e a liberação do Super Admin.";
+            : "Seu plano foi escolhido. Use um dos meios de pagamento disponíveis abaixo e aguarde a liberação do Super Admin.";
 
   return (
     <main
@@ -424,6 +425,12 @@ export function PlanSelectionPage() {
                   </div>
                 </div>
               )}
+
+              {business?.subscription?.cycle ? (
+                <BusinessPaymentInstructions
+                  cycle={business.subscription.cycle}
+                />
+              ) : null}
 
               <button
                 type="button"
