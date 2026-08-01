@@ -21,6 +21,7 @@ import { ProfessionalsPage } from "../pages/ProfessionalsPage";
 import { AppointmentsPage } from "../pages/AppointmentsPage";
 import { PublicBookingPage } from "../pages/PublicBookingPage";
 import { AdminPage } from "../pages/AdminPage";
+import { AdminLoginPage } from "../pages/AdminLoginPage";
 import { AccountPage } from "../pages/AccountPage";
 import { SettingsPage } from "../pages/SettingsPage";
 import { ClientLoginPage } from "../pages/ClientLoginPage";
@@ -120,7 +121,11 @@ function CustomerPage({ children }: { children: ReactNode }) {
   );
 }
 
-function OnboardingProtectedPage({ children }: { children: ReactNode }) {
+function OnboardingProtectedPage({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const token = getToken();
   const user = getUser();
 
@@ -139,12 +144,16 @@ function OnboardingProtectedPage({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-function AdminProtectedPage({ children }: { children: ReactNode }) {
+function AdminProtectedPage({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const token = getToken();
   const user = getUser();
 
   if (!token || !user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/admin/login" replace />;
   }
 
   if (user.role !== "ADMIN") {
@@ -154,7 +163,11 @@ function AdminProtectedPage({ children }: { children: ReactNode }) {
   return <AdminLayout>{children}</AdminLayout>;
 }
 
-function ClientProtectedPage({ children }: { children: ReactNode }) {
+function ClientProtectedPage({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const token = getToken();
   const user = getUser();
 
@@ -211,11 +224,24 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<HomeRedirect />} />
+
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
-      <Route path="/cliente/login" element={<ClientLoginPage />} />
-      <Route path="/cliente/cadastro" element={<ClientRegisterPage />} />
+      <Route
+        path="/admin/login"
+        element={<AdminLoginPage />}
+      />
+
+      <Route
+        path="/cliente/login"
+        element={<ClientLoginPage />}
+      />
+
+      <Route
+        path="/cliente/cadastro"
+        element={<ClientRegisterPage />}
+      />
 
       <Route
         path="/business-onboarding"
@@ -342,6 +368,7 @@ export function AppRoutes() {
           </ClientBookingProtectedPage>
         }
       />
+
       <Route path="*" element={<HomeRedirect />} />
     </Routes>
   );
