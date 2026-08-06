@@ -16,6 +16,7 @@ import {
   getApiAssetUrl,
 } from "../services/api";
 import { getUser } from "../services/authStorage";
+import { AdminThemePicker } from "../components/AdminThemePicker";
 
 type AdminLayoutProps = {
   children: ReactNode;
@@ -87,12 +88,18 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#eef2f3] p-3 text-[#17222b] sm:p-4">
+    <div
+      className="min-h-screen p-3 text-[#17222b] sm:p-4"
+      style={{ background: "var(--admin-background, #eef2f3)" }}
+    >
       <div className="mx-auto min-h-[calc(100vh-24px)] max-w-[1600px] overflow-hidden rounded-[28px] border border-white/90 bg-white/65 shadow-[0_28px_90px_rgba(25,45,55,0.16)] backdrop-blur-3xl sm:min-h-[calc(100vh-32px)] sm:rounded-[34px]">
         <div className="grid min-h-[calc(100vh-24px)] lg:grid-cols-[270px_minmax(0,1fr)] sm:min-h-[calc(100vh-32px)]">
-          <aside className="border-b border-slate-200/80 bg-[#102b3a] p-5 text-white lg:border-b-0 lg:border-r lg:border-white/10 lg:p-6">
+          <aside
+            className="border-b border-slate-200/80 p-5 text-white lg:border-b-0 lg:border-r lg:border-white/10 lg:p-6"
+            style={{ background: "var(--admin-primary, #102b3a)" }}
+          >
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#102b3a] shadow-lg">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[var(--admin-primary)] shadow-lg">
                 <ShieldCheck size={25} />
               </div>
 
@@ -119,7 +126,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                     className={[
                       "flex shrink-0 items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition",
                       isActive
-                        ? "bg-white text-[#102b3a] shadow-lg"
+                        ? "bg-white text-[var(--admin-primary)] shadow-lg"
                         : "text-slate-300 hover:bg-white/10 hover:text-white",
                     ].join(" ")}
                   >
@@ -153,7 +160,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <div className="min-w-0">
             <header className="flex min-h-[82px] items-center justify-between gap-4 border-b border-slate-200/80 px-5 py-4 sm:px-8">
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.2em] text-[#d97706]">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-[var(--admin-primary)]">
                   Operação central
                 </p>
 
@@ -163,11 +170,13 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               </div>
 
               <div className="flex items-center gap-2 sm:gap-3">
+                <AdminThemePicker />
+
                 <Link
                   to="/admin/account"
                   className="flex min-w-0 items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm transition hover:border-slate-300 sm:px-4"
                 >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#e9f0f3] text-[#102b3a]">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[var(--admin-muted)] text-[var(--admin-primary)]">
                     {profileImageUrl ? (
                       <img
                         src={profileImageUrl}
