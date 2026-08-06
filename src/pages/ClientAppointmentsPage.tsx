@@ -40,6 +40,7 @@ type ClientAppointment = {
   startTime: string;
   endTime: string;
   status: string;
+  displayStatus?: string;
   price: string;
   notes?: string | null;
   proposals?: AppointmentProposal[];
@@ -73,6 +74,7 @@ const statusLabels: Record<string, string> = {
   FINISHED: "Finalizado",
   CANCELED: "Cancelado",
   NO_SHOW: "Não compareceu",
+  PENDING_UPDATE: "Pendente de atualização",
 };
 
 const proposalStatusLabels: Record<AppointmentProposalStatus, string> = {
@@ -185,7 +187,7 @@ export function ClientAppointmentsPage() {
       setSuccessMessage(
         status === "ACCEPTED"
           ? "Novo horário aceito. Seu agendamento foi confirmado."
-          : "Sugestão recusada. O salão recebeu sua resposta."
+          : `Sugestão recusada. ${appointment.business.name} recebeu sua resposta.`
       );
     } catch (error) {
       setErrorMessage(
@@ -223,7 +225,9 @@ export function ClientAppointmentsPage() {
         [appointment.id]: "",
       }));
 
-      setSuccessMessage("Mensagem enviada ao salão.");
+      setSuccessMessage(
+        `Mensagem enviada para ${appointment.business.name}.`
+      );
     } catch (error) {
       setErrorMessage(getErrorMessage(error, "Não foi possível enviar a mensagem."));
     } finally {
@@ -244,7 +248,7 @@ export function ClientAppointmentsPage() {
 
         <p className="mt-2 max-w-3xl text-zinc-600">
           Veja seus horários marcados, serviços escolhidos, status dos
-          atendimentos e mensagens do salão.
+          atendimentos e mensagens das empresas.
         </p>
       </div>
 
@@ -299,13 +303,26 @@ export function ClientAppointmentsPage() {
               (proposal) => proposal.status === "PENDING"
             );
 
+            const displayStatus =
+              appointment.displayStatus ?? appointment.status;
+
+            const isPendingUpdate =
+              displayStatus === "PENDING_UPDATE";
+
             return (
               <Card key={appointment.id}>
                 <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-3">
-                      <span className="rounded-full bg-[#f3f3f3] px-3 py-1 text-xs font-black text-[#171717]">
-                        {statusLabels[appointment.status] ?? appointment.status}
+                      <span
+                        className={[
+                          "rounded-full px-3 py-1 text-xs font-black",
+                          isPendingUpdate
+                            ? "bg-amber-100 text-amber-800"
+                            : "bg-[#f3f3f3] text-[#171717]",
+                        ].join(" ")}
+                      >
+                        {statusLabels[displayStatus] ?? displayStatus}
                       </span>
 
                       <span className="rounded-full bg-white/60 px-3 py-1 text-xs font-black text-[#555555]">
@@ -314,10 +331,17 @@ export function ClientAppointmentsPage() {
 
                       {pendingProposal ? (
                         <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
-                          Nova sugestão do salão
+                          Nova sugestão de {appointment.business.name}
                         </span>
                       ) : null}
                     </div>
+
+                    {isPendingUpdate ? (
+                      <p className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold leading-6 text-amber-800">
+                        Este atendimento já terminou e aguarda atualização da
+                        empresa.
+                      </p>
+                    ) : null}
 
                     <h2 className="mt-4 text-2xl font-black text-[#101828]">
                       {appointment.business.name}
@@ -453,7 +477,7 @@ export function ClientAppointmentsPage() {
                       <div className="flex items-center gap-2">
                         <MessageCircle size={20} className="text-[#171717]" />
                         <h3 className="text-lg font-black text-[#101828]">
-                          Conversa com o salão
+                          Conversa com {appointment.business.name}
                         </h3>
                       </div>
 
@@ -476,7 +500,7 @@ export function ClientAppointmentsPage() {
                               <strong className="block text-xs uppercase tracking-wide">
                                 {appointmentMessage.sender === "CLIENT"
                                   ? "Você"
-                                  : "Salão"}
+                                  : appointment.business.name}
                               </strong>
 
                               <span>{appointmentMessage.message}</span>
@@ -494,7 +518,7 @@ export function ClientAppointmentsPage() {
                           }))
                         }
                         rows={3}
-                        placeholder="Digite uma mensagem para o salão..."
+                        placeholder={`Digite uma mensagem para ${appointment.business.name}...`}
                         className="mt-4 w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#dedede]"
                       />
 
