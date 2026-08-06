@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { Check, Palette, X } from "lucide-react";
+import { Palette } from "lucide-react";
+
+import { ThemePickerDialog } from "./ThemePickerDialog";
 
 import { defaultBusinessTheme } from "../utils/businessTheme";
 import {
@@ -93,103 +95,15 @@ export function AdminThemePicker() {
       </button>
 
       {isOpen ? (
-        <div
-          className="fixed inset-0 z-[120] flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm"
-          role="presentation"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) {
-              setIsOpen(false);
-            }
-          }}
-        >
-          <section
-            className="max-h-[calc(100vh-32px)] w-full max-w-[780px] overflow-y-auto rounded-[30px] border border-white/80 bg-[#f7fafc] p-5 shadow-[0_30px_100px_rgba(0,0,0,0.28)] sm:p-7"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="admin-theme-picker-title"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.24em] text-slate-500">
-                  Aparência do Super Admin
-                </p>
-
-                <h2
-                  id="admin-theme-picker-title"
-                  className="mt-2 text-2xl font-black tracking-tight text-slate-900"
-                >
-                  Escolha o tema
-                </h2>
-
-                <p className="mt-2 max-w-2xl text-sm font-medium text-slate-500">
-                  Esta preferência fica apenas neste navegador e não altera os
-                  temas escolhidos pelos empresários.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-slate-600 shadow-sm transition hover:text-slate-900"
-                aria-label="Fechar seletor de tema"
-              >
-                <X size={22} />
-              </button>
-            </div>
-
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              {colorThemeOptions.map((option) => {
-                const isSelected = option.id === selectedThemeId;
-
-                return (
-                  <button
-                    key={option.id}
-                    type="button"
-                    onClick={() => handleThemeChange(option.id)}
-                    className="flex min-h-[104px] items-center gap-4 rounded-[24px] border bg-white/80 p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                    style={
-                      isSelected
-                        ? {
-                            borderColor: option.colors[0],
-                            background: option.colors[2],
-                          }
-                        : { borderColor: "rgba(0,0,0,0.10)" }
-                    }
-                  >
-                    <span className="flex shrink-0 -space-x-2">
-                      {option.colors.map((color) => (
-                        <span
-                          key={color}
-                          className="h-10 w-10 rounded-full border-2 border-white shadow-sm"
-                          style={{ background: color }}
-                        />
-                      ))}
-                    </span>
-
-                    <span className="min-w-0 flex-1">
-                      <span className="flex items-center gap-2 text-sm font-black text-slate-900">
-                        {option.label}
-
-                        {isSelected ? (
-                          <span
-                            className="flex h-6 w-6 items-center justify-center rounded-full text-white"
-                            style={{ background: option.colors[0] }}
-                          >
-                            <Check size={15} strokeWidth={3} />
-                          </span>
-                        ) : null}
-                      </span>
-
-                      <span className="mt-1 block text-xs font-medium leading-5 text-slate-500">
-                        {option.description}
-                      </span>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </section>
-        </div>
+        <ThemePickerDialog
+          eyebrow="Aparência do Super Admin"
+          title="Escolha o tema"
+          description="Esta preferência fica somente neste navegador e não altera os temas escolhidos pelos empresários."
+          selectedThemeId={selectedThemeId}
+          onSelect={handleThemeChange}
+          onClose={() => setIsOpen(false)}
+          closeLabel="Fechar seletor de tema do Super Admin"
+        />
       ) : null}
     </>
   );

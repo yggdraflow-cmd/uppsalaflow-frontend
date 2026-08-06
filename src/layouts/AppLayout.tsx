@@ -6,10 +6,11 @@ import {
   type ReactNode,
 } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+
+import { ThemePickerDialog } from "../components/ThemePickerDialog";
 import {
   BriefcaseBusiness,
   CalendarDays,
-  Check,
   LayoutDashboard,
   LifeBuoy,
   LogOut,
@@ -536,7 +537,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               title="Escolher tema da plataforma"
             >
               <Palette size={19} />
-              <span>Tema</span>
+              <span className="font-black">Tema</span>
             </button>
 
             <a
@@ -649,7 +650,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               title="Escolher tema da plataforma no menu móvel"
             >
               <Palette size={20} />
-              <span>Tema</span>
+              <span className="font-black">Tema</span>
             </button>
 
             <a
@@ -774,99 +775,14 @@ export function AppLayout({ children }: AppLayoutProps) {
       </div>
 
       {isThemePickerOpen ? (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 sm:p-6">
-          <button
-            type="button"
-            aria-label="Fechar seleção de tema"
-            onClick={() => setIsThemePickerOpen(false)}
-            className="absolute inset-0 bg-black/40 backdrop-blur-[3px]"
-          />
-
-          <section
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="theme-picker-title"
-            className="relative z-10 max-h-[90vh] w-full max-w-[760px] overflow-y-auto rounded-[30px] border border-white/80 bg-[var(--yggdra-card)] p-5 shadow-[0_30px_100px_var(--yggdra-shadow)] backdrop-blur-3xl sm:p-7"
-          >
-            <div className="mb-6 flex items-start justify-between gap-4">
-              <div>
-                <p className="mb-2 text-xs font-black uppercase tracking-[0.18em] text-[#7a7a7a]">
-                  Aparência
-                </p>
-                <h2 id="theme-picker-title" className="text-2xl font-black tracking-tight text-[#171717]">
-                  Escolha o tema
-                </h2>
-                <p className="mt-2 text-sm font-semibold leading-6 text-[#6f6f6f]">
-                  Apenas as cores serão alteradas. O segmento e os nomes permanecem iguais.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsThemePickerOpen(false)}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--yggdra-muted)] text-[#4f4f4f]"
-                aria-label="Fechar seleção de tema"
-              >
-                <X size={22} />
-              </button>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              {colorThemeOptions.map((option) => {
-                const selected = option.id === selectedColorThemeId;
-
-                return (
-                  <button
-                    key={option.id}
-                    type="button"
-                    onClick={() => handleColorThemeChange(option.id)}
-                    className={[
-                      "flex min-h-[108px] items-center gap-4 rounded-[22px] border p-4 text-left transition",
-                      selected
-                        ? "border-[var(--yggdra-primary)] bg-[var(--yggdra-muted)] shadow-[0_14px_34px_var(--yggdra-shadow)]"
-                        : "border-black/10 bg-white/55 hover:bg-white/80",
-                    ].join(" ")}
-                    aria-pressed={selected}
-                  >
-                    <span className="flex shrink-0 -space-x-2">
-                      {option.colors.map((color) => (
-                        <span
-                          key={color}
-                          className="h-10 w-10 rounded-full border-2 border-white shadow-sm"
-                          style={{ backgroundColor: color }}
-                        />
-                      ))}
-                    </span>
-
-                    <span className="min-w-0 flex-1">
-                      <span className="flex items-center gap-2 text-sm font-black text-[#171717]">
-                        {option.label}
-                        {selected ? (
-                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--yggdra-primary)] text-[var(--yggdra-primary-text)]">
-                            <Check size={14} strokeWidth={3} />
-                          </span>
-                        ) : null}
-                      </span>
-                      <span className="mt-1 block text-xs font-semibold leading-5 text-[#707070]">
-                        {option.description}
-                      </span>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="mt-6 flex justify-end">
-              <button
-                type="button"
-                onClick={() => setIsThemePickerOpen(false)}
-                className="rounded-full bg-[var(--yggdra-primary)] px-6 py-3 text-sm font-black text-[var(--yggdra-primary-text)] shadow-[0_14px_34px_var(--yggdra-shadow)]"
-              >
-                Concluir
-              </button>
-            </div>
-          </section>
-        </div>
+        <ThemePickerDialog
+          eyebrow="Aparência"
+          title="Escolha o tema"
+          description="As cores mudam, mas o segmento, os nomes e os dados do negócio permanecem iguais."
+          selectedThemeId={selectedColorThemeId}
+          onSelect={handleColorThemeChange}
+          onClose={() => setIsThemePickerOpen(false)}
+        />
       ) : null}
     </div>
   );
