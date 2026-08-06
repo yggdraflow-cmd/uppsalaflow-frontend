@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   CalendarDays,
   CheckCircle2,
+  ChevronDown,
   Clock,
   MapPin,
   Phone,
@@ -195,6 +196,9 @@ export function PublicBookingPage() {
     getSaoPauloDateTime
   );
 
+  const [isTimeMenuOpen, setIsTimeMenuOpen] = useState(false);
+  const timeMenuRef = useRef<HTMLDivElement>(null);
+
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingTimes, setIsLoadingTimes] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -308,6 +312,32 @@ export function PublicBookingPage() {
   const selectedTimeOption = useMemo(() => {
     return timeOptions.find((option) => option.time === formData.startTime);
   }, [formData.startTime, timeOptions]);
+
+  useEffect(() => {
+    function handlePointerDown(event: MouseEvent) {
+      if (
+        timeMenuRef.current &&
+        event.target instanceof Node &&
+        !timeMenuRef.current.contains(event.target)
+      ) {
+        setIsTimeMenuOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsTimeMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   useEffect(() => {
     async function loadPublicBusiness() {
@@ -868,32 +898,77 @@ export function PublicBookingPage() {
                 />
               </label>
 
-              <label className="block">
+              <div ref={timeMenuRef} className="relative">
                 <span className="upp-label">
                   Horário {isLoadingTimes ? "(verificando...)" : ""}
                 </span>
 
-                <select
-                  className="upp-input"
-                  value={formData.startTime}
-                  onChange={(event) =>
-                    updateFormField("startTime", event.target.value)
+                <button
+                  type="button"
+                  aria-haspopup="listbox"
+                  aria-expanded={isTimeMenuOpen}
+                  disabled={isLoadingTimes || timeOptions.length === 0}
+                  onClick={() =>
+                    setIsTimeMenuOpen((currentValue) => !currentValue)
                   }
-                  required
+                  className="upp-input flex w-full items-center justify-between gap-3 text-left disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {timeOptions.map((option) => (
-                    <option
-                      key={option.time}
-                      value={option.time}
-                      disabled={option.disabled}
-                    >
-                      {option.disabled
-                        ? `${option.time} - ${option.reason}`
-                        : option.time}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  <span>
+                    {formData.startTime || "Sem horário disponível"}
+                  </span>
+
+                  <ChevronDown
+                    size={18}
+                    className={[
+                      "shrink-0 transition-transform duration-200",
+                      isTimeMenuOpen ? "rotate-180" : "",
+                    ].join(" ")}
+                  />
+                </button>
+
+                {isTimeMenuOpen ? (
+                  <div
+                    role="listbox"
+                    className="absolute left-0 right-0 z-50 mt-2 max-h-56 overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.18)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                  >
+                    {timeOptions.map((option) => {
+                      const isSelected =
+                        option.time === formData.startTime;
+
+                      return (
+                        <button
+                          key={option.time}
+                          type="button"
+                          role="option"
+                          aria-selected={isSelected}
+                          disabled={option.disabled}
+                          onClick={() => {
+                            updateFormField("startTime", option.time);
+                            setIsTimeMenuOpen(false);
+                          }}
+                          className={[
+                            "flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm font-black transition",
+                            isSelected
+                              ? "bg-[#171717] text-white"
+                              : "text-[#171717] hover:bg-[#f3f3f3]",
+                            option.disabled
+                              ? "cursor-not-allowed opacity-40"
+                              : "",
+                          ].join(" ")}
+                        >
+                          <span>{option.time}</span>
+
+                          {option.disabled ? (
+                            <span className="text-xs font-bold">
+                              {option.reason}
+                            </span>
+                          ) : null}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : null}
+              </div>
 
               <Input
                 label="Seu nome"
