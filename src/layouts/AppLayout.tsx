@@ -9,10 +9,12 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-do
 import {
   BriefcaseBusiness,
   CalendarDays,
+  Check,
   LayoutDashboard,
   LifeBuoy,
   LogOut,
   Menu,
+  Palette,
   Scissors,
   UserRound,
   Users,
@@ -26,6 +28,13 @@ import {
   getBusinessTheme,
   type BusinessTheme,
 } from "../utils/businessTheme";
+import {
+  applyColorTheme,
+  colorThemeOptions,
+  getStoredColorThemeId,
+  saveColorThemeId,
+  type ColorThemeId,
+} from "../utils/colorTheme";
 
 const SUPPORT_URL =
   import.meta.env.VITE_SUPPORT_URL || "http://localhost:3000/#contato";
@@ -310,8 +319,14 @@ export function AppLayout({ children }: AppLayoutProps) {
     getStoredBusinessTheme
   );
 
+  const [selectedColorThemeId, setSelectedColorThemeId] =
+    useState<ColorThemeId>(getStoredColorThemeId);
+
   const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isThemePickerOpen, setIsThemePickerOpen] = useState(false);
+
+  const layoutTheme = applyColorTheme(businessTheme, selectedColorThemeId);
 
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
   const mobileNavigationRef = useRef<HTMLElement>(null);
@@ -448,6 +463,16 @@ export function AppLayout({ children }: AppLayoutProps) {
     }
   }
 
+  function handleColorThemeChange(themeId: ColorThemeId) {
+    setSelectedColorThemeId(themeId);
+    saveColorThemeId(themeId);
+  }
+
+  function openThemePickerFromMobile() {
+    closeMobileMenu(false);
+    setIsThemePickerOpen(true);
+  }
+
   function handleLogout() {
     clearAuthStorage();
     closeMobileMenu(false);
@@ -457,7 +482,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   return (
     <div
       className="min-h-screen overflow-x-hidden p-0 text-[#171717] sm:p-5"
-      style={createLayoutStyle(businessTheme)}
+      style={createLayoutStyle(layoutTheme)}
     >
       <div className="mx-auto flex min-h-screen w-full max-w-[1540px] overflow-hidden border border-white/80 bg-white/20 shadow-[0_30px_100px_var(--yggdra-shadow)] backdrop-blur-3xl sm:min-h-[calc(100vh-40px)] sm:rounded-[34px]">
         <aside className="m-5 hidden w-[255px] shrink-0 flex-col rounded-[32px] bg-[var(--yggdra-sidebar)] px-5 py-6 shadow-[0_24px_70px_var(--yggdra-shadow)] backdrop-blur-2xl lg:flex">
@@ -503,6 +528,16 @@ export function AppLayout({ children }: AppLayoutProps) {
                 </NavLink>
               );
             })}
+
+            <button
+              type="button"
+              onClick={() => setIsThemePickerOpen(true)}
+              className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black text-[#4f4f4f] transition hover:bg-[var(--yggdra-muted)] hover:text-[#171717]"
+              title="Escolher tema da plataforma"
+            >
+              <Palette size={19} />
+              <span>Tema</span>
+            </button>
 
             <a
               href={SUPPORT_URL}
@@ -606,6 +641,16 @@ export function AppLayout({ children }: AppLayoutProps) {
                 </NavLink>
               );
             })}
+
+            <button
+              type="button"
+              onClick={openThemePickerFromMobile}
+              className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black text-[#4f4f4f] transition hover:bg-[var(--yggdra-muted)] hover:text-[#171717]"
+              title="Escolher tema da plataforma no menu móvel"
+            >
+              <Palette size={20} />
+              <span>Tema</span>
+            </button>
 
             <a
               href={SUPPORT_URL}
@@ -727,6 +772,102 @@ export function AppLayout({ children }: AppLayoutProps) {
           </main>
         </section>
       </div>
+
+      {isThemePickerOpen ? (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 sm:p-6">
+          <button
+            type="button"
+            aria-label="Fechar seleção de tema"
+            onClick={() => setIsThemePickerOpen(false)}
+            className="absolute inset-0 bg-black/40 backdrop-blur-[3px]"
+          />
+
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="theme-picker-title"
+            className="relative z-10 max-h-[90vh] w-full max-w-[760px] overflow-y-auto rounded-[30px] border border-white/80 bg-[var(--yggdra-card)] p-5 shadow-[0_30px_100px_var(--yggdra-shadow)] backdrop-blur-3xl sm:p-7"
+          >
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <p className="mb-2 text-xs font-black uppercase tracking-[0.18em] text-[#7a7a7a]">
+                  Aparência
+                </p>
+                <h2 id="theme-picker-title" className="text-2xl font-black tracking-tight text-[#171717]">
+                  Escolha o tema
+                </h2>
+                <p className="mt-2 text-sm font-semibold leading-6 text-[#6f6f6f]">
+                  Apenas as cores serão alteradas. O segmento e os nomes permanecem iguais.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsThemePickerOpen(false)}
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--yggdra-muted)] text-[#4f4f4f]"
+                aria-label="Fechar seleção de tema"
+              >
+                <X size={22} />
+              </button>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {colorThemeOptions.map((option) => {
+                const selected = option.id === selectedColorThemeId;
+
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => handleColorThemeChange(option.id)}
+                    className={[
+                      "flex min-h-[108px] items-center gap-4 rounded-[22px] border p-4 text-left transition",
+                      selected
+                        ? "border-[var(--yggdra-primary)] bg-[var(--yggdra-muted)] shadow-[0_14px_34px_var(--yggdra-shadow)]"
+                        : "border-black/10 bg-white/55 hover:bg-white/80",
+                    ].join(" ")}
+                    aria-pressed={selected}
+                  >
+                    <span className="flex shrink-0 -space-x-2">
+                      {option.colors.map((color) => (
+                        <span
+                          key={color}
+                          className="h-10 w-10 rounded-full border-2 border-white shadow-sm"
+                          style={{ backgroundColor: color }}
+                        />
+                      ))}
+                    </span>
+
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center gap-2 text-sm font-black text-[#171717]">
+                        {option.label}
+                        {selected ? (
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--yggdra-primary)] text-[var(--yggdra-primary-text)]">
+                            <Check size={14} strokeWidth={3} />
+                          </span>
+                        ) : null}
+                      </span>
+                      <span className="mt-1 block text-xs font-semibold leading-5 text-[#707070]">
+                        {option.description}
+                      </span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsThemePickerOpen(false)}
+                className="rounded-full bg-[var(--yggdra-primary)] px-6 py-3 text-sm font-black text-[var(--yggdra-primary-text)] shadow-[0_14px_34px_var(--yggdra-shadow)]"
+              >
+                Concluir
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
     </div>
   );
 }
