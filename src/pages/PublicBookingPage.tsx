@@ -52,6 +52,8 @@ type BookedAppointment = {
 };
 
 type BookedTimesResponse = {
+  currentDate: string;
+  currentTime: string;
   bookedTimes: string[];
   appointments: BookedAppointment[];
 };
@@ -92,13 +94,29 @@ const availableTimes = [
   "18:00",
 ];
 
-function getTodayDate() {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDate()).padStart(2, "0");
+function getSaoPauloDateTime(now = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Sao_Paulo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(now);
 
-  return `${year}-${month}-${day}`;
+  const values = Object.fromEntries(
+    parts.map((part) => [part.type, part.value])
+  );
+
+  return {
+    date: `${values.year}-${values.month}-${values.day}`,
+    time: `${values.hour}:${values.minute}`,
+  };
+}
+
+function getTodayDate() {
+  return getSaoPauloDateTime().date;
 }
 
 function formatCurrency(value: string | number) {
@@ -173,6 +191,10 @@ export function PublicBookingPage() {
     BookedAppointment[]
   >([]);
 
+  const [currentDateTime, setCurrentDateTime] = useState(
+    getSaoPauloDateTime
+  );
+
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingTimes, setIsLoadingTimes] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -215,23 +237,47 @@ export function PublicBookingPage() {
   }, [business, formData.professionalId]);
 
   const timeOptions = useMemo(() => {
-    return availableTimes.map((time) => {
+    const options: Array<{
+      time: string;
+      disabled: boolean;
+      reason: string;
+    }> = [];
+
+    for (const time of availableTimes) {
+      const selectedDateIsPast =
+        formData.date < currentDateTime.date;
+
+      const selectedTimeIsPast =
+        formData.date === currentDateTime.date &&
+        timeToMinutes(time) <= timeToMinutes(currentDateTime.time);
+
+      if (selectedDateIsPast || selectedTimeIsPast) {
+        continue;
+      }
+
       if (!selectedService) {
-        return {
+        options.push({
           time,
           disabled: false,
           reason: "",
-        };
+        });
+
+        continue;
       }
 
-      const endTime = addMinutesToTime(time, selectedService.durationMinutes);
+      const endTime = addMinutesToTime(
+        time,
+        selectedService.durationMinutes
+      );
 
       if (timeToMinutes(endTime) > timeToMinutes(BUSINESS_CLOSE_TIME)) {
-        return {
+        options.push({
           time,
           disabled: true,
           reason: "fora do expediente",
-        };
+        });
+
+        continue;
       }
 
       const hasConflict = bookedAppointments.some((appointment) =>
@@ -243,13 +289,21 @@ export function PublicBookingPage() {
         )
       );
 
-      return {
+      options.push({
         time,
         disabled: hasConflict,
         reason: hasConflict ? "ocupado" : "",
-      };
-    });
-  }, [bookedAppointments, selectedService]);
+      });
+    }
+
+    return options;
+  }, [
+    bookedAppointments,
+    currentDateTime.date,
+    currentDateTime.time,
+    formData.date,
+    selectedService,
+  ]);
 
   const selectedTimeOption = useMemo(() => {
     return timeOptions.find((option) => option.time === formData.startTime);
@@ -312,6 +366,11 @@ export function PublicBookingPage() {
         );
 
         setBookedAppointments(response.data.appointments);
+
+        setCurrentDateTime({
+          date: response.data.currentDate,
+          time: response.data.currentTime,
+        });
       } catch {
         setBookedAppointments([]);
       } finally {
@@ -321,6 +380,23 @@ export function PublicBookingPage() {
 
     loadBookedTimes();
   }, [slug, formData.date, formData.professionalId]);
+
+  useEffect(() => {
+    function updateCurrentDateTime() {
+      setCurrentDateTime(getSaoPauloDateTime());
+    }
+
+    updateCurrentDateTime();
+
+    const intervalId = window.setInterval(
+      updateCurrentDateTime,
+      30_000
+    );
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, []);
 
   useEffect(() => {
     if (timeOptions.length === 0) {
@@ -367,6 +443,22 @@ export function PublicBookingPage() {
 
     if (!formData.startTime) {
       setErrorMessage("Não há horário disponível para este serviço nesta data.");
+      return;
+    }
+
+    const current = getSaoPauloDateTime();
+
+    const selectedDateIsPast =
+      formData.date < current.date;
+
+    const selectedTimeIsPast =
+      formData.date === current.date &&
+      timeToMinutes(formData.startTime) <= timeToMinutes(current.time);
+
+    if (selectedDateIsPast || selectedTimeIsPast) {
+      setErrorMessage(
+        "Esse horário já passou. Escolha um horário futuro."
+      );
       return;
     }
 
