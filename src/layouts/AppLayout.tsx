@@ -31,7 +31,6 @@ import {
 } from "../utils/businessTheme";
 import {
   applyColorTheme,
-  colorThemeOptions,
   getStoredColorThemeId,
   saveColorThemeId,
   type ColorThemeId,

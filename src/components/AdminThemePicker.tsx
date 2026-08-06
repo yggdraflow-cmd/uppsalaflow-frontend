@@ -6,7 +6,6 @@ import { ThemePickerDialog } from "./ThemePickerDialog";
 import { defaultBusinessTheme } from "../utils/businessTheme";
 import {
   applyColorTheme,
-  colorThemeOptions,
   getStoredAdminColorThemeId,
   saveAdminColorThemeId,
   type ColorThemeId,
@@ -87,7 +86,7 @@ export function AdminThemePicker() {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="flex h-12 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 shadow-sm transition hover:border-[var(--admin-primary)] hover:text-[var(--admin-primary)] sm:px-4"
+        className="flex h-12 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-black text-slate-700 shadow-sm transition hover:border-[var(--admin-primary)] hover:text-[var(--admin-primary)] sm:px-4"
         title="Escolher tema do Super Admin"
       >
         <Palette size={20} />

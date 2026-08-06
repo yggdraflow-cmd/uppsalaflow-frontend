@@ -1,29 +1,24 @@
-import {
-  defaultBusinessTheme,
-  type BusinessTheme,
-  type BusinessThemeStyles,
+import type {
+  BusinessTheme,
+  BusinessThemeStyles,
 } from "./businessTheme";
 
 export type ColorThemeId =
-  | "automatic"
   | "ocean"
   | "forest"
   | "rose"
   | "violet"
   | "gold"
   | "graphite"
-  | "sapphire"
-  | "mint"
   | "terracotta"
-  | "lavender"
-  | "coral";
+  | "turquoise";
 
 export type ColorThemeOption = {
   id: ColorThemeId;
   label: string;
   description: string;
   colors: readonly [string, string, string];
-  styles?: BusinessThemeStyles;
+  styles: BusinessThemeStyles;
 };
 
 const STORAGE_KEY = "@yggdraflow:color-theme";
@@ -31,207 +26,147 @@ const ADMIN_STORAGE_KEY = "@yggdraflow:admin-color-theme";
 
 export const colorThemeOptions: readonly ColorThemeOption[] = [
   {
-    id: "automatic",
-    label: "Automático",
-    description: "Mantém a identidade do segmento.",
-    colors: ["#174f7a", "#d9efff", "#ffffff"],
-  },
-  {
     id: "ocean",
     label: "Oceano",
-    description: "Marinho profundo com turquesa.",
-    colors: ["#0b3954", "#2ec4b6", "#e8fffb"],
+    description: "Marinho profundo com ciano aquático.",
+    colors: ["#083B66", "#22B8CF", "#E8FAFF"],
     styles: {
-      primary: "#0b3954",
-      primaryText: "#ffffff",
-      accent: "#2ec4b6",
-      accentText: "#062a32",
-      muted: "#dff8f5",
-      card: "rgba(245,255,253,0.92)",
-      sidebar: "rgba(235,250,249,0.95)",
+      primary: "#083B66",
+      primaryText: "#FFFFFF",
+      accent: "#22B8CF",
+      accentText: "#06314A",
+      muted: "#DDF5FA",
+      card: "rgba(245,252,255,0.93)",
+      sidebar: "rgba(232,247,252,0.96)",
       background:
-        "radial-gradient(circle at 14% 10%, rgba(46,196,182,0.34), transparent 30%), radial-gradient(circle at 88% 5%, rgba(83,144,178,0.30), transparent 28%), linear-gradient(135deg, #7ba7b7 0%, #eaf9f8 48%, #4f7f94 100%)",
-      shadow: "rgba(11,57,84,0.24)",
+        "radial-gradient(circle at 14% 10%, rgba(34,184,207,0.38), transparent 30%), radial-gradient(circle at 88% 4%, rgba(8,59,102,0.30), transparent 29%), linear-gradient(135deg, #6B9EB2 0%, #EAFBFF 47%, #315E79 100%)",
+      shadow: "rgba(8,59,102,0.25)",
     },
   },
   {
     id: "forest",
     label: "Floresta",
-    description: "Pinho escuro, musgo e marfim.",
-    colors: ["#1b4332", "#95a96d", "#f4f1de"],
+    description: "Verde pinho, musgo e marfim natural.",
+    colors: ["#174A32", "#97B65D", "#F4F0D9"],
     styles: {
-      primary: "#1b4332",
-      primaryText: "#ffffff",
-      accent: "#95a96d",
-      accentText: "#20351d",
-      muted: "#e7edd7",
-      card: "rgba(250,250,240,0.92)",
-      sidebar: "rgba(242,246,227,0.95)",
+      primary: "#174A32",
+      primaryText: "#FFFFFF",
+      accent: "#97B65D",
+      accentText: "#233817",
+      muted: "#E5EED2",
+      card: "rgba(249,250,239,0.93)",
+      sidebar: "rgba(239,245,222,0.96)",
       background:
-        "radial-gradient(circle at 15% 12%, rgba(93,132,88,0.34), transparent 31%), radial-gradient(circle at 86% 2%, rgba(207,214,164,0.34), transparent 29%), linear-gradient(135deg, #8fa58c 0%, #f5f4e6 47%, #6f856e 100%)",
-      shadow: "rgba(27,67,50,0.24)",
+        "radial-gradient(circle at 15% 12%, rgba(111,151,76,0.39), transparent 31%), radial-gradient(circle at 86% 2%, rgba(213,221,157,0.35), transparent 29%), linear-gradient(135deg, #78947B 0%, #F5F3DF 47%, #506D56 100%)",
+      shadow: "rgba(23,74,50,0.25)",
     },
   },
   {
     id: "rose",
     label: "Rosé",
     description: "Vinho elegante com rosa antigo.",
-    colors: ["#7d2855", "#d88ca6", "#fff0f5"],
+    colors: ["#812653", "#E3A0B7", "#FFF0F5"],
     styles: {
-      primary: "#7d2855",
-      primaryText: "#ffffff",
-      accent: "#d88ca6",
-      accentText: "#4d1734",
-      muted: "#f7dce6",
-      card: "rgba(255,247,250,0.93)",
-      sidebar: "rgba(255,240,246,0.95)",
+      primary: "#812653",
+      primaryText: "#FFFFFF",
+      accent: "#E3A0B7",
+      accentText: "#50162F",
+      muted: "#F7D9E4",
+      card: "rgba(255,247,250,0.94)",
+      sidebar: "rgba(255,238,245,0.96)",
       background:
-        "radial-gradient(circle at 14% 10%, rgba(216,140,166,0.34), transparent 31%), radial-gradient(circle at 88% 5%, rgba(125,40,85,0.20), transparent 29%), linear-gradient(135deg, #d6a0b3 0%, #fff3f7 48%, #b77690 100%)",
-      shadow: "rgba(125,40,85,0.22)",
+        "radial-gradient(circle at 14% 10%, rgba(227,160,183,0.40), transparent 31%), radial-gradient(circle at 88% 5%, rgba(129,38,83,0.25), transparent 29%), linear-gradient(135deg, #D99DB2 0%, #FFF3F7 48%, #AC637D 100%)",
+      shadow: "rgba(129,38,83,0.23)",
     },
   },
   {
     id: "violet",
     label: "Violeta",
-    description: "Índigo intenso com violeta vivo.",
-    colors: ["#4c1d95", "#8b5cf6", "#f5f3ff"],
+    description: "Roxo profundo com violeta elétrico.",
+    colors: ["#4A187D", "#9B5DE5", "#F6EFFF"],
     styles: {
-      primary: "#4c1d95",
-      primaryText: "#ffffff",
-      accent: "#8b5cf6",
-      accentText: "#2c1454",
-      muted: "#e8ddff",
-      card: "rgba(250,248,255,0.93)",
-      sidebar: "rgba(245,240,255,0.95)",
+      primary: "#4A187D",
+      primaryText: "#FFFFFF",
+      accent: "#9B5DE5",
+      accentText: "#2E0D4F",
+      muted: "#EAD9FF",
+      card: "rgba(251,247,255,0.94)",
+      sidebar: "rgba(245,237,255,0.96)",
       background:
-        "radial-gradient(circle at 15% 11%, rgba(139,92,246,0.35), transparent 31%), radial-gradient(circle at 87% 4%, rgba(76,29,149,0.24), transparent 28%), linear-gradient(135deg, #a891d5 0%, #f7f3ff 47%, #7660a8 100%)",
-      shadow: "rgba(76,29,149,0.24)",
+        "radial-gradient(circle at 15% 11%, rgba(155,93,229,0.41), transparent 31%), radial-gradient(circle at 87% 4%, rgba(74,24,125,0.27), transparent 28%), linear-gradient(135deg, #A486CC 0%, #F8F1FF 47%, #72509E 100%)",
+      shadow: "rgba(74,24,125,0.25)",
     },
   },
   {
     id: "gold",
     label: "Dourado",
-    description: "Carvão, ouro metálico e champanhe.",
-    colors: ["#221c12", "#d4a017", "#fff7e0"],
+    description: "Ébano, ouro metálico e champanhe.",
+    colors: ["#261D0E", "#D9A514", "#FFF3CC"],
     styles: {
-      primary: "#221c12",
-      primaryText: "#fff8e8",
-      accent: "#d4a017",
-      accentText: "#3f2e00",
-      muted: "#f5e8bd",
-      card: "rgba(255,250,236,0.94)",
-      sidebar: "rgba(255,247,224,0.96)",
+      primary: "#261D0E",
+      primaryText: "#FFF8E8",
+      accent: "#D9A514",
+      accentText: "#3D2C00",
+      muted: "#F4E4AE",
+      card: "rgba(255,249,231,0.95)",
+      sidebar: "rgba(255,244,211,0.97)",
       background:
-        "radial-gradient(circle at 15% 10%, rgba(212,160,23,0.36), transparent 31%), radial-gradient(circle at 86% 4%, rgba(73,57,25,0.25), transparent 29%), linear-gradient(135deg, #b59b62 0%, #fff8e8 47%, #806c45 100%)",
-      shadow: "rgba(34,28,18,0.25)",
+        "radial-gradient(circle at 15% 10%, rgba(217,165,20,0.42), transparent 31%), radial-gradient(circle at 86% 4%, rgba(54,40,17,0.29), transparent 29%), linear-gradient(135deg, #B69A55 0%, #FFF7DF 47%, #745F34 100%)",
+      shadow: "rgba(38,29,14,0.27)",
     },
   },
   {
     id: "graphite",
     label: "Grafite",
-    description: "Carvão moderno com prata fria.",
-    colors: ["#263238", "#90a4ae", "#f4f7f8"],
+    description: "Carvão urbano com prata fria.",
+    colors: ["#22282D", "#A9B4BC", "#F2F5F7"],
     styles: {
-      primary: "#263238",
-      primaryText: "#ffffff",
-      accent: "#90a4ae",
-      accentText: "#1d272c",
-      muted: "#e1e8eb",
-      card: "rgba(248,250,251,0.93)",
-      sidebar: "rgba(239,244,246,0.96)",
+      primary: "#22282D",
+      primaryText: "#FFFFFF",
+      accent: "#A9B4BC",
+      accentText: "#20282D",
+      muted: "#DDE4E8",
+      card: "rgba(247,249,250,0.94)",
+      sidebar: "rgba(235,240,243,0.97)",
       background:
-        "radial-gradient(circle at 14% 10%, rgba(144,164,174,0.34), transparent 31%), radial-gradient(circle at 88% 4%, rgba(38,50,56,0.20), transparent 29%), linear-gradient(135deg, #9aa6ac 0%, #f4f7f8 47%, #6b777d 100%)",
-      shadow: "rgba(38,50,56,0.24)",
-    },
-  },
-  {
-    id: "sapphire",
-    label: "Safira",
-    description: "Azul real com brilho de gelo.",
-    colors: ["#0b3d91", "#4ea8de", "#eef6ff"],
-    styles: {
-      primary: "#0b3d91",
-      primaryText: "#ffffff",
-      accent: "#4ea8de",
-      accentText: "#082a60",
-      muted: "#d8ebff",
-      card: "rgba(245,250,255,0.93)",
-      sidebar: "rgba(235,245,255,0.96)",
-      background:
-        "radial-gradient(circle at 15% 10%, rgba(78,168,222,0.37), transparent 31%), radial-gradient(circle at 87% 3%, rgba(11,61,145,0.26), transparent 29%), linear-gradient(135deg, #7da7d8 0%, #eff7ff 47%, #4f72a6 100%)",
-      shadow: "rgba(11,61,145,0.25)",
-    },
-  },
-  {
-    id: "mint",
-    label: "Menta",
-    description: "Verde-azulado com menta fresca.",
-    colors: ["#006d77", "#83c5be", "#edfaf7"],
-    styles: {
-      primary: "#006d77",
-      primaryText: "#ffffff",
-      accent: "#83c5be",
-      accentText: "#00464d",
-      muted: "#d7f1ed",
-      card: "rgba(247,255,253,0.93)",
-      sidebar: "rgba(237,250,247,0.96)",
-      background:
-        "radial-gradient(circle at 15% 10%, rgba(131,197,190,0.39), transparent 31%), radial-gradient(circle at 87% 4%, rgba(0,109,119,0.23), transparent 29%), linear-gradient(135deg, #8bbdb8 0%, #effbf8 47%, #5f9692 100%)",
-      shadow: "rgba(0,109,119,0.23)",
+        "radial-gradient(circle at 14% 10%, rgba(169,180,188,0.40), transparent 31%), radial-gradient(circle at 88% 4%, rgba(34,40,45,0.25), transparent 29%), linear-gradient(135deg, #929DA4 0%, #F3F6F7 47%, #606B72 100%)",
+      shadow: "rgba(34,40,45,0.26)",
     },
   },
   {
     id: "terracotta",
     label: "Terracota",
-    description: "Ferrugem, argila e areia quente.",
-    colors: ["#9c4a2d", "#d77a61", "#fff3e8"],
+    description: "Ferrugem, laranja queimado e areia.",
+    colors: ["#984526", "#E28752", "#FFF0DF"],
     styles: {
-      primary: "#9c4a2d",
-      primaryText: "#ffffff",
-      accent: "#d77a61",
-      accentText: "#5b2818",
-      muted: "#f5d8c8",
-      card: "rgba(255,248,242,0.93)",
-      sidebar: "rgba(255,241,232,0.96)",
+      primary: "#984526",
+      primaryText: "#FFFFFF",
+      accent: "#E28752",
+      accentText: "#58230E",
+      muted: "#F5D2BB",
+      card: "rgba(255,247,239,0.94)",
+      sidebar: "rgba(255,237,224,0.97)",
       background:
-        "radial-gradient(circle at 15% 10%, rgba(215,122,97,0.37), transparent 31%), radial-gradient(circle at 87% 4%, rgba(156,74,45,0.24), transparent 29%), linear-gradient(135deg, #cc957c 0%, #fff4ea 47%, #a86f58 100%)",
-      shadow: "rgba(156,74,45,0.24)",
+        "radial-gradient(circle at 15% 10%, rgba(226,135,82,0.42), transparent 31%), radial-gradient(circle at 87% 4%, rgba(152,69,38,0.27), transparent 29%), linear-gradient(135deg, #CB8F70 0%, #FFF2E4 47%, #9D6248 100%)",
+      shadow: "rgba(152,69,38,0.25)",
     },
   },
   {
-    id: "lavender",
-    label: "Lavanda",
-    description: "Ameixa suave com lavanda acinzentada.",
-    colors: ["#5b3a70", "#b8a1d9", "#f8f1ff"],
+    id: "turquoise",
+    label: "Turquesa",
+    description: "Petróleo, turquesa e branco aquático.",
+    colors: ["#006466", "#4DD0C8", "#E8FFFD"],
     styles: {
-      primary: "#5b3a70",
-      primaryText: "#ffffff",
-      accent: "#b8a1d9",
-      accentText: "#382246",
-      muted: "#eadff4",
-      card: "rgba(252,248,255,0.93)",
-      sidebar: "rgba(247,240,252,0.96)",
+      primary: "#006466",
+      primaryText: "#FFFFFF",
+      accent: "#4DD0C8",
+      accentText: "#003F40",
+      muted: "#D4F5F1",
+      card: "rgba(246,255,253,0.94)",
+      sidebar: "rgba(233,251,248,0.97)",
       background:
-        "radial-gradient(circle at 15% 10%, rgba(184,161,217,0.38), transparent 31%), radial-gradient(circle at 87% 4%, rgba(91,58,112,0.22), transparent 29%), linear-gradient(135deg, #b8a9c7 0%, #faf4ff 47%, #8f7b9d 100%)",
-      shadow: "rgba(91,58,112,0.23)",
-    },
-  },
-  {
-    id: "coral",
-    label: "Coral",
-    description: "Coral intenso com pêssego luminoso.",
-    colors: ["#c44536", "#ff8a65", "#fff1ec"],
-    styles: {
-      primary: "#c44536",
-      primaryText: "#ffffff",
-      accent: "#ff8a65",
-      accentText: "#69251e",
-      muted: "#ffd9ce",
-      card: "rgba(255,248,245,0.93)",
-      sidebar: "rgba(255,239,234,0.96)",
-      background:
-        "radial-gradient(circle at 15% 10%, rgba(255,138,101,0.40), transparent 31%), radial-gradient(circle at 87% 4%, rgba(196,69,54,0.24), transparent 29%), linear-gradient(135deg, #e49a88 0%, #fff3ee 47%, #bd7568 100%)",
-      shadow: "rgba(196,69,54,0.24)",
+        "radial-gradient(circle at 15% 10%, rgba(77,208,200,0.43), transparent 31%), radial-gradient(circle at 87% 4%, rgba(0,100,102,0.26), transparent 29%), linear-gradient(135deg, #79BBB6 0%, #ECFFFC 47%, #3E8986 100%)",
+      shadow: "rgba(0,100,102,0.25)",
     },
   },
 ] as const;
@@ -241,7 +176,7 @@ export function getStoredColorThemeId(): ColorThemeId {
 
   return colorThemeOptions.some((option) => option.id === stored)
     ? (stored as ColorThemeId)
-    : "automatic";
+    : "ocean";
 }
 
 export function saveColorThemeId(themeId: ColorThemeId) {
@@ -264,9 +199,12 @@ export function applyColorTheme(
   businessTheme: BusinessTheme,
   themeId: ColorThemeId
 ): BusinessTheme {
-  const option = colorThemeOptions.find((item) => item.id === themeId);
+  const option =
+    colorThemeOptions.find((item) => item.id === themeId) ??
+    colorThemeOptions[0];
 
-  return option?.styles
-    ? { ...businessTheme, styles: option.styles }
-    : businessTheme;
+  return {
+    ...businessTheme,
+    styles: option.styles,
+  };
 }
