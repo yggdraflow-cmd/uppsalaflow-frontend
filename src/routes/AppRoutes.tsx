@@ -203,24 +203,12 @@ function ClientBookingProtectedPage({
 }) {
   const token = getToken();
   const user = getUser();
-  const location = useLocation();
 
-  if (!token || !user) {
-    const redirectPath = encodeURIComponent(location.pathname);
-
-    return (
-      <Navigate
-        to={`/cliente/login?redirect=${redirectPath}`}
-        replace
-      />
-    );
+  if (token && user?.role === "CLIENT") {
+    return <ClientPortalLayout>{children}</ClientPortalLayout>;
   }
 
-  if (user.role !== "CLIENT") {
-    return <Navigate to={getHomePath(user)} replace />;
-  }
-
-  return <ClientPortalLayout>{children}</ClientPortalLayout>;
+  return <>{children}</>;
 }
 
 function HomeRedirect() {
