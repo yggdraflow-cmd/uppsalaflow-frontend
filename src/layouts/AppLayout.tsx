@@ -10,6 +10,7 @@ import {
   BriefcaseBusiness,
   CalendarDays,
   LayoutDashboard,
+  LifeBuoy,
   LogOut,
   Menu,
   Scissors,
@@ -25,6 +26,9 @@ import {
   getBusinessTheme,
   type BusinessTheme,
 } from "../utils/businessTheme";
+
+const SUPPORT_URL =
+  import.meta.env.VITE_SUPPORT_URL || "http://localhost:3000/#contato";
 
 type AppLayoutProps = {
   children?: ReactNode;
@@ -500,6 +504,17 @@ export function AppLayout({ children }: AppLayoutProps) {
               );
             })}
 
+            <a
+              href={SUPPORT_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black text-[#4f4f4f] transition hover:bg-[var(--yggdra-muted)] hover:text-[#171717]"
+              title="Abrir suporte da YggdraTech"
+            >
+              <LifeBuoy size={19} />
+              <span>Suporte</span>
+            </a>
+
             <button
               type="button"
               onClick={handleLogout}
@@ -591,6 +606,18 @@ export function AppLayout({ children }: AppLayoutProps) {
                 </NavLink>
               );
             })}
+
+            <a
+              href={SUPPORT_URL}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => closeMobileMenu(false)}
+              className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black text-[#4f4f4f] transition hover:bg-[var(--yggdra-muted)] hover:text-[#171717]"
+              title="Abrir suporte da YggdraTech no menu móvel"
+            >
+              <LifeBuoy size={20} />
+              <span>Suporte</span>
+            </a>
 
             <button
               type="button"
