@@ -1,212 +1,232 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import {
-  Building2,
-  CircleDollarSign,
-  LayoutDashboard,
-  ListChecks,
-  LogOut,
-  Settings,
-  ShieldCheck,
-  UserRound,
-} from "lucide-react";
+import { useState, type CSSProperties, type ReactNode } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Check, LogOut, Palette, ShieldCheck, X } from "lucide-react";
 
-import {
-  clearAuthStorage,
-  getApiAssetUrl,
-} from "../services/api";
+import { clearAuthStorage } from "../services/api";
 import { getUser } from "../services/authStorage";
+import { defaultBusinessTheme } from "../utils/businessTheme";
+import {
+  applyColorTheme,
+  colorThemeOptions,
+  getStoredAdminColorThemeId,
+  saveAdminColorThemeId,
+  type ColorThemeId,
+} from "../utils/colorTheme";
 
 type AdminLayoutProps = {
   children: ReactNode;
 };
 
-const navigationItems = [
-  {
-    label: "Visão geral",
-    to: "/admin?view=overview",
-    view: "overview",
-    icon: LayoutDashboard,
-  },
-  {
-    label: "Empresas",
-    to: "/admin?view=businesses",
-    view: "businesses",
-    icon: Building2,
-  },
-  {
-    label: "Aprovações",
-    to: "/admin?view=approvals",
-    view: "approvals",
-    icon: ListChecks,
-  },
-  {
-    label: "Pagamentos",
-    to: "/admin?view=payments",
-    view: "payments",
-    icon: CircleDollarSign,
-  },
-];
+function createAdminStyle(themeId: ColorThemeId): {
+  theme: ReturnType<typeof applyColorTheme>;
+  style: CSSProperties;
+} {
+  const theme = applyColorTheme(defaultBusinessTheme, themeId);
+
+  return {
+    theme,
+    style: {
+      "--yggdra-primary": theme.styles.primary,
+      "--yggdra-primary-text": theme.styles.primaryText,
+      "--yggdra-accent": theme.styles.accent,
+      "--yggdra-accent-text": theme.styles.accentText,
+      "--yggdra-muted": theme.styles.muted,
+      "--yggdra-card": theme.styles.card,
+      "--yggdra-sidebar": theme.styles.sidebar,
+      "--yggdra-shadow": theme.styles.shadow,
+      background: theme.styles.background,
+    } as CSSProperties,
+  };
+}
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const navigate = useNavigate();
-  const location = useLocation();
+  const user = getUser();
 
-  const [user, setUser] = useState(() => getUser());
+  const [selectedThemeId, setSelectedThemeId] = useState<ColorThemeId>(
+    getStoredAdminColorThemeId
+  );
+  const [isThemePickerOpen, setIsThemePickerOpen] = useState(false);
 
-  const currentView =
-    new URLSearchParams(location.search).get("view") || "overview";
-
-  const profileImageUrl = getApiAssetUrl(user?.profileImageUrl);
-
-  useEffect(() => {
-    function synchronizeUser() {
-      setUser(getUser());
-    }
-
-    window.addEventListener(
-      "yggdraflow:user-updated",
-      synchronizeUser
-    );
-
-    window.addEventListener("storage", synchronizeUser);
-
-    return () => {
-      window.removeEventListener(
-        "yggdraflow:user-updated",
-        synchronizeUser
-      );
-
-      window.removeEventListener("storage", synchronizeUser);
-    };
-  }, []);
+  const { theme, style } = createAdminStyle(selectedThemeId);
 
   function handleLogout() {
     clearAuthStorage();
-    navigate("/admin/login", { replace: true });
+    navigate("/login");
+  }
+
+  function handleThemeChange(themeId: ColorThemeId) {
+    setSelectedThemeId(themeId);
+    saveAdminColorThemeId(themeId);
   }
 
   return (
-    <div className="min-h-screen bg-[#eef2f3] p-3 text-[#17222b] sm:p-4">
-      <div className="mx-auto min-h-[calc(100vh-24px)] max-w-[1600px] overflow-hidden rounded-[28px] border border-white/90 bg-white/65 shadow-[0_28px_90px_rgba(25,45,55,0.16)] backdrop-blur-3xl sm:min-h-[calc(100vh-32px)] sm:rounded-[34px]">
-        <div className="grid min-h-[calc(100vh-24px)] lg:grid-cols-[270px_minmax(0,1fr)] sm:min-h-[calc(100vh-32px)]">
-          <aside className="border-b border-slate-200/80 bg-[#102b3a] p-5 text-white lg:border-b-0 lg:border-r lg:border-white/10 lg:p-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#102b3a] shadow-lg">
-                <ShieldCheck size={25} />
-              </div>
-
-              <div className="min-w-0">
-                <p className="truncate text-lg font-black tracking-tight">
-                  YggdraFlow
-                </p>
-
-                <p className="text-xs font-semibold text-slate-300">
-                  Super Admin da plataforma
-                </p>
-              </div>
+    <div className="min-h-screen p-4 text-[#171717]" style={style}>
+      <div
+        className="mx-auto min-h-[calc(100vh-32px)] max-w-[1500px] overflow-hidden rounded-[34px] border border-white/80 backdrop-blur-3xl"
+        style={{
+          background: theme.styles.card,
+          boxShadow: `0 30px 100px ${theme.styles.shadow}`,
+        }}
+      >
+        <header className="flex min-h-[88px] items-center justify-between gap-4 border-b border-white/70 px-5 py-4 sm:px-8">
+          <div className="flex min-w-0 items-center gap-4">
+            <div
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl shadow-[0_18px_42px_rgba(0,0,0,0.22)]"
+              style={{
+                background: theme.styles.primary,
+                color: theme.styles.primaryText,
+              }}
+            >
+              <ShieldCheck size={27} />
             </div>
 
-            <nav className="mt-6 flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
-              {navigationItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = currentView === item.view;
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-3 text-sm font-bold text-[#6a7a89]">
+                <span>YggdraFlow</span>
+                <span className="h-1 w-1 rounded-full bg-[#aab8c3]" />
+                <span style={{ color: theme.styles.primary }}>
+                  Admin da plataforma
+                </span>
+              </div>
 
-                return (
-                  <Link
-                    key={item.view}
-                    to={item.to}
-                    className={[
-                      "flex shrink-0 items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition",
-                      isActive
-                        ? "bg-white text-[#102b3a] shadow-lg"
-                        : "text-slate-300 hover:bg-white/10 hover:text-white",
-                    ].join(" ")}
-                  >
-                    <Icon size={19} />
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
+              <p className="mt-1 hidden text-xs font-semibold text-[#8a99a6] sm:block">
+                Gestão interna de usuários, empresas, planos e pagamentos.
+              </p>
+            </div>
+          </div>
 
-            <div className="mt-6 hidden border-t border-white/10 pt-6 lg:block">
-              <Link
-                to="/admin/account"
-                className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-slate-300 transition hover:bg-white/10 hover:text-white"
-              >
-                <Settings size={19} />
-                Minha conta
-              </Link>
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={() => setIsThemePickerOpen(true)}
+              className="flex h-12 items-center gap-2 rounded-2xl border border-white/80 bg-white/55 px-3 text-sm font-bold text-[#555555] shadow-sm backdrop-blur-xl transition hover:text-[#171717] sm:px-4"
+              title="Escolher tema do Super Admin"
+            >
+              <Palette size={20} />
+              <span className="hidden sm:inline">Tema</span>
+            </button>
+
+            <Link
+              to="/admin/account"
+              className="hidden rounded-full border border-white/80 bg-white/55 px-5 py-3 text-sm font-bold text-[#171717] shadow-sm backdrop-blur-xl transition hover:text-[#171717] lg:block"
+              title="Minha conta"
+            >
+              {user?.name || user?.email || "Admin"}
+            </Link>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex h-12 items-center gap-2 rounded-2xl border border-white/80 bg-white/55 px-3 text-sm font-bold text-[#555555] shadow-sm backdrop-blur-xl transition hover:text-[#171717] sm:px-4"
+            >
+              <LogOut size={20} />
+              <span className="hidden sm:inline">Sair</span>
+            </button>
+          </div>
+        </header>
+
+        <main className="px-5 py-6 sm:px-8 sm:py-8">{children}</main>
+      </div>
+
+      {isThemePickerOpen ? (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              setIsThemePickerOpen(false);
+            }
+          }}
+        >
+          <section
+            className="max-h-[calc(100vh-32px)] w-full max-w-[780px] overflow-y-auto rounded-[30px] border border-white/80 bg-[#f7fafc] p-5 shadow-[0_30px_100px_rgba(0,0,0,0.28)] sm:p-7"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="admin-theme-picker-title"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.24em] text-[#7b7b7b]">
+                  Aparência do Super Admin
+                </p>
+                <h2
+                  id="admin-theme-picker-title"
+                  className="mt-2 text-2xl font-black tracking-tight text-[#171717]"
+                >
+                  Escolha o tema
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm font-medium text-[#737373]">
+                  Esta preferência fica apenas neste navegador e não altera os
+                  temas escolhidos pelos empresários.
+                </p>
+              </div>
 
               <button
                 type="button"
-                onClick={handleLogout}
-                className="mt-2 flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-slate-300 transition hover:bg-red-500/15 hover:text-red-100"
+                onClick={() => setIsThemePickerOpen(false)}
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[#52606d] shadow-sm transition hover:text-[#171717]"
+                aria-label="Fechar seletor de tema"
               >
-                <LogOut size={19} />
-                Sair
+                <X size={22} />
               </button>
             </div>
-          </aside>
 
-          <div className="min-w-0">
-            <header className="flex min-h-[82px] items-center justify-between gap-4 border-b border-slate-200/80 px-5 py-4 sm:px-8">
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.2em] text-[#d97706]">
-                  Operação central
-                </p>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              {colorThemeOptions.map((option) => {
+                const isSelected = option.id === selectedThemeId;
 
-                <p className="mt-1 text-sm font-semibold text-slate-500">
-                  Empresas, pagamentos e liberações.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2 sm:gap-3">
-                <Link
-                  to="/admin/account"
-                  className="flex min-w-0 items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm transition hover:border-slate-300 sm:px-4"
-                >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#e9f0f3] text-[#102b3a]">
-                    {profileImageUrl ? (
-                      <img
-                        src={profileImageUrl}
-                        alt={user?.name || "Foto do administrador"}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <UserRound size={18} />
-                    )}
-                  </span>
-
-                  <span className="hidden min-w-0 text-left sm:block">
-                    <strong className="block max-w-40 truncate text-sm text-slate-900">
-                      {user?.name || "Administrador"}
-                    </strong>
-
-                    <span className="block max-w-40 truncate text-xs text-slate-500">
-                      {user?.email || "Conta administrativa"}
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => handleThemeChange(option.id)}
+                    className="flex min-h-[104px] items-center gap-4 rounded-[24px] border bg-white/75 p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                    style={
+                      isSelected
+                        ? {
+                            borderColor: theme.styles.primary,
+                            background: theme.styles.muted,
+                          }
+                        : { borderColor: "rgba(0,0,0,0.10)" }
+                    }
+                  >
+                    <span className="flex shrink-0 -space-x-2">
+                      {option.colors.map((color) => (
+                        <span
+                          key={color}
+                          className="h-10 w-10 rounded-full border-2 border-white shadow-sm"
+                          style={{ background: color }}
+                        />
+                      ))}
                     </span>
-                  </span>
-                </Link>
 
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:border-red-200 hover:text-red-600 lg:hidden"
-                  title="Sair"
-                >
-                  <LogOut size={20} />
-                </button>
-              </div>
-            </header>
-
-            <main className="min-w-0 px-5 py-6 sm:px-8 sm:py-8">
-              {children}
-            </main>
-          </div>
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center gap-2 text-sm font-black text-[#171717]">
+                        {option.label}
+                        {isSelected ? (
+                          <span
+                            className="flex h-6 w-6 items-center justify-center rounded-full"
+                            style={{
+                              background: theme.styles.primary,
+                              color: theme.styles.primaryText,
+                            }}
+                          >
+                            <Check size={15} strokeWidth={3} />
+                          </span>
+                        ) : null}
+                      </span>
+                      <span className="mt-1 block text-xs font-medium leading-5 text-[#737373]">
+                        {option.description}
+                      </span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 }
