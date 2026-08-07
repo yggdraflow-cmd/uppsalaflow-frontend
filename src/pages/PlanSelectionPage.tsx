@@ -239,7 +239,7 @@ export function PlanSelectionPage() {
             <img
               src="/yggdraflow-brand-mark.png"
               alt="YggdraFlow"
-              className="relative z-10 translate-x-8 max-h-[96vh] max-w-[125%] object-contain drop-shadow-[0_24px_45px_rgba(0,0,0,0.35)]"
+              className="relative z-10 translate-x-12 max-h-[96vh] max-w-[125%] object-contain drop-shadow-[0_24px_45px_rgba(0,0,0,0.35)]"
             />
           </div>
         </section>
