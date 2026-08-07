@@ -5,7 +5,8 @@ import {
   Clock3,
   CreditCard,
   RefreshCw,
-  ShieldCheck,
+  ShieldCheck,
+
 } from "lucide-react";
 
 import { BusinessPaymentInstructions } from "../components/BusinessPaymentInstructions";
@@ -390,9 +391,9 @@ export function PlanSelectionPage() {
             )}
           </section>
         ) : (
-          <section className="mx-auto mt-12 max-w-[780px]">
-            <div className="rounded-[38px] border border-white/90 bg-white/90 p-8 text-center shadow-[0_28px_90px_rgba(0,0,0,0.12)] md:p-12">
-              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[26px] bg-[#171717] text-white">
+          <section className="w-full">
+            <div className="w-full rounded-[28px] border border-white/90 bg-white/95 px-7 py-6 text-center shadow-[0_30px_80px_rgba(0,0,0,0.30)] backdrop-blur-xl">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#171717] text-white shadow-[0_12px_30px_rgba(0,0,0,0.18)]">
                 {business?.status === "UNDER_REVIEW" ? (
                   <CheckCircle2 size={36} />
                 ) : business?.status === "BLOCKED" ||
@@ -404,20 +405,20 @@ export function PlanSelectionPage() {
                 )}
               </div>
 
-              <p className="mt-7 text-sm font-black uppercase tracking-[0.2em] text-[#07a80d]">
+              <p className="mt-4 text-xs font-black uppercase tracking-[0.22em] text-[#00bfff]">
                 {business?.name}
               </p>
 
-              <h1 className="mt-3 text-4xl font-black tracking-tight">
+              <h1 className="mt-2 text-3xl font-black tracking-tight">
                 {statusTitle}
               </h1>
 
-              <p className="mx-auto mt-4 max-w-2xl text-base font-medium leading-7 text-[#666]">
+              <p className="mx-auto mt-3 max-w-lg text-sm font-medium leading-6 text-[#666]">
                 {statusDescription}
               </p>
 
               {selectedPlan && (
-                <div className="mx-auto mt-8 max-w-xl rounded-[28px] bg-[#f3f4f4] p-6 text-left">
+                <div className="mx-auto mt-5 w-full rounded-2xl border border-[#e4e4e4] bg-[#f4f5f5] p-5 text-left">
                   <div className="flex items-center justify-between gap-4">
                     <div>
                       <p className="text-xs font-black uppercase tracking-[0.16em] text-[#777]">
@@ -467,13 +468,13 @@ export function PlanSelectionPage() {
               <button
                 type="button"
                 onClick={() => loadData()}
-                className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#171717] px-6 py-4 text-sm font-black text-white transition hover:-translate-y-0.5"
+                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#00bfff] px-6 py-3 text-sm font-black text-white shadow-[0_10px_24px_rgba(0,191,255,0.24)] transition hover:-translate-y-0.5 hover:bg-[#29c9ff]"
               >
                 <RefreshCw size={18} />
                 Atualizar status
               </button>
 
-              <p className="mt-5 text-xs font-bold text-[#888]">
+              <p className="mt-3 text-xs font-bold text-[#888]">
                 Esta página atualiza automaticamente a cada 15
                 segundos.
               </p>
