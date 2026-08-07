@@ -284,8 +284,9 @@ export function AccountPage() {
         </p>
       </div>
 
-      <div className="yggdra-split-grid">
-        <Card title="Usuário logado">
+      <div className="grid gap-6 xl:grid-cols-[minmax(340px,0.85fr)_minmax(0,1.65fr)] xl:items-start">
+        <div className="grid gap-6 xl:col-start-1 xl:row-start-1">
+          <Card title="Usuário logado">
           <div className="flex flex-col gap-5">
             <div className="flex items-start gap-4">
               <span className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-3xl bg-[var(--yggdra-primary)] text-[var(--yggdra-primary-text)] shadow-[0_16px_38px_var(--yggdra-shadow)]">
@@ -335,9 +336,11 @@ export function AccountPage() {
               sistema enquanto você estiver logado.
             </p>
           </div>
-        </Card>
+          </Card>
+        </div>
 
-        <Card title="Foto de capa do negócio">
+        <div className="xl:col-start-2 xl:row-start-1 xl:row-span-2">
+          <Card title="Foto de capa do negócio">
           <div className="flex flex-col gap-5">
             {businesses.length > 1 ? (
               <label>
@@ -434,9 +437,11 @@ export function AccountPage() {
               capa no Dashboard deste negócio.
             </p>
           </div>
-        </Card>
+          </Card>
+        </div>
 
-        <Card title="Alterar senha">
+        <div className="grid gap-6 xl:col-start-1 xl:row-start-2">
+          <Card title="Alterar senha">
           <form onSubmit={handleSubmit} className="space-y-4">
             <PasswordField
               label="Senha atual"
@@ -491,7 +496,8 @@ export function AccountPage() {
               {isSaving ? "Alterando..." : "Alterar senha"}
             </Button>
           </form>
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
   );
