@@ -1233,14 +1233,10 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
                         type="button"
                         onClick={() =>
                           setPendingStepIndex((current) =>
-                            Math.min(
-                              attentionItems.length - 1,
-                              current + 1
-                            )
+                            current === attentionItems.length - 1
+                              ? 0
+                              : current + 1
                           )
-                        }
-                        disabled={
-                          pendingStepIndex === attentionItems.length - 1
                         }
                         className="inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-black shadow-[0_10px_24px_var(--admin-shadow)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:translate-y-0"
                         style={{
