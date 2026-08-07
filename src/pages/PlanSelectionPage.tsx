@@ -234,12 +234,12 @@ export function PlanSelectionPage() {
       <div className="grid h-full w-full grid-cols-1 items-center gap-6 px-6 py-5 lg:grid-cols-[1fr_560px] lg:px-12 xl:grid-cols-[1fr_600px] xl:px-16">
         <section className="relative hidden h-full items-center justify-center lg:flex">
           <div className="relative flex h-full w-full items-center justify-center">
-            <div className="absolute h-[560px] w-[560px] rounded-full bg-[#00bfff]/15 blur-[90px]" />
+            <div className="absolute h-[760px] w-[760px] rounded-full bg-[#00bfff]/15 blur-[90px]" />
 
             <img
               src="/yggdraflow-brand-mark.png"
               alt="YggdraFlow"
-              className="relative z-10 max-h-[78vh] max-w-[92%] object-contain drop-shadow-[0_24px_45px_rgba(0,0,0,0.35)]"
+              className="relative z-10 max-h-[96vh] max-w-[125%] object-contain drop-shadow-[0_24px_45px_rgba(0,0,0,0.35)]"
             />
           </div>
         </section>
