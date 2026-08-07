@@ -1,10 +1,11 @@
-import { FormEvent, useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { Button } from "../components/Button";
-import { Card } from "../components/Card";
-import { Input } from "../components/Input";
+import {
+  FloatingInput,
+  PasswordInput,
+  RegisterPanel,
+} from "../components/RegisterPanel";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { api } from "../services/api";
 import { saveAuth } from "../services/authStorage";
@@ -22,41 +23,6 @@ function getRouteForRole(role: UserRole) {
   return "/dashboard";
 }
 
-type PasswordFieldProps = {
-  value: string;
-  onChange: (value: string) => void;
-};
-
-function PasswordField({ value, onChange }: PasswordFieldProps) {
-  const [isVisible, setIsVisible] = useState(false);
-
-  return (
-    <label className="block">
-      <span className="upp-label">Senha</span>
-
-      <div className="relative">
-        <input
-          className="upp-input pr-14"
-          type={isVisible ? "text" : "password"}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          required
-        />
-
-        <button
-          type="button"
-          onClick={() => setIsVisible((currentValue) => !currentValue)}
-          className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-[#555555] transition hover:text-[#171717]"
-          aria-label={isVisible ? "Ocultar senha" : "Mostrar senha"}
-          title={isVisible ? "Ocultar senha" : "Mostrar senha"}
-        >
-          {isVisible ? <EyeOff size={21} /> : <Eye size={21} />}
-        </button>
-      </div>
-    </label>
-  );
-}
-
 export function LoginPage() {
   const navigate = useNavigate();
 
@@ -66,7 +32,7 @@ export function LoginPage() {
   const [error, setError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  async function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     try {
@@ -90,40 +56,42 @@ export function LoginPage() {
   }
 
   return (
-    <AuthLayout>
-      <Card title="Entrar">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            label="E-mail"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-          />
+    <AuthLayout variant="plain" registerTheme="business">
+      <RegisterPanel
+        accountType="business"
+        theme="business"
+        title="Entrar como empresa"
+        description="Acesse o painel para gerenciar sua agenda, clientes, serviços e profissionais."
+        onSubmit={handleSubmit}
+        error={error}
+        isSaving={isSaving}
+        submitLabel="Entrar"
+        savingLabel="Entrando..."
+        loginPath="/register"
+        loginLabel="Criar conta da empresa"
+        businessPath="/login"
+        clientPath="/cliente/login"
+        footerText="Ainda não tem uma conta?"
+      >
+        <FloatingInput
+          id="business-login-email"
+          label="E-mail"
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          required
+        />
 
-          <PasswordField value={password} onChange={setPassword} />
-
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
-
-          <Button type="submit" disabled={isSaving} className="w-full">
-            {isSaving ? "Entrando..." : "Entrar"}
-          </Button>
-        </form>
-
-        <p className="mt-4 text-center text-sm text-zinc-600">
-          Ainda não tem conta?{" "}
-          <Link to="/register" className="font-semibold text-[#171717]">
-            Criar conta
-          </Link>
-        </p>
-
-        <p className="mt-3 text-center text-sm text-zinc-600">
-          Quer agendar um horário?{" "}
-          <Link to="/cliente/login" className="font-semibold text-[#171717]">
-            Entrar como cliente
-          </Link>
-        </p>
-      </Card>
+        <PasswordInput
+          id="business-login-password"
+          label="Senha"
+          autoComplete="current-password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          required
+        />
+      </RegisterPanel>
     </AuthLayout>
   );
 }

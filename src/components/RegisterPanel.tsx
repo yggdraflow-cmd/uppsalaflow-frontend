@@ -27,6 +27,9 @@ type RegisterPanelProps = {
   loginPath: string;
   loginLabel: string;
   clientRegisterPath?: string;
+  businessPath?: string;
+  clientPath?: string;
+  footerText?: string;
 };
 
 type FloatingInputProps = InputHTMLAttributes<HTMLInputElement> & {
@@ -241,6 +244,9 @@ export function RegisterPanel({
   loginPath,
   loginLabel,
   clientRegisterPath = "/cliente/cadastro",
+  businessPath = "/register",
+  clientPath = clientRegisterPath,
+  footerText = "Já tem uma conta?",
 }: RegisterPanelProps) {
   const currentTheme = themes[theme];
 
@@ -260,7 +266,7 @@ export function RegisterPanel({
           aria-label="Tipo de cadastro"
         >
           <Link
-            to="/register"
+            to={businessPath}
             className={[
               "flex min-w-0 items-center justify-center gap-2 rounded-xl px-2 py-2",
               "text-sm font-black transition",
@@ -275,7 +281,7 @@ export function RegisterPanel({
           </Link>
 
           <Link
-            to={clientRegisterPath}
+            to={clientPath}
             className={[
               "flex min-w-0 items-center justify-center gap-2 rounded-xl px-2 py-2",
               "text-sm font-black transition",
@@ -364,7 +370,7 @@ export function RegisterPanel({
             currentTheme.footer,
           ].join(" ")}
         >
-          Já tem uma conta?{" "}
+          {footerText}{" "}
           <Link
             to={loginPath}
             className={[
