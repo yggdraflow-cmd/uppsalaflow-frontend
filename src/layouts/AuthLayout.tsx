@@ -9,28 +9,63 @@ export function AuthLayout({
   children,
   variant = "framed",
 }: AuthLayoutProps) {
+  const isRegisterPage = variant === "plain";
+
   return (
-    <main className="auth-shell relative flex min-h-screen items-center justify-center overflow-hidden bg-white px-4 py-10">
-      <div className="pointer-events-none absolute left-1/2 top-[-180px] h-[420px] w-[720px] -translate-x-1/2 rounded-full bg-white/40 blur-3xl" />
+    <main
+      className={[
+        "auth-shell relative flex min-h-screen items-center justify-center",
+        "overflow-hidden px-4 py-10",
+        isRegisterPage
+          ? "bg-slate-950 bg-cover bg-center bg-no-repeat"
+          : "bg-white",
+      ].join(" ")}
+      style={
+        isRegisterPage
+          ? {
+              backgroundImage:
+                "linear-gradient(135deg, rgba(3, 10, 20, 0.56), rgba(3, 10, 20, 0.28)), url('/register-background.webp')",
+            }
+          : undefined
+      }
+    >
+      {!isRegisterPage ? (
+        <>
+          <div className="pointer-events-none absolute left-1/2 top-[-180px] h-[420px] w-[720px] -translate-x-1/2 rounded-full bg-white/40 blur-3xl" />
 
-      <div className="pointer-events-none absolute bottom-[-220px] right-[-160px] h-[420px] w-[420px] rounded-full bg-slate-200/50 blur-3xl" />
+          <div className="pointer-events-none absolute bottom-[-220px] right-[-160px] h-[420px] w-[420px] rounded-full bg-slate-200/50 blur-3xl" />
 
-      <div className="pointer-events-none absolute left-[-180px] top-1/3 h-[360px] w-[360px] rounded-full bg-slate-100/70 blur-3xl" />
+          <div className="pointer-events-none absolute left-[-180px] top-1/3 h-[360px] w-[360px] rounded-full bg-slate-100/70 blur-3xl" />
+        </>
+      ) : null}
 
       <div className="relative z-10 w-full max-w-md">
-        <div className="mb-8 text-center">
-          <p className="inline-flex rounded-full border border-slate-200 bg-white/70 px-5 py-2 text-xs font-bold uppercase tracking-[0.32em] text-[#171717] shadow-sm backdrop-blur-xl">
+        <div className="mb-6 text-center">
+          <p
+            className={[
+              "inline-flex rounded-full border px-5 py-2",
+              "text-xs font-black uppercase tracking-[0.32em]",
+              "shadow-lg backdrop-blur-xl",
+              isRegisterPage
+                ? "border-white/25 bg-black/35 text-white"
+                : "border-slate-200 bg-white/70 text-[#171717]",
+            ].join(" ")}
+          >
             YggdraFlow
           </p>
 
-          <h1 className="mt-6 text-4xl font-bold tracking-tight text-slate-950">
-            Gestão simples para negócios de estilo
-          </h1>
+          {!isRegisterPage ? (
+            <>
+              <h1 className="mt-6 text-4xl font-bold tracking-tight text-slate-950">
+                Gestão simples para negócios de estilo
+              </h1>
 
-          <p className="mt-4 text-sm leading-6 text-slate-500">
-            Organize agenda, clientes, serviços e profissionais em um fluxo
-            leve, moderno e direto.
-          </p>
+              <p className="mt-4 text-sm leading-6 text-slate-500">
+                Organize agenda, clientes, serviços e profissionais em um fluxo
+                leve, moderno e direto.
+              </p>
+            </>
+          ) : null}
         </div>
 
         {variant === "framed" ? (
