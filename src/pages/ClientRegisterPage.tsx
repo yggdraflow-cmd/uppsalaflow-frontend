@@ -24,7 +24,6 @@ export function ClientRegisterPage() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -48,7 +47,6 @@ export function ClientRegisterPage() {
         {
           name,
           email,
-          phone,
           password,
         }
       );
@@ -95,17 +93,6 @@ export function ClientRegisterPage() {
           autoComplete="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          required
-        />
-
-        <FloatingInput
-          id="client-phone"
-          label="Telefone"
-          type="tel"
-          inputMode="tel"
-          autoComplete="tel"
-          value={phone}
-          onChange={(event) => setPhone(event.target.value)}
           required
         />
 
