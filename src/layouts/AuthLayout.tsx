@@ -2,13 +2,19 @@ import type { ReactNode } from "react";
 
 type AuthLayoutProps = {
   children: ReactNode;
+  variant?: "framed" | "plain";
 };
 
-export function AuthLayout({ children }: AuthLayoutProps) {
+export function AuthLayout({
+  children,
+  variant = "framed",
+}: AuthLayoutProps) {
   return (
     <main className="auth-shell relative flex min-h-screen items-center justify-center overflow-hidden bg-white px-4 py-10">
       <div className="pointer-events-none absolute left-1/2 top-[-180px] h-[420px] w-[720px] -translate-x-1/2 rounded-full bg-white/40 blur-3xl" />
+
       <div className="pointer-events-none absolute bottom-[-220px] right-[-160px] h-[420px] w-[420px] rounded-full bg-slate-200/50 blur-3xl" />
+
       <div className="pointer-events-none absolute left-[-180px] top-1/3 h-[360px] w-[360px] rounded-full bg-slate-100/70 blur-3xl" />
 
       <div className="relative z-10 w-full max-w-md">
@@ -27,9 +33,13 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           </p>
         </div>
 
-        <div className="rounded-[32px] border border-white/70 bg-white/55 p-2 shadow-[0_24px_80px_rgba(15,23,42,0.10)] backdrop-blur-2xl">
-          {children}
-        </div>
+        {variant === "framed" ? (
+          <div className="rounded-[32px] border border-white/70 bg-white/55 p-2 shadow-[0_24px_80px_rgba(15,23,42,0.10)] backdrop-blur-2xl">
+            {children}
+          </div>
+        ) : (
+          children
+        )}
       </div>
     </main>
   );

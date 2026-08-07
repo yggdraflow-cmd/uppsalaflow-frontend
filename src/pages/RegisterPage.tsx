@@ -1,50 +1,15 @@
-import { FormEvent, useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { Button } from "../components/Button";
-import { Card } from "../components/Card";
-import { Input } from "../components/Input";
+import {
+  FloatingInput,
+  PasswordInput,
+  RegisterPanel,
+} from "../components/RegisterPanel";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { api } from "../services/api";
 import { saveAuth } from "../services/authStorage";
 import type { AuthResponse } from "../types/auth";
-
-type PasswordFieldProps = {
-  value: string;
-  onChange: (value: string) => void;
-};
-
-function PasswordField({ value, onChange }: PasswordFieldProps) {
-  const [isVisible, setIsVisible] = useState(false);
-
-  return (
-    <label className="block">
-      <span className="upp-label">Senha</span>
-
-      <div className="relative">
-        <input
-          className="upp-input pr-14"
-          type={isVisible ? "text" : "password"}
-          minLength={6}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          required
-        />
-
-        <button
-          type="button"
-          onClick={() => setIsVisible((currentValue) => !currentValue)}
-          className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-[#555555] transition hover:text-[#171717]"
-          aria-label={isVisible ? "Ocultar senha" : "Mostrar senha"}
-          title={isVisible ? "Ocultar senha" : "Mostrar senha"}
-        >
-          {isVisible ? <EyeOff size={21} /> : <Eye size={21} />}
-        </button>
-      </div>
-    </label>
-  );
-}
 
 export function RegisterPage() {
   const navigate = useNavigate();
@@ -52,12 +17,18 @@ export function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [error, setError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  async function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (password !== confirmPassword) {
+      setError("As senhas informadas não são iguais.");
+      return;
+    }
 
     try {
       setIsSaving(true);
@@ -72,57 +43,66 @@ export function RegisterPage() {
       saveAuth(response.data.token, response.data.user);
       navigate("/dashboard");
     } catch {
-      setError("Não foi possível criar a conta.");
+      setError("Não foi possível criar a conta da empresa.");
     } finally {
       setIsSaving(false);
     }
   }
 
   return (
-    <AuthLayout>
-      <Card title="Criar conta da empresa">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            label="Nome"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            required
-          />
+    <AuthLayout variant="plain">
+      <RegisterPanel
+        accountType="business"
+        title="Criar conta da empresa"
+        description="Cadastre seu acesso para gerenciar agenda, clientes, serviços e profissionais."
+        onSubmit={handleSubmit}
+        error={error}
+        isSaving={isSaving}
+        submitLabel="Criar conta da empresa"
+        savingLabel="Criando conta..."
+        loginPath="/login"
+        loginLabel="Entrar no painel"
+      >
+        <FloatingInput
+          id="business-name"
+          label="Seu nome"
+          type="text"
+          autoComplete="name"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          required
+        />
 
-          <Input
-            label="E-mail"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-          />
+        <FloatingInput
+          id="business-email"
+          label="E-mail"
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          required
+        />
 
-          <PasswordField value={password} onChange={setPassword} />
+        <PasswordInput
+          id="business-password"
+          label="Senha"
+          autoComplete="new-password"
+          minLength={6}
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          required
+        />
 
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
-
-          <Button type="submit" disabled={isSaving} className="w-full">
-            {isSaving ? "Criando..." : "Criar conta"}
-          </Button>
-        </form>
-
-        <p className="mt-4 text-center text-sm text-zinc-600">
-          Já tem conta?{" "}
-          <Link to="/login" className="font-semibold text-[#171717]">
-            Entrar
-          </Link>
-        </p>
-
-        <p className="mt-3 text-center text-sm text-zinc-600">
-          Quer agendar um horário?{" "}
-          <Link
-            to="/cliente/cadastro"
-            className="font-semibold text-[#171717]"
-          >
-            Criar conta de cliente
-          </Link>
-        </p>
-      </Card>
+        <PasswordInput
+          id="business-confirm-password"
+          label="Confirmar senha"
+          autoComplete="new-password"
+          minLength={6}
+          value={confirmPassword}
+          onChange={(event) => setConfirmPassword(event.target.value)}
+          required
+        />
+      </RegisterPanel>
     </AuthLayout>
   );
 }
