@@ -833,6 +833,49 @@ export function DashboardPage() {
                 </div>
               </div>
             </article>
+
+<article className="min-w-0 w-full max-w-full rounded-[24px] bg-[var(--yggdra-primary)] p-4 text-[var(--yggdra-primary-text)] shadow-[0_24px_60px_var(--yggdra-shadow)] sm:rounded-[28px] sm:p-5 md:rounded-[30px] md:p-7">
+            <div className="flex h-full flex-col gap-5">
+              <div>
+                <h2 className="text-xl font-black">{copy.businessSummaryTitle}</h2>
+                <p className="mt-2 text-sm font-bold opacity-65">
+                  {selectedBusiness?.name || "Nenhum negócio selecionado"}
+                </p>
+              </div>
+
+              <div className="mt-auto grid min-w-0 w-full grid-cols-3 gap-3">
+                <div className="rounded-2xl bg-white/10 px-5 py-4">
+                  <BriefcaseBusiness size={20} />
+                  <strong className="mt-4 block text-2xl font-black">
+                    {services.length}
+                  </strong>
+                  <span className="text-xs font-bold opacity-65">
+                    {copy.servicesSummaryLabel}
+                  </span>
+                </div>
+
+                <div className="rounded-2xl bg-white/10 px-5 py-4">
+                  <CheckCircle2 size={20} />
+                  <strong className="mt-4 block text-2xl font-black">
+                    {activeServices}
+                  </strong>
+                  <span className="text-xs font-bold opacity-65">
+                    {copy.activeServicesSummaryLabel}
+                  </span>
+                </div>
+
+                <div className="rounded-2xl bg-white/10 px-5 py-4">
+                  <UsersRound size={20} />
+                  <strong className="mt-4 block text-2xl font-black">
+                    {clients.length}
+                  </strong>
+                  <span className="text-xs font-bold opacity-65">
+                    {copy.clientsLabel}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </article>
           </section>
 
           <section className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
@@ -981,48 +1024,7 @@ export function DashboardPage() {
             </div>
           </section>
 
-          <section className="min-w-0 w-full max-w-full rounded-[24px] bg-[var(--yggdra-primary)] p-4 text-[var(--yggdra-primary-text)] shadow-[0_24px_60px_var(--yggdra-shadow)] sm:rounded-[28px] sm:p-5 md:rounded-[30px] md:p-7">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div>
-                <h2 className="text-xl font-black">{copy.businessSummaryTitle}</h2>
-                <p className="mt-2 text-sm font-bold opacity-65">
-                  {selectedBusiness?.name || "Nenhum negócio selecionado"}
-                </p>
-              </div>
 
-              <div className="grid min-w-0 w-full grid-cols-1 gap-3 sm:grid-cols-3">
-                <div className="rounded-2xl bg-white/10 px-5 py-4">
-                  <BriefcaseBusiness size={20} />
-                  <strong className="mt-4 block text-2xl font-black">
-                    {services.length}
-                  </strong>
-                  <span className="text-xs font-bold opacity-65">
-                    {copy.servicesSummaryLabel}
-                  </span>
-                </div>
-
-                <div className="rounded-2xl bg-white/10 px-5 py-4">
-                  <CheckCircle2 size={20} />
-                  <strong className="mt-4 block text-2xl font-black">
-                    {activeServices}
-                  </strong>
-                  <span className="text-xs font-bold opacity-65">
-                    {copy.activeServicesSummaryLabel}
-                  </span>
-                </div>
-
-                <div className="rounded-2xl bg-white/10 px-5 py-4">
-                  <UsersRound size={20} />
-                  <strong className="mt-4 block text-2xl font-black">
-                    {clients.length}
-                  </strong>
-                  <span className="text-xs font-bold opacity-65">
-                    {copy.clientsLabel}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </section>
         </>
       )}
     </div>
