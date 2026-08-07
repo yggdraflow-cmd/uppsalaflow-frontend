@@ -60,7 +60,7 @@ export function AuthLayout({
           <div
             className={
               isRegisterPage
-                ? "absolute bottom-full left-1/2 mb-3 -translate-x-1/2 whitespace-nowrap text-center"
+                ? "fixed left-1/2 top-4 z-30 -translate-x-1/2 whitespace-nowrap text-center sm:top-5"
                 : "mb-8 text-center"
             }
           >
