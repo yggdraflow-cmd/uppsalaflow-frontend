@@ -28,26 +28,19 @@ export function AuthLayout({
       ].join(" ")}
     >
       {isRegisterPage ? (
-        <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="pointer-events-none fixed inset-0">
           <img
             src={backgroundImage}
             alt=""
             aria-hidden="true"
-            className="absolute inset-0 h-full w-full scale-110 object-cover object-center opacity-70 blur-2xl"
-          />
-
-          <img
-            src={backgroundImage}
-            alt=""
-            aria-hidden="true"
-            className="absolute inset-0 h-full w-full object-contain object-center"
+            className="absolute inset-0 h-full w-full object-cover object-center"
           />
 
           <div
             className={[
               "absolute inset-0",
               isClientRegister
-                ? "bg-[rgba(57,39,12,0.16)]"
+                ? "bg-[rgba(57,39,12,0.18)]"
                 : "bg-[rgba(2,10,20,0.38)]",
             ].join(" ")}
           />
@@ -64,7 +57,13 @@ export function AuthLayout({
 
       <div className="relative z-10 flex min-h-[calc(100dvh-24px)] w-full items-center justify-center sm:min-h-[calc(100dvh-32px)]">
         <div className="w-full max-w-[450px]">
-          <div className="mb-3 text-center">
+          <div
+            className={
+              isRegisterPage
+                ? "absolute bottom-full left-1/2 mb-3 -translate-x-1/2 whitespace-nowrap text-center"
+                : "mb-8 text-center"
+            }
+          >
             <p
               className={[
                 "inline-flex rounded-full border px-5 py-2",
