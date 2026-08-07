@@ -99,6 +99,7 @@ export type Business = {
   email?: string | null;
   address?: string | null;
   category?: string | null;
+  coverImageUrl?: string | null;
   slug: string;
   segment?: BusinessSegment | null;
   specialty?: BusinessSpecialty | null;

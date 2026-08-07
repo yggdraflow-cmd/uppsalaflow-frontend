@@ -1,11 +1,12 @@
-import { ChangeEvent, FormEvent, useState } from "react";
-import { Camera, Eye, EyeOff, LockKeyhole, UserRound } from "lucide-react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { Camera, Eye, EyeOff, Image, LockKeyhole, Trash2, UserRound } from "lucide-react";
 
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { api, getApiAssetUrl } from "../services/api";
 import { getUser, updateStoredUser } from "../services/authStorage";
 import type { User } from "../types/auth";
+import type { Business } from "../types/business";
 
 type PasswordFieldProps = {
   label: string;
@@ -81,7 +82,38 @@ export function AccountPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
+  const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [selectedBusinessId, setSelectedBusinessId] = useState("");
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [isRemovingCover, setIsRemovingCover] = useState(false);
+
   const profileImageUrl = getApiAssetUrl(user?.profileImageUrl);
+
+  const selectedBusiness = businesses.find(
+    (business) => business.id === selectedBusinessId
+  );
+
+  const coverImageUrl = getApiAssetUrl(selectedBusiness?.coverImageUrl);
+
+  useEffect(() => {
+    async function loadBusinesses() {
+      try {
+        const response = await api.get<Business[]>("/businesses");
+
+        setBusinesses(response.data);
+
+        if (response.data.length > 0) {
+          setSelectedBusinessId(response.data[0].id);
+        }
+      } catch (error) {
+        setError(
+          getApiErrorMessage(error, "Não foi possível carregar seus negócios.")
+        );
+      }
+    }
+
+    loadBusinesses();
+  }, []);
 
   async function handleProfileImageChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -129,6 +161,87 @@ export function AccountPage() {
     }
   }
 
+  async function handleCoverImageChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file || !selectedBusinessId) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      setError("Envie uma imagem válida para a capa.");
+      setMessage("");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setError("A imagem da capa precisa ter no máximo 2MB.");
+      setMessage("");
+      event.target.value = "";
+      return;
+    }
+
+    try {
+      setIsUploadingCover(true);
+      setError("");
+      setMessage("");
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const response = await api.patch<Business>(
+        `/businesses/${selectedBusinessId}/cover`,
+        formData
+      );
+
+      setBusinesses((currentBusinesses) =>
+        currentBusinesses.map((business) =>
+          business.id === response.data.id ? response.data : business
+        )
+      );
+
+      setMessage("Foto de capa atualizada com sucesso.");
+    } catch (error) {
+      setError(
+        getApiErrorMessage(error, "Não foi possível atualizar a foto de capa.")
+      );
+    } finally {
+      setIsUploadingCover(false);
+      event.target.value = "";
+    }
+  }
+
+  async function handleRemoveCover() {
+    if (!selectedBusinessId || !selectedBusiness?.coverImageUrl) {
+      return;
+    }
+
+    try {
+      setIsRemovingCover(true);
+      setError("");
+      setMessage("");
+
+      const response = await api.delete<Business>(
+        `/businesses/${selectedBusinessId}/cover`
+      );
+
+      setBusinesses((currentBusinesses) =>
+        currentBusinesses.map((business) =>
+          business.id === response.data.id ? response.data : business
+        )
+      );
+
+      setMessage("Foto de capa removida com sucesso.");
+    } catch (error) {
+      setError(
+        getApiErrorMessage(error, "Não foi possível remover a foto de capa.")
+      );
+    } finally {
+      setIsRemovingCover(false);
+    }
+  }
+
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
@@ -167,7 +280,7 @@ export function AccountPage() {
         <p className="text-sm font-medium text-[#171717]">Minha conta</p>
         <h1 className="text-3xl font-bold text-zinc-950">Dados da conta</h1>
         <p className="mt-2 max-w-3xl text-zinc-600">
-          Gerencie seus dados de acesso, foto de perfil e senha com segurança.
+          Gerencie seus dados de acesso, foto de perfil, capa do negócio e senha com segurança.
         </p>
       </div>
 
@@ -220,6 +333,105 @@ export function AccountPage() {
             <p className="text-xs font-medium leading-5 text-zinc-500">
               Use JPG, PNG ou WEBP com até 2MB. Essa foto aparece no topo do
               sistema enquanto você estiver logado.
+            </p>
+          </div>
+        </Card>
+
+        <Card title="Foto de capa do negócio">
+          <div className="flex flex-col gap-5">
+            {businesses.length > 1 ? (
+              <label>
+                <span className="mb-2 block text-sm font-bold text-zinc-700">
+                  Negócio
+                </span>
+
+                <select
+                  value={selectedBusinessId}
+                  onChange={(event) => setSelectedBusinessId(event.target.value)}
+                  className="upp-input"
+                >
+                  {businesses.map((business) => (
+                    <option key={business.id} value={business.id}>
+                      {business.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : (
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">
+                  Negócio
+                </p>
+                <p className="mt-1 font-black text-zinc-950">
+                  {selectedBusiness?.name || "Nenhum negócio disponível"}
+                </p>
+              </div>
+            )}
+
+            <div className="relative h-44 overflow-hidden rounded-[24px] border border-white/80 bg-[var(--yggdra-muted)] shadow-[0_16px_38px_var(--yggdra-shadow)]">
+              {coverImageUrl ? (
+                <img
+                  src={coverImageUrl}
+                  alt={`Capa de ${selectedBusiness?.name || "negócio"}`}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full flex-col items-center justify-center gap-3 text-zinc-500">
+                  <Image size={34} />
+                  <span className="text-sm font-bold">
+                    Nenhuma foto de capa cadastrada
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label
+                className={[
+                  "flex items-center justify-center gap-2 rounded-2xl border border-white/80 bg-[var(--yggdra-muted)] px-4 py-3 text-sm font-black text-[#171717] transition hover:bg-white",
+                  !selectedBusinessId || isUploadingCover
+                    ? "cursor-not-allowed opacity-50"
+                    : "cursor-pointer",
+                ].join(" ")}
+              >
+                <Camera size={18} />
+
+                <span>
+                  {isUploadingCover
+                    ? "Enviando..."
+                    : coverImageUrl
+                      ? "Trocar capa"
+                      : "Enviar capa"}
+                </span>
+
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={handleCoverImageChange}
+                  disabled={!selectedBusinessId || isUploadingCover}
+                  className="hidden"
+                />
+              </label>
+
+              <button
+                type="button"
+                onClick={handleRemoveCover}
+                disabled={
+                  !selectedBusiness?.coverImageUrl ||
+                  isRemovingCover ||
+                  isUploadingCover
+                }
+                className="flex items-center justify-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-black text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <Trash2 size={18} />
+
+                {isRemovingCover ? "Removendo..." : "Remover capa"}
+              </button>
+            </div>
+
+            <p className="text-xs font-medium leading-5 text-zinc-500">
+              Use JPG, PNG ou WEBP com até 2MB. A imagem será exibida como
+              capa no Dashboard deste negócio.
             </p>
           </div>
         </Card>
