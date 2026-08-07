@@ -489,7 +489,7 @@ export function DashboardPage() {
 
   return (
     <div className="min-w-0 w-full max-w-full space-y-5 pb-4 sm:space-y-7">
-      <section className="grid min-w-0 grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
+      <section className="grid min-w-0 grid-cols-1 items-stretch gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
         <div
           className={[
             "relative min-w-0 overflow-hidden rounded-[28px] border border-white/70 p-6 shadow-[0_20px_55px_var(--yggdra-shadow)] sm:min-h-[220px] sm:p-8",
@@ -538,8 +538,8 @@ export function DashboardPage() {
           </div>
         </div>
 
-        <div className="grid min-w-0 w-full grid-cols-1 gap-4 self-start sm:grid-cols-2 xl:max-w-[560px] xl:justify-self-end">
-          <label className="min-w-0 max-w-full rounded-[24px] bg-[var(--yggdra-card)] p-4 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl sm:p-5">
+        <div className="grid h-full min-w-0 w-full grid-cols-1 gap-4 self-stretch sm:grid-cols-2 xl:min-h-[220px] xl:max-w-[560px] xl:justify-self-end">
+          <label className="flex min-w-0 max-w-full flex-col justify-center rounded-[24px] bg-[var(--yggdra-card)] p-4 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl sm:p-5">
             <span className="mb-3 block text-xs font-black uppercase tracking-[0.28em] text-[#777]">
               {copy.businessSelectLabel}
             </span>
@@ -561,7 +561,7 @@ export function DashboardPage() {
             </select>
           </label>
 
-          <label className="rounded-[24px] bg-[var(--yggdra-card)] p-5 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
+          <label className="flex flex-col justify-center rounded-[24px] bg-[var(--yggdra-card)] p-5 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl">
             <span className="mb-3 block text-xs font-black uppercase tracking-[0.28em] text-[#777]">
               Data
             </span>
