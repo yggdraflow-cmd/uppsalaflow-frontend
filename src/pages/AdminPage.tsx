@@ -50,6 +50,7 @@ type BusinessAction =
 type Subscription = {
   id: string;
   plan: string;
+  cycle?: "MONTHLY" | "SEMIANNUAL" | "ANNUAL";
   status: string;
   startedAt: string;
   expiresAt?: string | null;
@@ -199,14 +200,22 @@ function formatCurrency(value: string | number) {
   });
 }
 
-function planLabel(plan?: string | null) {
-  const labels: Record<string, string> = {
-    FREE: "Gratuito",
-    BASIC: "Básico",
-    PRO: "Pro",
+function planLabel(subscription?: Subscription | null) {
+  if (!subscription) {
+    return "Sem plano";
+  }
+
+  const cycleLabels: Record<string, string> = {
+    MONTHLY: "Mensal",
+    SEMIANNUAL: "Semestral",
+    ANNUAL: "Anual",
   };
 
-  return plan ? labels[plan] || plan : "Sem plano";
+  return (
+    cycleLabels[subscription.cycle || ""] ||
+    subscription.plan ||
+    "Sem plano"
+  );
 }
 
 function subscriptionLabel(status?: string | null) {
@@ -285,6 +294,144 @@ function paymentStatusMeta(status: PaymentStatus) {
   };
 
   return metadata[status];
+}
+
+type BillingAlert = {
+  label: string;
+  details: string;
+  style: string;
+};
+
+function getSaoPauloDateOnly(value: Date) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Sao_Paulo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(value);
+
+  const values = Object.fromEntries(
+    parts.map((part) => [part.type, part.value])
+  );
+
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+function dateOnlyToUtcTimestamp(value: string) {
+  const [year, month, day] = value.split("-").map(Number);
+
+  return Date.UTC(year, month - 1, day);
+}
+
+function differenceInCalendarDays(target: Date, current: Date) {
+  const targetDate = getSaoPauloDateOnly(target);
+  const currentDate = getSaoPauloDateOnly(current);
+
+  return Math.round(
+    (dateOnlyToUtcTimestamp(targetDate) -
+      dateOnlyToUtcTimestamp(currentDate)) /
+      86_400_000
+  );
+}
+
+function getBillingAlert(
+  payment?: Payment | null
+): BillingAlert | null {
+  if (
+    !payment?.dueAt ||
+    !["PENDING", "OVERDUE"].includes(payment.status)
+  ) {
+    return null;
+  }
+
+  const dueDate = new Date(payment.dueAt);
+
+  if (Number.isNaN(dueDate.getTime())) {
+    return null;
+  }
+
+  const daysUntilDue = differenceInCalendarDays(
+    dueDate,
+    new Date()
+  );
+
+  const dueDateLabel = formatDate(payment.dueAt);
+
+  if (daysUntilDue > 7) {
+    return null;
+  }
+
+  if (daysUntilDue > 1) {
+    return {
+      label: `Vence em ${daysUntilDue} dias`,
+      details: `Vencimento em ${dueDateLabel}`,
+      style:
+        "bg-amber-50 text-amber-800 ring-amber-200",
+    };
+  }
+
+  if (daysUntilDue === 1) {
+    return {
+      label: "Vence amanhã",
+      details: `Vencimento em ${dueDateLabel}`,
+      style:
+        "bg-amber-50 text-amber-800 ring-amber-200",
+    };
+  }
+
+  if (daysUntilDue === 0) {
+    return {
+      label: "Vence hoje",
+      details:
+        "Regularize o pagamento para evitar suspensão.",
+      style:
+        "bg-orange-50 text-orange-800 ring-orange-200",
+    };
+  }
+
+  const overdueDays = Math.abs(daysUntilDue);
+
+  return {
+    label:
+      overdueDays === 1
+        ? "Atrasado há 1 dia"
+        : `Atrasado há ${overdueDays} dias`,
+    details: `Venceu em ${dueDateLabel}`,
+    style: "bg-red-50 text-red-800 ring-red-200",
+  };
+}
+
+function BillingAlertBadge({
+  payment,
+}: {
+  payment?: Payment | null;
+}) {
+  const alert = getBillingAlert(payment);
+
+  if (!alert) {
+    return null;
+  }
+
+  return (
+    <div
+      className={`mt-3 inline-flex max-w-full items-start gap-2 rounded-xl px-3 py-2 text-xs font-bold ring-1 ${alert.style}`}
+    >
+      <AlertTriangle
+        className="mt-0.5 shrink-0"
+        size={16}
+      />
+
+      <span className="min-w-0">
+        <strong className="block font-black">
+          {alert.label}
+        </strong>
+
+        <span className="mt-0.5 block">
+          {alert.details}
+        </span>
+      </span>
+    </div>
+  );
 }
 
 function CompanyStatusBadge({ status }: { status: CompanyStatus }) {
@@ -413,6 +560,14 @@ export function AdminPage() {
     [paymentStatus, payments]
   );
 
+  const billingAttentionPayments = useMemo(
+    () =>
+      payments.filter((payment) =>
+        Boolean(getBillingAlert(payment))
+      ),
+    [payments]
+  );
+
   function openDialog(business: Business, action: BusinessAction) {
     setReason("");
     setDialog({ business, action });
@@ -474,8 +629,16 @@ export function AdminPage() {
   }
 
   function getPaymentForBusiness(businessId: string) {
-    return payments.find(
-      (payment) => payment.business?.id === businessId
+    return (
+      payments.find(
+        (payment) =>
+          payment.business?.id === businessId &&
+          (payment.status === "PENDING" ||
+            payment.status === "OVERDUE")
+      ) ||
+      payments.find(
+        (payment) => payment.business?.id === businessId
+      )
     );
   }
 
@@ -601,6 +764,38 @@ export function AdminPage() {
         <div className="mb-5 flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">
           <CheckCircle2 className="mt-0.5 shrink-0" size={19} />
           {success}
+        </div>
+      ) : null}
+
+      {billingAttentionPayments.length > 0 &&
+      (currentView === "overview" ||
+        currentView === "businesses" ||
+        currentView === "payments") ? (
+        <div className="mb-5 flex items-start gap-3 rounded-[24px] border border-amber-200 bg-amber-50 p-5 text-amber-900 shadow-sm">
+          <AlertTriangle
+            className="mt-0.5 shrink-0 text-amber-700"
+            size={22}
+          />
+
+          <div className="min-w-0">
+            <strong className="block font-black">
+              {billingAttentionPayments.length}{" "}
+              {billingAttentionPayments.length === 1
+                ? "cobrança exige"
+                : "cobranças exigem"}{" "}
+              atenção
+            </strong>
+
+            <p className="mt-1 text-sm font-semibold leading-6 text-amber-800">
+              {billingAttentionPayments
+                .map(
+                  (payment) =>
+                    payment.business?.name ||
+                    "Empresa não informada"
+                )
+                .join(", ")}
+            </p>
+          </div>
         </div>
       ) : null}
 
@@ -745,7 +940,7 @@ export function AdminPage() {
                         </p>
                         <p className="mt-1 text-sm text-slate-500">
                           Cadastro em {formatDateTime(business.createdAt)} • plano{" "}
-                          {planLabel(business.subscription?.plan)}
+                          {planLabel(business.subscription)}
                         </p>
 
                         <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
@@ -899,9 +1094,13 @@ export function AdminPage() {
                         {business.owner.name} • {business.owner.email}
                       </p>
                       <p className="mt-1 text-sm text-slate-500">
-                        Plano {planLabel(business.subscription?.plan)} •{" "}
+                        Plano {planLabel(business.subscription)} •{" "}
                         {subscriptionLabel(business.subscription?.status)}
                       </p>
+
+                      <BillingAlertBadge
+                        payment={getPaymentForBusiness(business.id)}
+                      />
 
                       {business.statusReason ? (
                         <p className="mt-3 rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-600 ring-1 ring-slate-200">
@@ -1073,13 +1272,15 @@ export function AdminPage() {
                         </span>
                       </td>
                       <td className="px-4 py-4 font-semibold text-slate-600">
-                        {planLabel(payment.subscription?.plan)}
+                        {planLabel(payment.subscription)}
                       </td>
                       <td className="px-4 py-4 font-black text-slate-950">
                         {formatCurrency(payment.amount)}
                       </td>
                       <td className="px-4 py-4">
                         <PaymentStatusBadge status={payment.status} />
+
+                        <BillingAlertBadge payment={payment} />
                       </td>
                       <td className="px-4 py-4 text-slate-600">
                         {formatDate(payment.dueAt)}
