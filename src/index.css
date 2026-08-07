@@ -360,3 +360,80 @@ button {
     animation: none;
   }
 }
+
+
+/* Super Admin - Saúde da plataforma em formato de paleta */
+.admin-health-palette {
+  width: 100%;
+}
+
+.admin-health-palette-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.admin-health-palette-title {
+  color: var(--admin-primary);
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.admin-health-palette-subtitle {
+  margin-top: 6px;
+  color: var(--admin-primary);
+  opacity: 0.55;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.admin-health-palette-list {
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 16px 34px var(--admin-shadow);
+}
+
+.admin-health-palette-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 64px;
+  padding: 14px 18px;
+  font-size: 0.875rem;
+  font-weight: 800;
+}
+
+.admin-health-palette-row strong {
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.admin-health-palette-primary {
+  background: var(--admin-primary);
+  color: var(--admin-primary-text);
+}
+
+.admin-health-palette-accent {
+  background: var(--admin-accent);
+  color: var(--admin-accent-text);
+}
+
+.admin-health-palette-muted {
+  background: var(--admin-muted);
+  color: var(--admin-primary);
+}
+
+.admin-health-palette-card {
+  background: var(--admin-card);
+  color: var(--admin-primary);
+}
+
+.admin-health-palette-footer {
+  margin-top: 18px;
+  text-align: center;
+  color: var(--admin-primary);
+  opacity: 0.55;
+  font-size: 0.72rem;
+  font-weight: 800;
+}

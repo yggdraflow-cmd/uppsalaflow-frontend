@@ -1376,32 +1376,47 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
               })() : null}
             </Card>
 
-            <Card title="Saúde da plataforma">
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between rounded-2xl bg-slate-50 p-4">
-                  <span className="font-semibold text-slate-500">Usuários</span>
-                  <strong>{overview?.summary.totalUsers || 0}</strong>
+            <Card>
+              <div className="admin-health-palette">
+                <div className="admin-health-palette-header">
+                  <h2 className="admin-health-palette-title">
+                    Saúde da plataforma
+                  </h2>
+
+                  <p className="admin-health-palette-subtitle">
+                    Visão geral operacional
+                  </p>
                 </div>
-                <div className="flex justify-between rounded-2xl bg-slate-50 p-4">
-                  <span className="font-semibold text-slate-500">
-                    Assinaturas ativas
-                  </span>
-                  <strong>{overview?.summary.activeSubscriptions || 0}</strong>
+
+                <div className="admin-health-palette-list">
+                  <div className="admin-health-palette-row admin-health-palette-primary">
+                    <span>Usuários</span>
+                    <strong>{overview?.summary.totalUsers || 0}</strong>
+                  </div>
+
+                  <div className="admin-health-palette-row admin-health-palette-accent">
+                    <span>Assinaturas ativas</span>
+                    <strong>
+                      {overview?.summary.activeSubscriptions || 0}
+                    </strong>
+                  </div>
+
+                  <div className="admin-health-palette-row admin-health-palette-muted">
+                    <span>Sem assinatura</span>
+                    <strong>
+                      {overview?.summary.businessesWithoutSubscription || 0}
+                    </strong>
+                  </div>
+
+                  <div className="admin-health-palette-row admin-health-palette-card">
+                    <span>Pagamentos registrados</span>
+                    <strong>{overview?.summary.totalPayments || 0}</strong>
+                  </div>
                 </div>
-                <div className="flex justify-between rounded-2xl bg-slate-50 p-4">
-                  <span className="font-semibold text-slate-500">
-                    Sem assinatura
-                  </span>
-                  <strong>
-                    {overview?.summary.businessesWithoutSubscription || 0}
-                  </strong>
-                </div>
-                <div className="flex justify-between rounded-2xl bg-slate-50 p-4">
-                  <span className="font-semibold text-slate-500">
-                    Pagamentos registrados
-                  </span>
-                  <strong>{overview?.summary.totalPayments || 0}</strong>
-                </div>
+
+                <p className="admin-health-palette-footer">
+                  Indicadores atualizados com os dados da plataforma
+                </p>
               </div>
             </Card>
           </div>
