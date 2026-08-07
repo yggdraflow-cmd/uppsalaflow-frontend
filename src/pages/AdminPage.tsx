@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   AlertTriangle,
+  ArrowLeft,
+  ArrowRight,
   Ban,
   Building2,
   CheckCircle2,
@@ -484,6 +486,7 @@ export function AdminPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [search, setSearch] = useState("");
+const [pendingStepIndex, setPendingStepIndex] = useState(0);
   const [companyStatus, setCompanyStatus] = useState<CompanyStatus | "ALL">(
     "ALL"
   );
@@ -781,6 +784,36 @@ export function AdminPage() {
     };
   }, [payments]);
 
+  const attentionItems = [
+    {
+      label: "Aguardando pagamento",
+      value: overview?.summary.paymentPendingBusinesses || 0,
+      description: "Empresas aguardando confirmação de pagamento",
+      icon: CreditCard,
+    },
+    {
+      label: "Em análise",
+      value: overview?.summary.underReviewBusinesses || 0,
+      description: "Cadastros aguardando análise administrativa",
+      icon: ShieldCheck,
+    },
+    {
+      label: "Pagamentos atrasados",
+      value: overview?.summary.overduePayments || 0,
+      description: "Cobranças vencidas que exigem atenção",
+      icon: AlertTriangle,
+    },
+    {
+      label: "Empresas suspensas",
+      value: overview?.summary.suspendedBusinesses || 0,
+      description: "Empresas temporariamente sem acesso",
+      icon: PauseCircle,
+    },
+  ];
+
+  const activeAttentionItem =
+    attentionItems[pendingStepIndex] || attentionItems[0];
+
   const summaryCards = [
     {
       title: "Empresas ativas",
@@ -1061,122 +1094,167 @@ export function AdminPage() {
 
           <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
             <Card title="Pendências que exigem atenção">
-              <div className="py-2">
-                {[
-                  {
-                    label: "Aguardando pagamento",
-                    value: overview?.summary.paymentPendingBusinesses || 0,
-                    description: "Empresas aguardando confirmação de pagamento",
-                    icon: CreditCard,
-                  },
-                  {
-                    label: "Em análise",
-                    value: overview?.summary.underReviewBusinesses || 0,
-                    description: "Cadastros aguardando análise administrativa",
-                    icon: ShieldCheck,
-                  },
-                  {
-                    label: "Pagamentos atrasados",
-                    value: overview?.summary.overduePayments || 0,
-                    description: "Cobranças vencidas que exigem atenção",
-                    icon: AlertTriangle,
-                  },
-                  {
-                    label: "Empresas suspensas",
-                    value: overview?.summary.suspendedBusinesses || 0,
-                    description: "Empresas temporariamente sem acesso",
-                    icon: PauseCircle,
-                  },
-                ].map((item, index, items) => {
-                  const Icon = item.icon;
-                  const hasAttention = item.value > 0;
-                  const isLast = index === items.length - 1;
+              {activeAttentionItem ? (() => {
+                const Icon = activeAttentionItem.icon;
+                const hasAttention = activeAttentionItem.value > 0;
 
-                  return (
-                    <div
-                      key={item.label}
-                      className={[
-                        "relative flex gap-4",
-                        isLast ? "" : "pb-7",
-                      ].join(" ")}
-                    >
-                      <div className="relative flex shrink-0 flex-col items-center">
-                        <div
-                          className={[
-                            "relative z-10 flex h-11 w-11 items-center justify-center rounded-full transition",
-                            hasAttention
-                              ? "border-2 border-[var(--admin-accent)] bg-[var(--admin-card)] text-[var(--admin-accent-text)]"
-                              : "bg-[var(--admin-primary)] text-[var(--admin-primary-text)] shadow-[0_8px_20px_var(--admin-shadow)]",
-                          ].join(" ")}
+                return (
+                  <div className="flex min-h-[360px] flex-col justify-between py-3">
+                    <div>
+                      <div className="mb-8 flex items-center justify-between">
+                        <span
+                          className="rounded-full px-3 py-1 text-xs font-black"
+                          style={{
+                            background: "var(--admin-muted)",
+                            color: "var(--admin-primary)",
+                          }}
                         >
-                          {hasAttention ? (
-                            <Icon size={19} />
-                          ) : (
-                            <CheckCircle2 size={20} />
-                          )}
+                          {pendingStepIndex + 1} de {attentionItems.length}
+                        </span>
+
+                        <div className="flex gap-2">
+                          {attentionItems.map((item, index) => (
+                            <span
+                              key={item.label}
+                              className="h-2.5 w-2.5 rounded-full transition-all"
+                              style={{
+                                background:
+                                  index === pendingStepIndex
+                                    ? "var(--admin-primary)"
+                                    : "var(--admin-muted)",
+                                transform:
+                                  index === pendingStepIndex
+                                    ? "scale(1.2)"
+                                    : "scale(1)",
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-5">
+                        <div className="relative flex shrink-0 flex-col items-center">
+                          <div
+                            className="flex h-16 w-16 items-center justify-center rounded-full shadow-[0_12px_30px_var(--admin-shadow)]"
+                            style={
+                              hasAttention
+                                ? {
+                                    border: "2px solid var(--admin-accent)",
+                                    background: "var(--admin-card)",
+                                    color: "var(--admin-accent-text)",
+                                  }
+                                : {
+                                    background: "var(--admin-primary)",
+                                    color: "var(--admin-primary-text)",
+                                  }
+                            }
+                          >
+                            {hasAttention ? (
+                              <Icon size={27} />
+                            ) : (
+                              <CheckCircle2 size={28} />
+                            )}
+                          </div>
                         </div>
 
-                        {!isLast ? (
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-2xl font-black text-slate-950">
+                            {activeAttentionItem.label}
+                          </h3>
+
+                          <span
+                            className="mt-3 inline-flex rounded-full px-4 py-1.5 text-sm font-black"
+                            style={
+                              hasAttention
+                                ? {
+                                    background: "var(--admin-accent)",
+                                    color: "var(--admin-accent-text)",
+                                  }
+                                : {
+                                    background: "var(--admin-muted)",
+                                    color: "var(--admin-primary)",
+                                  }
+                            }
+                          >
+                            {hasAttention
+                              ? `${activeAttentionItem.value} ${
+                                  activeAttentionItem.value === 1
+                                    ? "pendência"
+                                    : "pendências"
+                                }`
+                              : "Sem pendências"}
+                          </span>
+
+                          <p className="mt-4 max-w-lg text-sm font-semibold leading-6 text-slate-400">
+                            {activeAttentionItem.description}
+                          </p>
+
                           <div
-                            className="absolute left-1/2 top-11 h-[calc(100%-44px)] w-[2px] -translate-x-1/2"
+                            className="mt-7 rounded-[22px] p-5"
                             style={{
                               background: "var(--admin-muted)",
                             }}
-                          />
-                        ) : null}
-                      </div>
-
-                      <div className="min-w-0 flex-1 pb-1">
-                        <div className="flex flex-wrap items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <h3 className="text-base font-black text-slate-950">
-                              {item.label}
-                            </h3>
-
-                            <p className="mt-1 text-xs font-semibold leading-5 text-slate-400">
-                              {item.description}
-                            </p>
-                          </div>
-
-                          <strong
-                            className="text-2xl font-black"
-                            style={{
-                              color: hasAttention
-                                ? "var(--admin-accent-text)"
-                                : "var(--admin-primary)",
-                            }}
                           >
-                            {item.value}
-                          </strong>
-                        </div>
+                            <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">
+                              Total atual
+                            </p>
 
-                        <span
-                          className="mt-3 inline-flex rounded-full px-3 py-1 text-xs font-black"
-                          style={
-                            hasAttention
-                              ? {
-                                  background: "var(--admin-accent)",
-                                  color: "var(--admin-accent-text)",
-                                }
-                              : {
-                                  background: "var(--admin-muted)",
-                                  color: "var(--admin-primary)",
-                                }
-                          }
-                        >
-                          {hasAttention
-                            ? `${item.value} ${
-                                item.value === 1
-                                  ? "pendência"
-                                  : "pendências"
-                              }`
-                            : "Sem pendências"}
-                        </span>
+                            <strong
+                              className="mt-2 block text-4xl font-black"
+                              style={{
+                                color: hasAttention
+                                  ? "var(--admin-accent-text)"
+                                  : "var(--admin-primary)",
+                              }}
+                            >
+                              {activeAttentionItem.value}
+                            </strong>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
+
+                    <div className="mt-8 flex items-center justify-between border-t border-slate-200 pt-5">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setPendingStepIndex((current) =>
+                            Math.max(0, current - 1)
+                          )
+                        }
+                        disabled={pendingStepIndex === 0}
+                        className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:border-[var(--admin-primary)] hover:text-[var(--admin-primary)] disabled:cursor-not-allowed disabled:opacity-35"
+                      >
+                        <ArrowLeft size={17} />
+                        Previous
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setPendingStepIndex((current) =>
+                            Math.min(
+                              attentionItems.length - 1,
+                              current + 1
+                            )
+                          )
+                        }
+                        disabled={
+                          pendingStepIndex === attentionItems.length - 1
+                        }
+                        className="inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-black shadow-[0_10px_24px_var(--admin-shadow)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:translate-y-0"
+                        style={{
+                          background: "var(--admin-primary)",
+                          color: "var(--admin-primary-text)",
+                        }}
+                      >
+                        Next
+                        <ArrowRight size={17} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })() : null}
             </Card>
 
             <Card title="Saúde da plataforma">
