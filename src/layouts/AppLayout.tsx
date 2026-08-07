@@ -545,8 +545,6 @@ export function AppLayout({ children }: AppLayoutProps) {
               );
             })}
 
-            <div className="floating-business-nav-push" />
-
             <button
               type="button"
               onClick={() => setIsThemePickerOpen(true)}
