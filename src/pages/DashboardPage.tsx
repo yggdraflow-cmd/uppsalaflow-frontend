@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-import { api } from "../services/api";
+import { api, getApiAssetUrl } from "../services/api";
 import type { Business } from "../types/business";
 import type { Client } from "../types/client";
 import type { BeautyService } from "../types/service";
@@ -372,6 +372,7 @@ export function DashboardPage() {
   const ProgressIcon = copy.progressIcon;
 
   const userName = getStoredUserName();
+  const coverImageUrl = getApiAssetUrl(selectedBusiness?.coverImageUrl);
   const activeServices = services.filter((service) => service.active).length;
   const upcomingAppointments = summary?.upcomingAppointments || [];
 
@@ -489,18 +490,52 @@ export function DashboardPage() {
   return (
     <div className="min-w-0 w-full max-w-full space-y-5 pb-4 sm:space-y-7">
       <section className="grid min-w-0 grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
-        <div className="flex min-w-0 flex-col justify-end sm:min-h-[110px]">
-          <div className="mb-4 inline-flex w-fit rounded-full bg-[var(--yggdra-accent)] px-4 py-2 text-xs font-black text-[var(--yggdra-accent-text)] shadow-[0_12px_34px_var(--yggdra-shadow)]">
-            {copy.theme.brandName}
+        <div
+          className={[
+            "relative min-w-0 overflow-hidden rounded-[28px] border border-white/70 p-6 shadow-[0_20px_55px_var(--yggdra-shadow)] sm:min-h-[220px] sm:p-8",
+            coverImageUrl ? "text-white" : "bg-[var(--yggdra-card)]",
+          ].join(" ")}
+          style={
+            coverImageUrl
+              ? {
+                  backgroundImage: `linear-gradient(90deg, rgba(8,20,32,0.78) 0%, rgba(8,20,32,0.38) 55%, rgba(8,20,32,0.14) 100%), url("${coverImageUrl}")`,
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: "cover",
+                }
+              : undefined
+          }
+        >
+          <div className="relative z-10 flex h-full min-h-[150px] flex-col justify-end">
+            <div
+              className={[
+                "mb-3 inline-flex w-fit rounded-full px-4 py-2 text-xs font-black shadow-[0_12px_34px_var(--yggdra-shadow)]",
+                coverImageUrl
+                  ? "bg-white/20 text-white backdrop-blur-md"
+                  : "bg-[var(--yggdra-accent)] text-[var(--yggdra-accent-text)]",
+              ].join(" ")}
+            >
+              {copy.theme.brandName}
+            </div>
+
+            <h1
+              className={[
+                "break-words text-[clamp(2rem,5vw,3.2rem)] font-black leading-[1] tracking-tight",
+                coverImageUrl ? "text-white" : "text-[#171717]",
+              ].join(" ")}
+            >
+              Olá, {userName}!
+            </h1>
+
+            <p
+              className={[
+                "mt-3 max-w-xl text-sm font-medium leading-6",
+                coverImageUrl ? "text-white/85" : "text-[#5f6368]",
+              ].join(" ")}
+            >
+              {copy.description}
+            </p>
           </div>
-
-          <h1 className="break-words text-[clamp(2rem,10vw,4.6rem)] font-black leading-[0.98] tracking-tight text-[#171717]">
-            Olá, {userName}!
-          </h1>
-
-          <p className="mt-3 max-w-xl text-sm font-medium leading-6 text-[#5f6368]">
-            {copy.description}
-          </p>
         </div>
 
         <div className="grid min-w-0 w-full grid-cols-1 gap-4 self-start sm:grid-cols-2 xl:max-w-[560px] xl:justify-self-end">
