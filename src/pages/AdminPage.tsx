@@ -927,50 +927,50 @@ export function AdminPage() {
             })}
           </div>
 
-          <article className="overflow-hidden rounded-[28px] bg-[#102b3a] p-5 text-white shadow-[0_24px_60px_rgba(15,43,58,0.22)] sm:p-6 md:p-7">
+          <article className="overflow-hidden rounded-[28px] bg-[var(--admin-primary)] p-5 text-[var(--admin-primary-text)] shadow-[0_24px_60px_var(--admin-shadow)] sm:p-6 md:p-7">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-center gap-4">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-amber-400">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--admin-muted)] text-[var(--admin-accent)]">
                   <CircleDollarSign size={24} />
                 </span>
 
                 <div>
-                  <h2 className="text-xl font-black text-white">
+                  <h2 className="text-xl font-black text-[var(--admin-primary-text)]">
                     Receita da plataforma
                   </h2>
 
-                  <p className="mt-1 text-xs font-semibold text-white/50">
+                  <p className="mt-1 text-xs font-semibold text-[var(--admin-primary-text)] opacity-50">
                     Movimento financeiro dos últimos 7 dias
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="mt-6 flex divide-x divide-white/10 border-t border-white/10 pt-6">
+            <div className="mt-6 flex divide-x divide-[var(--admin-muted)] border-t border-[var(--admin-muted)] pt-6">
               <div className="min-w-0 flex-1 pr-5 sm:pr-8">
-                <p className="text-xs font-semibold text-white/45">
+                <p className="text-xs font-semibold text-[var(--admin-primary-text)] opacity-45">
                   Receita confirmada
                 </p>
 
-                <p className="mt-1 truncate text-2xl font-black text-white sm:text-3xl">
+                <p className="mt-1 truncate text-2xl font-black text-[var(--admin-primary-text)] sm:text-3xl">
                   {formatCurrency(overview?.summary.paidRevenue || 0)}
                 </p>
 
-                <p className="mt-2 text-xs font-bold text-amber-400">
+                <p className="mt-2 text-xs font-bold text-[var(--admin-accent)]">
                   {overview?.summary.paidPayments || 0} pagamentos pagos
                 </p>
               </div>
 
               <div className="min-w-0 flex-1 pl-5 sm:pl-8">
-                <p className="text-xs font-semibold text-white/45">
+                <p className="text-xs font-semibold text-[var(--admin-primary-text)] opacity-45">
                   Últimos 7 dias
                 </p>
 
-                <p className="mt-1 truncate text-2xl font-black text-white sm:text-3xl">
+                <p className="mt-1 truncate text-2xl font-black text-[var(--admin-primary-text)] sm:text-3xl">
                   {formatCurrency(revenueLast7Days.total)}
                 </p>
 
-                <p className="mt-2 text-xs font-bold text-sky-300">
+                <p className="mt-2 text-xs font-bold text-[var(--admin-accent)]">
                   {(overview?.summary.pendingPayments || 0) +
                     (overview?.summary.overduePayments || 0)}{" "}
                   exigem atenção
@@ -994,13 +994,13 @@ export function AdminPage() {
                   >
                     <stop
                       offset="0%"
-                      stopColor="#f59e0b"
+                      stopColor="var(--admin-accent)"
                       stopOpacity="0.32"
                     />
 
                     <stop
                       offset="100%"
-                      stopColor="#f59e0b"
+                      stopColor="var(--admin-accent)"
                       stopOpacity="0"
                     />
                   </linearGradient>
@@ -1014,14 +1014,14 @@ export function AdminPage() {
                 <path
                   d={revenueLast7Days.path}
                   fill="none"
-                  stroke="#f59e0b"
+                  stroke="var(--admin-accent)"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                 />
               </svg>
 
               <div
-                className="absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.75)]"
+                className="absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--admin-accent)] shadow-[0_0_20px_var(--admin-shadow)]"
                 style={{
                   left: `${(revenueLast7Days.lastPoint.x / 300) * 100}%`,
                   top: `${revenueLast7Days.lastPoint.y}%`,
@@ -1029,7 +1029,7 @@ export function AdminPage() {
               />
 
               <div
-                className="absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full bg-amber-400/30"
+                className="absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full bg-[var(--admin-accent)] opacity-30"
                 style={{
                   left: `${(revenueLast7Days.lastPoint.x / 300) * 100}%`,
                   top: `${revenueLast7Days.lastPoint.y}%`,
@@ -1041,19 +1041,19 @@ export function AdminPage() {
               {revenueLast7Days.days.map((day) => (
                 <span
                   key={day.key}
-                  className="text-[10px] font-black uppercase text-white/35 sm:text-xs"
+                  className="text-[10px] font-black uppercase text-[var(--admin-primary-text)] opacity-35 sm:text-xs"
                 >
                   {day.label}
                 </span>
               ))}
             </div>
 
-            <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-5">
-              <span className="text-xs font-semibold text-white/45">
+            <div className="mt-5 flex items-center justify-between border-t border-[var(--admin-muted)] pt-5">
+              <span className="text-xs font-semibold text-[var(--admin-primary-text)] opacity-45">
                 Somente pagamentos confirmados
               </span>
 
-              <span className="text-xs font-black text-white/75">
+              <span className="text-xs font-black text-[var(--admin-primary-text)] opacity-75">
                 {overview?.summary.totalPayments || 0} pagamentos registrados
               </span>
             </div>
