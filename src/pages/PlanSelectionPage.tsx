@@ -5,8 +5,7 @@ import {
   Clock3,
   CreditCard,
   RefreshCw,
-  ShieldCheck,
-  Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 
 import { BusinessPaymentInstructions } from "../components/BusinessPaymentInstructions";
@@ -223,81 +222,64 @@ export function PlanSelectionPage() {
 
   return (
     <main
-      className="min-h-screen px-5 py-8 text-[#171717] md:px-8"
+      className="relative h-[100dvh] overflow-hidden bg-slate-950 text-[#171717]"
       style={{
-        background:
-          "linear-gradient(180deg, #eeeeee 0%, #e3e3e3 100%)",
+        backgroundImage:
+          "linear-gradient(90deg, rgba(2,10,20,0.48), rgba(2,10,20,0.30)), url('/register-background.webp')",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
       }}
     >
-      <div className="mx-auto min-h-[calc(100vh-64px)] max-w-[1280px] rounded-[42px] border border-white/80 bg-white/35 p-6 shadow-[0_34px_110px_rgba(0,0,0,0.16)] backdrop-blur-3xl md:p-10">
-        <header className="flex flex-wrap items-center justify-between gap-5">
-          <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#171717] text-white shadow-[0_18px_42px_rgba(0,0,0,0.24)]">
-              <Sparkles size={26} />
-            </div>
+      <div className="grid h-full w-full grid-cols-1 items-center gap-6 px-6 py-5 lg:grid-cols-[1fr_560px] lg:px-12 xl:grid-cols-[1fr_600px] xl:px-16">
+        <section className="relative hidden h-full items-center justify-center lg:flex">
+          <div className="relative flex h-full w-full items-center justify-center">
+            <div className="absolute h-[420px] w-[420px] rounded-full bg-[#00bfff]/15 blur-[90px]" />
 
-            <div>
-              <strong className="block text-2xl font-black tracking-tight">
-                YggdraFlow
-              </strong>
-
-              <span className="text-sm font-bold text-[#666]">
-                Escolha do plano e liberação do acesso
-              </span>
-            </div>
+            <img
+              src="/yggdraflow-brand-mark.png"
+              alt="YggdraFlow"
+              className="relative z-10 max-h-[58vh] max-w-[72%] object-contain drop-shadow-[0_24px_45px_rgba(0,0,0,0.35)]"
+            />
           </div>
+        </section>
 
-          <div className="rounded-full bg-white/80 px-4 py-2 text-xs font-black shadow-[0_12px_34px_rgba(0,0,0,0.08)]">
-            Etapa final
-          </div>
-        </header>
+        <section className="flex h-full min-h-0 items-center justify-center">
+          <div className="w-full max-w-[560px]">
 
         {canChoosePlan ? (
-          <section className="mt-10">
-            <div className="mx-auto max-w-2xl text-center">
-              <p className="text-sm font-black uppercase tracking-[0.2em] text-[#07a80d]">
-                Empresa cadastrada
-              </p>
-
-              <h1 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">
-                Escolha o plano do seu negócio
-              </h1>
-
-              <p className="mt-4 text-base font-medium leading-7 text-[#666]">
-                A empresa{" "}
-                <strong className="text-[#171717]">
-                  {business?.name}
-                </strong>{" "}
-                foi cadastrada. Escolha o ciclo desejado para
-                continuar.
-              </p>
+          <section className="w-full">
+            <div className="mb-3 text-center">
+              <span className="inline-flex rounded-full border border-white/25 bg-black/35 px-5 py-2 text-[11px] font-black uppercase tracking-[0.28em] text-white shadow-lg backdrop-blur-xl">
+                YggdraFlow
+              </span>
             </div>
 
             {activePlan ? (
               <article
-                className="mx-auto mt-9 w-full max-w-[560px] overflow-hidden rounded-[30px] border border-white bg-white shadow-[0_35px_90px_rgba(0,0,0,0.16)]"
+                className="mx-auto w-full max-w-[560px] overflow-hidden rounded-[28px] border border-white/90 bg-white shadow-[0_30px_80px_rgba(0,0,0,0.30)]"
                 style={{
                   background:
-                    "linear-gradient(180deg, #DCF9E0 0%, #FFFFFF 30.21%)",
+                    "linear-gradient(180deg, #dff6ff 0%, #FFFFFF 30.21%)",
                 }}
               >
-                <div className="px-6 pb-5 pt-8 text-center sm:px-8 sm:pt-10">
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#171717] text-white shadow-[0_12px_30px_rgba(0,0,0,0.18)]">
+                <div className="px-6 pb-4 pt-5 text-center sm:px-7">
+                  <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-[#171717] text-white shadow-[0_12px_30px_rgba(0,0,0,0.18)]">
                     <CreditCard size={22} />
                   </div>
 
-                  <h2 className="mt-5 text-2xl font-black tracking-tight text-[#2b2b2f]">
+                  <h2 className="mt-3 text-xl font-black tracking-tight text-[#2b2b2f]">
                     YggdraFlow para o seu negócio
                   </h2>
 
-                  <p className="mx-auto mt-3 max-w-[430px] text-sm font-semibold leading-6 text-[#666571]">
-                    Tenha agenda, clientes, profissionais,
-                    serviços e agendamento online organizados em
-                    um único lugar.
+                  <p className="mx-auto mt-2 max-w-[430px] text-xs font-semibold leading-5 text-[#666571]">
+                    Plano para <strong className="text-[#2b2b2f]">{business?.name}</strong>. Agenda, clientes,
+                    profissionais, serviços e agendamento online
+                    em um único lugar.
                   </p>
                 </div>
 
-                <div className="mx-6 mt-2 flex rounded-xl bg-[#ebebec] p-1 sm:mx-8">
+                <div className="mx-6 mt-1 flex rounded-xl bg-[#ebebec] p-1 sm:mx-7">
                   {plans.map((plan) => {
                     const isActive =
                       plan.cycle === activePlan.cycle;
@@ -310,7 +292,7 @@ export function PlanSelectionPage() {
                           setActiveCycle(plan.cycle)
                         }
                         className={[
-                          "relative flex-1 rounded-[9px] px-3 py-2.5 text-sm font-black transition-all duration-200",
+                          "relative flex-1 rounded-[9px] px-3 py-2 text-sm font-black transition-all duration-200",
                           isActive
                             ? "bg-white text-[#171717] shadow-[0_3px_10px_rgba(0,0,0,0.14)]"
                             : "text-[#595959] hover:text-[#171717]",
@@ -323,17 +305,17 @@ export function PlanSelectionPage() {
                 </div>
 
                 {activePlan.cycle === "ANNUAL" ? (
-                  <div className="mx-auto mt-3 w-fit rounded-full bg-[#DCF9E0] px-3 py-1 text-xs font-black text-[#16821b]">
+                  <div className="mx-auto mt-3 w-fit rounded-full bg-[#dff6ff] px-3 py-1 text-xs font-black text-[#007da8]">
                     Melhor economia
                   </div>
                 ) : null}
 
-                <div className="px-6 py-8 sm:px-8">
+                <div className="px-6 py-5 sm:px-7">
                   <h3 className="text-xl font-black text-[#2b2b2f]">
                     O que oferecemos
                   </h3>
 
-                  <ul className="mt-6 flex flex-col gap-4">
+                  <ul className="mt-4 flex flex-col gap-3">
                     <li className="flex items-start gap-3">
                       <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#171717] text-white">
                         <Check size={15} strokeWidth={3} />
@@ -364,19 +346,10 @@ export function PlanSelectionPage() {
                       </span>
                     </li>
 
-                    <li className="flex items-start gap-3">
-                      <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#171717] text-white">
-                        <Check size={15} strokeWidth={3} />
-                      </span>
-
-                      <span className="text-sm font-bold leading-6 text-[#656470]">
-                        {activePlan.description}
-                      </span>
-                    </li>
                   </ul>
                 </div>
 
-                <footer className="flex flex-col gap-5 border-t border-[#ebebec] px-6 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+                <footer className="flex flex-col gap-3 border-t border-[#ebebec] px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-7">
                   <div>
                     <div className="flex items-end gap-1">
                       <strong className="text-4xl font-black tracking-tight text-[#2b2b2f]">
@@ -386,9 +359,7 @@ export function PlanSelectionPage() {
                       </strong>
 
                       <span className="mb-1 text-xs font-black text-[#656470]">
-                        {activePlan.installments === 1
-                          ? "/mês"
-                          : "/parcela"}
+                        /mês
                       </span>
                     </div>
 
@@ -404,7 +375,7 @@ export function PlanSelectionPage() {
                     onClick={() =>
                       handleSelectPlan(activePlan.cycle)
                     }
-                    className="min-h-12 rounded-xl bg-[#0bdd12] px-7 py-3 text-sm font-black text-white shadow-[0_10px_24px_rgba(11,221,18,0.22)] transition hover:-translate-y-0.5 hover:bg-[#07b90d] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 sm:min-w-[220px]"
+                    className="min-h-12 rounded-xl bg-[#00bfff] px-7 py-3 text-sm font-black text-white shadow-[0_10px_24px_rgba(0,191,255,0.24)] transition hover:-translate-y-0.5 hover:bg-[#29c9ff] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 sm:min-w-[220px]"
                   >
                     {isSaving === activePlan.cycle
                       ? "Registrando plano..."
@@ -511,10 +482,12 @@ export function PlanSelectionPage() {
         )}
 
         {error && (
-          <p className="mt-7 rounded-2xl bg-red-50 px-4 py-3 text-sm font-black text-red-700 ring-1 ring-red-100">
+          <p className="mt-3 rounded-2xl bg-red-50 px-4 py-3 text-sm font-black text-red-700 ring-1 ring-red-100">
             {error}
           </p>
         )}
+          </div>
+        </section>
       </div>
     </main>
   );
