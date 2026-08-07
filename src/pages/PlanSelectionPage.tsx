@@ -225,7 +225,7 @@ export function PlanSelectionPage() {
       className="relative h-[100dvh] overflow-hidden bg-slate-950 text-[#171717]"
       style={{
         backgroundImage:
-          "linear-gradient(90deg, rgba(2,10,20,0.48), rgba(2,10,20,0.30)), url('/register-background.webp')",
+          "linear-gradient(90deg, rgba(2,10,20,0.48), rgba(2,10,20,0.30)), url('/plan-selection-bg.png')",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
