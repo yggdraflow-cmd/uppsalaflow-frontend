@@ -437,3 +437,189 @@ button {
   font-size: 0.72rem;
   font-weight: 800;
 }
+
+/* ===== FLOATING BUSINESS SIDEBAR ===== */
+
+.floating-business-sidebar {
+  position: relative;
+  z-index: 20;
+  width: 88px;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.25rem 0;
+  overflow: visible;
+}
+
+.floating-business-brand-button,
+.floating-business-nav-item {
+  position: relative;
+  display: flex;
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid color-mix(
+    in srgb,
+    var(--yggdra-primary) 12%,
+    transparent
+  );
+  background: color-mix(
+    in srgb,
+    var(--yggdra-card) 82%,
+    transparent
+  );
+  color: var(--yggdra-primary);
+  backdrop-filter: blur(15px);
+  box-shadow:
+    inset 0 0 20px rgba(255, 255, 255, 0.28),
+    inset 0 0 5px rgba(255, 255, 255, 0.38),
+    0 8px 20px color-mix(
+      in srgb,
+      var(--yggdra-shadow) 70%,
+      transparent
+    );
+  transition:
+    transform 0.28s ease,
+    background 0.28s ease,
+    color 0.28s ease,
+    box-shadow 0.28s ease;
+  isolation: isolate;
+}
+
+.floating-business-brand-button {
+  margin-bottom: 1.6rem;
+  background: var(--yggdra-primary);
+  color: var(--yggdra-primary-text);
+  box-shadow:
+    inset 0 0 20px rgba(255, 255, 255, 0.14),
+    0 12px 28px var(--yggdra-shadow);
+}
+
+.floating-business-nav {
+  display: flex;
+  min-height: 0;
+  width: 100%;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.floating-business-nav-item {
+  cursor: pointer;
+}
+
+.floating-business-nav-item:hover,
+.floating-business-brand-button:hover {
+  transform: translate(7px, -5px);
+}
+
+.floating-business-nav-item.is-active {
+  background: var(--yggdra-primary);
+  color: var(--yggdra-primary-text);
+  box-shadow:
+    inset 0 0 20px rgba(255, 255, 255, 0.12),
+    0 12px 28px var(--yggdra-shadow);
+}
+
+.floating-business-nav-icon {
+  position: relative;
+  z-index: 5;
+  transition: transform 0.28s ease;
+}
+
+.floating-business-nav-item:hover .floating-business-nav-icon {
+  transform: translate(2px, -2px);
+}
+
+.floating-business-nav-echo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  background: color-mix(
+    in srgb,
+    var(--yggdra-primary) 18%,
+    transparent
+  );
+  box-shadow:
+    inset 0 0 18px rgba(255, 255, 255, 0.22),
+    0 6px 14px var(--yggdra-shadow);
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s ease;
+}
+
+.floating-business-nav-item:hover .floating-business-nav-echo-1,
+.floating-business-brand-button:hover .floating-business-nav-echo-1 {
+  opacity: 0.18;
+  transform: translate(-5px, 5px);
+}
+
+.floating-business-nav-item:hover .floating-business-nav-echo-2,
+.floating-business-brand-button:hover .floating-business-nav-echo-2 {
+  opacity: 0.32;
+  transform: translate(-10px, 10px);
+}
+
+.floating-business-nav-item:hover .floating-business-nav-echo-3,
+.floating-business-brand-button:hover .floating-business-nav-echo-3 {
+  opacity: 0.46;
+  transform: translate(-15px, 15px);
+}
+
+.floating-business-nav-label {
+  position: absolute;
+  left: 72px;
+  top: 50%;
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  transform: translate(12px, -50%) skew(-4deg);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 12px;
+  padding: 0.45rem 0.75rem;
+  background: color-mix(
+    in srgb,
+    var(--yggdra-card) 78%,
+    transparent
+  );
+  color: var(--yggdra-primary);
+  font-size: 0.8rem;
+  font-weight: 900;
+  backdrop-filter: blur(15px);
+  box-shadow:
+    -5px 0 1px rgba(153, 153, 153, 0.10),
+    -10px 0 1px rgba(153, 153, 153, 0.08),
+    inset 0 0 20px rgba(255, 255, 255, 0.25),
+    0 8px 20px var(--yggdra-shadow);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.floating-business-nav-item:hover .floating-business-nav-label,
+.floating-business-brand-button:hover .floating-business-nav-label {
+  opacity: 1;
+  transform: translate(0, -50%) skew(-4deg);
+}
+
+.floating-business-nav-push {
+  flex: 1;
+  min-height: 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-business-brand-button,
+  .floating-business-nav-item,
+  .floating-business-nav-icon,
+  .floating-business-nav-echo,
+  .floating-business-nav-label {
+    transition: none;
+  }
+}

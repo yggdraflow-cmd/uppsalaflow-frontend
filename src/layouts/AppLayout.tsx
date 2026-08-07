@@ -491,28 +491,28 @@ export function AppLayout({ children }: AppLayoutProps) {
       style={createLayoutStyle(layoutTheme)}
     >
       <div className="mx-auto flex min-h-screen w-full max-w-[1540px] overflow-hidden border border-white/80 bg-white/20 shadow-[0_30px_100px_var(--yggdra-shadow)] backdrop-blur-3xl sm:min-h-[calc(100vh-40px)] sm:rounded-[34px]">
-        <aside className="m-5 hidden w-[255px] shrink-0 flex-col rounded-[32px] bg-[var(--yggdra-sidebar)] px-5 py-6 shadow-[0_24px_70px_var(--yggdra-shadow)] backdrop-blur-2xl lg:flex">
+        <aside className="floating-business-sidebar m-5 hidden shrink-0 lg:flex">
           <Link
             to="/dashboard"
-            className="mb-10 flex items-center gap-3 px-2"
+            className="floating-business-brand-button"
             title={businessTheme.brandName}
+            aria-label={businessTheme.brandName}
           >
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--yggdra-primary)] text-[var(--yggdra-primary-text)] shadow-[0_16px_38px_var(--yggdra-shadow)]">
-              <CalendarDays size={24} />
+            <span className="floating-business-nav-echo floating-business-nav-echo-1" />
+            <span className="floating-business-nav-echo floating-business-nav-echo-2" />
+            <span className="floating-business-nav-echo floating-business-nav-echo-3" />
+
+            <CalendarDays
+              size={25}
+              className="floating-business-nav-icon"
+            />
+
+            <span className="floating-business-nav-label">
+              {businessTheme.brandName}
             </span>
-
-            <div className="min-w-0">
-              <strong className="block truncate text-lg font-black tracking-tight text-[#171717]">
-                {businessTheme.brandName}
-              </strong>
-
-              <span className="block max-w-[150px] text-xs font-bold leading-5 text-[#7a7a7a]">
-                {businessTheme.subtitle}
-              </span>
-            </div>
           </Link>
 
-          <nav className="flex flex-1 flex-col gap-2">
+          <nav className="floating-business-nav">
             {getMenuItems(businessTheme).map((item) => {
               const Icon = item.icon;
 
@@ -520,50 +520,95 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <NavLink
                   key={item.path}
                   to={item.path}
+                  aria-label={item.label}
+                  title={item.label}
                   className={({ isActive }) =>
                     [
-                      "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black transition-all duration-200",
-                      isActive
-                        ? "bg-[var(--yggdra-primary)] text-[var(--yggdra-primary-text)] shadow-[0_18px_38px_var(--yggdra-shadow)]"
-                        : "text-[#4f4f4f] hover:bg-[var(--yggdra-muted)] hover:text-[#171717]",
+                      "floating-business-nav-item",
+                      isActive ? "is-active" : "",
                     ].join(" ")
                   }
                 >
-                  <Icon size={19} />
-                  <span className="min-w-0 truncate">{item.label}</span>
+                  <span className="floating-business-nav-echo floating-business-nav-echo-1" />
+                  <span className="floating-business-nav-echo floating-business-nav-echo-2" />
+                  <span className="floating-business-nav-echo floating-business-nav-echo-3" />
+
+                  <Icon
+                    size={22}
+                    className="floating-business-nav-icon"
+                  />
+
+                  <span className="floating-business-nav-label">
+                    {item.label}
+                  </span>
                 </NavLink>
               );
             })}
 
+            <div className="floating-business-nav-push" />
+
             <button
               type="button"
               onClick={() => setIsThemePickerOpen(true)}
-              className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black text-[#4f4f4f] transition hover:bg-[var(--yggdra-muted)] hover:text-[#171717]"
-              title="Escolher tema da plataforma"
+              className="floating-business-nav-item"
+              title="Tema"
+              aria-label="Escolher tema da plataforma"
             >
-              <Palette size={19} />
-              <span className="font-black">Tema</span>
+              <span className="floating-business-nav-echo floating-business-nav-echo-1" />
+              <span className="floating-business-nav-echo floating-business-nav-echo-2" />
+              <span className="floating-business-nav-echo floating-business-nav-echo-3" />
+
+              <Palette
+                size={22}
+                className="floating-business-nav-icon"
+              />
+
+              <span className="floating-business-nav-label">
+                Tema
+              </span>
             </button>
 
             <a
               href={SUPPORT_URL}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black text-[#4f4f4f] transition hover:bg-[var(--yggdra-muted)] hover:text-[#171717]"
-              title="Abrir suporte da YggdraTech"
+              className="floating-business-nav-item"
+              title="Suporte"
+              aria-label="Abrir suporte da YggdraTech"
             >
-              <LifeBuoy size={19} />
-              <span>Suporte</span>
+              <span className="floating-business-nav-echo floating-business-nav-echo-1" />
+              <span className="floating-business-nav-echo floating-business-nav-echo-2" />
+              <span className="floating-business-nav-echo floating-business-nav-echo-3" />
+
+              <LifeBuoy
+                size={22}
+                className="floating-business-nav-icon"
+              />
+
+              <span className="floating-business-nav-label">
+                Suporte
+              </span>
             </a>
 
             <button
               type="button"
               onClick={handleLogout}
-              className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black text-[#4f4f4f] transition hover:bg-[var(--yggdra-muted)] hover:text-[#171717]"
+              className="floating-business-nav-item"
               title="Sair"
+              aria-label="Sair"
             >
-              <LogOut size={19} />
-              <span>Sair</span>
+              <span className="floating-business-nav-echo floating-business-nav-echo-1" />
+              <span className="floating-business-nav-echo floating-business-nav-echo-2" />
+              <span className="floating-business-nav-echo floating-business-nav-echo-3" />
+
+              <LogOut
+                size={22}
+                className="floating-business-nav-icon"
+              />
+
+              <span className="floating-business-nav-label">
+                Sair
+              </span>
             </button>
           </nav>
         </aside>
