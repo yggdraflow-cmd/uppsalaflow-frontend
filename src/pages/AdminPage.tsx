@@ -960,6 +960,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
             })}
           </div>
 
+          <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
           <article className="overflow-hidden rounded-[28px] bg-[var(--admin-primary)] p-5 text-[var(--admin-primary-text)] shadow-[0_24px_60px_var(--admin-shadow)] sm:p-6 md:p-7">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-center gap-4">
@@ -1091,6 +1092,128 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
               </span>
             </div>
           </article>
+
+            <article className="flex min-w-0 flex-col overflow-hidden rounded-[28px] bg-[var(--admin-primary)] p-5 text-[var(--admin-primary-text)] shadow-[0_24px_60px_var(--admin-shadow)] sm:p-6 md:p-7">
+              <div className="flex items-center gap-4">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--admin-muted)] text-[var(--admin-primary)]">
+                  <Building2 size={24} />
+                </span>
+
+                <div>
+                  <h2 className="text-xl font-black">
+                    Resumo da plataforma
+                  </h2>
+
+                  <p className="mt-1 text-xs font-semibold opacity-50">
+                    Indicadores gerais do YggdraFlow
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 grid grid-cols-2 divide-x divide-[var(--admin-muted)] border-t border-[var(--admin-muted)] pt-6">
+                <div className="pr-5">
+                  <p className="text-xs font-semibold opacity-50">
+                    Empresas ativas
+                  </p>
+
+                  <strong className="mt-2 block text-3xl font-black">
+                    {overview?.summary.activeBusinesses || 0}
+                  </strong>
+
+                  <p className="mt-2 text-xs font-bold text-[var(--admin-accent)]">
+                    {overview?.summary.totalBusinesses || 0} cadastradas
+                  </p>
+                </div>
+
+                <div className="pl-5">
+                  <p className="text-xs font-semibold opacity-50">
+                    Assinaturas ativas
+                  </p>
+
+                  <strong className="mt-2 block text-3xl font-black">
+                    {overview?.summary.activeSubscriptions || 0}
+                  </strong>
+
+                  <p className="mt-2 text-xs font-bold text-[var(--admin-accent)]">
+                    {overview?.summary.totalSubscriptions || 0} no total
+                  </p>
+                </div>
+              </div>
+
+              <div className="admin-summary-carousel mt-8">
+                <div className="admin-summary-carousel-track">
+
+                  <div className="admin-summary-carousel-slide">
+                    <div className="flex min-h-[150px] items-center justify-between gap-4 bg-[var(--admin-card)] px-5 py-5 text-slate-950">
+                      <div>
+                        <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
+                          Usuários
+                        </span>
+
+                        <strong className="mt-2 block text-4xl font-black">
+                          {overview?.summary.totalUsers || 0}
+                        </strong>
+
+                        <p className="mt-2 text-xs font-semibold text-slate-400">
+                          cadastrados na plataforma
+                        </p>
+                      </div>
+
+                      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[var(--admin-muted)] text-[var(--admin-primary)]">
+                        <ShieldCheck size={26} />
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="admin-summary-carousel-slide">
+                    <div className="flex min-h-[150px] items-center justify-between gap-4 bg-[var(--admin-card)] px-5 py-5 text-slate-950">
+                      <div>
+                        <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
+                          Pagamentos confirmados
+                        </span>
+
+                        <strong className="mt-2 block text-4xl font-black">
+                          {overview?.summary.paidPayments || 0}
+                        </strong>
+
+                        <p className="mt-2 text-xs font-semibold text-slate-400">
+                          pagamentos com status pago
+                        </p>
+                      </div>
+
+                      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[var(--admin-muted)] text-[var(--admin-primary)]">
+                        <CheckCircle2 size={26} />
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="admin-summary-carousel-slide">
+                    <div className="flex min-h-[150px] items-center justify-between gap-4 bg-[var(--admin-card)] px-5 py-5 text-slate-950">
+                      <div className="min-w-0">
+                        <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
+                          Receita confirmada
+                        </span>
+
+                        <strong className="mt-2 block truncate text-3xl font-black">
+                          {formatCurrency(overview?.summary.paidRevenue || 0)}
+                        </strong>
+
+                        <p className="mt-2 text-xs font-semibold text-slate-400">
+                          receita recebida pela plataforma
+                        </p>
+                      </div>
+
+                      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[var(--admin-muted)] text-[var(--admin-primary)]">
+                        <CircleDollarSign size={26} />
+                      </span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </article>
+
+          </div>
 
           <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
             <Card title="Pendências que exigem atenção">
