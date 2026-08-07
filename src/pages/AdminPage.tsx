@@ -1226,7 +1226,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
                         className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:border-[var(--admin-primary)] hover:text-[var(--admin-primary)] disabled:cursor-not-allowed disabled:opacity-35"
                       >
                         <ArrowLeft size={17} />
-                        Previous
+                        Voltar
                       </button>
 
                       <button
@@ -1244,7 +1244,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
                           color: "var(--admin-primary-text)",
                         }}
                       >
-                        Next
+                        Próximo
                         <ArrowRight size={17} />
                       </button>
                     </div>
