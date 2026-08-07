@@ -226,7 +226,7 @@ export function PlanSelectionPage() {
       className="min-h-screen px-5 py-8 text-[#171717] md:px-8"
       style={{
         background:
-          "radial-gradient(circle at 15% 10%, rgba(255,255,255,0.96), transparent 28%), radial-gradient(circle at 85% 0%, rgba(255,255,255,0.72), transparent 28%), linear-gradient(135deg,#d7d7d7 0%, #eeeeee 48%, #cfd4d6 100%)",
+          "linear-gradient(180deg, #eeeeee 0%, #e3e3e3 100%)",
       }}
     >
       <div className="mx-auto min-h-[calc(100vh-64px)] max-w-[1280px] rounded-[42px] border border-white/80 bg-white/35 p-6 shadow-[0_34px_110px_rgba(0,0,0,0.16)] backdrop-blur-3xl md:p-10">
@@ -255,7 +255,7 @@ export function PlanSelectionPage() {
         {canChoosePlan ? (
           <section className="mt-10">
             <div className="mx-auto max-w-2xl text-center">
-              <p className="text-sm font-black uppercase tracking-[0.2em] text-[#d97706]">
+              <p className="text-sm font-black uppercase tracking-[0.2em] text-[#07a80d]">
                 Empresa cadastrada
               </p>
 
@@ -278,7 +278,7 @@ export function PlanSelectionPage() {
                 className="mx-auto mt-9 w-full max-w-[560px] overflow-hidden rounded-[30px] border border-white bg-white shadow-[0_35px_90px_rgba(0,0,0,0.16)]"
                 style={{
                   background:
-                    "linear-gradient(180deg, #fff1d7 0%, #ffffff 31%)",
+                    "linear-gradient(180deg, #DCF9E0 0%, #FFFFFF 30.21%)",
                 }}
               >
                 <div className="px-6 pb-5 pt-8 text-center sm:px-8 sm:pt-10">
@@ -323,7 +323,7 @@ export function PlanSelectionPage() {
                 </div>
 
                 {activePlan.cycle === "ANNUAL" ? (
-                  <div className="mx-auto mt-3 w-fit rounded-full bg-[#f59e0b]/15 px-3 py-1 text-xs font-black text-[#b56700]">
+                  <div className="mx-auto mt-3 w-fit rounded-full bg-[#DCF9E0] px-3 py-1 text-xs font-black text-[#16821b]">
                     Melhor economia
                   </div>
                 ) : null}
@@ -404,7 +404,7 @@ export function PlanSelectionPage() {
                     onClick={() =>
                       handleSelectPlan(activePlan.cycle)
                     }
-                    className="min-h-12 rounded-xl bg-[#171717] px-7 py-3 text-sm font-black text-white shadow-[0_10px_24px_rgba(0,0,0,0.16)] transition hover:-translate-y-0.5 hover:bg-[#2b2b2b] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 sm:min-w-[220px]"
+                    className="min-h-12 rounded-xl bg-[#0bdd12] px-7 py-3 text-sm font-black text-white shadow-[0_10px_24px_rgba(11,221,18,0.22)] transition hover:-translate-y-0.5 hover:bg-[#07b90d] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 sm:min-w-[220px]"
                   >
                     {isSaving === activePlan.cycle
                       ? "Registrando plano..."
@@ -433,7 +433,7 @@ export function PlanSelectionPage() {
                 )}
               </div>
 
-              <p className="mt-7 text-sm font-black uppercase tracking-[0.2em] text-[#d97706]">
+              <p className="mt-7 text-sm font-black uppercase tracking-[0.2em] text-[#07a80d]">
                 {business?.name}
               </p>
 
