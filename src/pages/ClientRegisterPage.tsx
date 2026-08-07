@@ -24,6 +24,7 @@ export function ClientRegisterPage() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -47,14 +48,18 @@ export function ClientRegisterPage() {
         {
           name,
           email,
+          phone,
           password,
         }
       );
 
       saveAuth(response.data.token, response.data.user);
       navigate(safeRedirectTo || "/cliente/agendamentos");
-    } catch {
-      setError("Não foi possível criar sua conta de cliente.");
+    } catch (error: any) {
+      setError(
+        error?.response?.data?.message ||
+          "Não foi possível criar sua conta de cliente."
+      );
     } finally {
       setIsSaving(false);
     }
@@ -93,6 +98,16 @@ export function ClientRegisterPage() {
           autoComplete="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
+          required
+        />
+
+        <FloatingInput
+          id="client-phone"
+          label="Telefone"
+          type="tel"
+          autoComplete="tel"
+          value={phone}
+          onChange={(event) => setPhone(event.target.value)}
           required
         />
 
