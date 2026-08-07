@@ -44,6 +44,25 @@ export type PaymentStatus =
   | "CANCELED"
   | "REFUNDED";
 
+export type BillingState =
+  | "FREE"
+  | "NO_OPEN_PAYMENT"
+  | "CURRENT"
+  | "DUE_SOON"
+  | "DUE_TODAY"
+  | "PAST_DUE"
+  | "SUSPENDED";
+
+export type BusinessBilling = {
+  state: BillingState;
+  dueAt: string | null;
+  daysUntilDue: number | null;
+  overdueDays: number;
+  warningDays: number;
+  graceDays: number;
+  message: string;
+};
+
 export type BusinessSubscription = {
   id: string;
   businessId: string;
@@ -88,6 +107,7 @@ export type Business = {
   approvedAt?: string | null;
   subscription?: BusinessSubscription | null;
   payments?: BusinessPayment[];
+  billing?: BusinessBilling | null;
   createdAt: string;
   updatedAt: string;
 };

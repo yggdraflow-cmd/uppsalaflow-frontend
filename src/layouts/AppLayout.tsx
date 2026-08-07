@@ -8,6 +8,7 @@ import {
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { ThemePickerDialog } from "../components/ThemePickerDialog";
+import { BusinessBillingBanner } from "../components/BusinessBillingBanner";
 import {
   BriefcaseBusiness,
   CalendarDays,
@@ -319,6 +320,9 @@ export function AppLayout({ children }: AppLayoutProps) {
     getStoredBusinessTheme
   );
 
+  const [activeBusiness, setActiveBusiness] =
+    useState<Business | null>(null);
+
   const [selectedColorThemeId, setSelectedColorThemeId] =
     useState<ColorThemeId>(getStoredColorThemeId);
 
@@ -351,6 +355,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         }
 
         setBusinessTheme(theme);
+        setActiveBusiness(businessWithSegment || null);
 
         localStorage.setItem(
           "@yggdraflow:business-theme",
@@ -363,6 +368,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       } catch {
         if (isMounted) {
           setBusinessTheme(getStoredBusinessTheme());
+          setActiveBusiness(null);
         }
       }
     }
@@ -768,6 +774,10 @@ export function AppLayout({ children }: AppLayoutProps) {
           </header>
 
           <main className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-3 pb-5 pt-4 sm:px-5 sm:pb-6 md:px-8 md:pb-7">
+            {activeBusiness ? (
+              <BusinessBillingBanner business={activeBusiness} />
+            ) : null}
+
             {children ?? <Outlet />}
           </main>
         </section>
