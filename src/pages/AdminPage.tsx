@@ -682,6 +682,105 @@ export function AdminPage() {
     }
   }
 
+  const revenueLast7Days = useMemo(() => {
+    const today = new Date();
+
+    const days = Array.from({ length: 7 }, (_, index) => {
+      const date = new Date(today);
+
+      date.setHours(0, 0, 0, 0);
+      date.setDate(date.getDate() - (6 - index));
+
+      const key = [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0"),
+        String(date.getDate()).padStart(2, "0"),
+      ].join("-");
+
+      return {
+        key,
+        label: date
+          .toLocaleDateString("pt-BR", { weekday: "short" })
+          .replace(".", ""),
+        revenue: 0,
+      };
+    });
+
+    const daysByKey = new Map(days.map((day) => [day.key, day]));
+
+    payments.forEach((payment) => {
+      if (payment.status !== "PAID") {
+        return;
+      }
+
+      const paymentDate = new Date(payment.paidAt || payment.createdAt);
+
+      if (Number.isNaN(paymentDate.getTime())) {
+        return;
+      }
+
+      const key = [
+        paymentDate.getFullYear(),
+        String(paymentDate.getMonth() + 1).padStart(2, "0"),
+        String(paymentDate.getDate()).padStart(2, "0"),
+      ].join("-");
+
+      const day = daysByKey.get(key);
+
+      if (!day) {
+        return;
+      }
+
+      day.revenue += Number(payment.amount) || 0;
+    });
+
+    const total = days.reduce((sum, day) => sum + day.revenue, 0);
+    const maxRevenue = Math.max(...days.map((day) => day.revenue), 0);
+
+    const baseline = 84;
+    const chartHeight = 62;
+
+    const points = days.map((day, index) => {
+      const x = index * (300 / (days.length - 1));
+
+      const y =
+        maxRevenue > 0
+          ? baseline - (day.revenue / maxRevenue) * chartHeight
+          : baseline;
+
+      return {
+        x,
+        y,
+      };
+    });
+
+    const path = points.reduce((currentPath, point, index) => {
+      if (index === 0) {
+        return `M${point.x},${point.y}`;
+      }
+
+      const previousPoint = points[index - 1];
+      const middleX = (previousPoint.x + point.x) / 2;
+
+      return `${currentPath} C${middleX},${previousPoint.y} ${middleX},${point.y} ${point.x},${point.y}`;
+    }, "");
+
+    const areaPath = path ? `${path} L300,100 L0,100 Z` : "";
+
+    const lastPoint = points[points.length - 1] || {
+      x: 300,
+      y: baseline,
+    };
+
+    return {
+      days,
+      total,
+      path,
+      areaPath,
+      lastPoint,
+    };
+  }, [payments]);
+
   const summaryCards = [
     {
       title: "Empresas ativas",
@@ -827,6 +926,138 @@ export function AdminPage() {
               );
             })}
           </div>
+
+          <article className="overflow-hidden rounded-[28px] bg-[#102b3a] p-5 text-white shadow-[0_24px_60px_rgba(15,43,58,0.22)] sm:p-6 md:p-7">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-amber-400">
+                  <CircleDollarSign size={24} />
+                </span>
+
+                <div>
+                  <h2 className="text-xl font-black text-white">
+                    Receita da plataforma
+                  </h2>
+
+                  <p className="mt-1 text-xs font-semibold text-white/50">
+                    Movimento financeiro dos últimos 7 dias
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex divide-x divide-white/10 border-t border-white/10 pt-6">
+              <div className="min-w-0 flex-1 pr-5 sm:pr-8">
+                <p className="text-xs font-semibold text-white/45">
+                  Receita confirmada
+                </p>
+
+                <p className="mt-1 truncate text-2xl font-black text-white sm:text-3xl">
+                  {formatCurrency(overview?.summary.paidRevenue || 0)}
+                </p>
+
+                <p className="mt-2 text-xs font-bold text-amber-400">
+                  {overview?.summary.paidPayments || 0} pagamentos pagos
+                </p>
+              </div>
+
+              <div className="min-w-0 flex-1 pl-5 sm:pl-8">
+                <p className="text-xs font-semibold text-white/45">
+                  Últimos 7 dias
+                </p>
+
+                <p className="mt-1 truncate text-2xl font-black text-white sm:text-3xl">
+                  {formatCurrency(revenueLast7Days.total)}
+                </p>
+
+                <p className="mt-2 text-xs font-bold text-sky-300">
+                  {(overview?.summary.pendingPayments || 0) +
+                    (overview?.summary.overduePayments || 0)}{" "}
+                  exigem atenção
+                </p>
+              </div>
+            </div>
+
+            <div className="relative mt-8 h-36 w-full">
+              <svg
+                className="h-full w-full"
+                viewBox="0 0 300 100"
+                preserveAspectRatio="none"
+              >
+                <defs>
+                  <linearGradient
+                    id="admin-revenue-gradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="0%"
+                      stopColor="#f59e0b"
+                      stopOpacity="0.32"
+                    />
+
+                    <stop
+                      offset="100%"
+                      stopColor="#f59e0b"
+                      stopOpacity="0"
+                    />
+                  </linearGradient>
+                </defs>
+
+                <path
+                  d={revenueLast7Days.areaPath}
+                  fill="url(#admin-revenue-gradient)"
+                />
+
+                <path
+                  d={revenueLast7Days.path}
+                  fill="none"
+                  stroke="#f59e0b"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+
+              <div
+                className="absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.75)]"
+                style={{
+                  left: `${(revenueLast7Days.lastPoint.x / 300) * 100}%`,
+                  top: `${revenueLast7Days.lastPoint.y}%`,
+                }}
+              />
+
+              <div
+                className="absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full bg-amber-400/30"
+                style={{
+                  left: `${(revenueLast7Days.lastPoint.x / 300) * 100}%`,
+                  top: `${revenueLast7Days.lastPoint.y}%`,
+                }}
+              />
+            </div>
+
+            <div className="mt-2 grid grid-cols-7 text-center">
+              {revenueLast7Days.days.map((day) => (
+                <span
+                  key={day.key}
+                  className="text-[10px] font-black uppercase text-white/35 sm:text-xs"
+                >
+                  {day.label}
+                </span>
+              ))}
+            </div>
+
+            <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-5">
+              <span className="text-xs font-semibold text-white/45">
+                Somente pagamentos confirmados
+              </span>
+
+              <span className="text-xs font-black text-white/75">
+                {overview?.summary.totalPayments || 0} pagamentos registrados
+              </span>
+            </div>
+          </article>
 
           <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
             <Card title="Pendências que exigem atenção">
