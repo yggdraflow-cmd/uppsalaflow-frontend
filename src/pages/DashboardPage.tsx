@@ -652,51 +652,51 @@ export function DashboardPage() {
               </div>
             </article>
 
-            <article className="min-w-0 w-full max-w-full overflow-hidden rounded-[24px] border border-white/10 bg-[#090c08] p-5 text-white shadow-[0_24px_60px_rgba(0,0,0,0.22)] sm:rounded-[28px] sm:p-6 md:rounded-[30px] md:p-7">
+            <article className="min-w-0 w-full max-w-full overflow-hidden rounded-[24px] border border-white/10 bg-[var(--yggdra-primary)] p-5 text-[var(--yggdra-primary-text)] shadow-[0_24px_60px_rgba(0,0,0,0.22)] sm:rounded-[28px] sm:p-6 md:rounded-[30px] md:p-7">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex min-w-0 items-center gap-4">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#19250d] text-lime-400">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-[var(--yggdra-accent)]">
                     <Activity size={24} />
                   </span>
 
                   <div className="min-w-0">
-                    <h2 className="truncate text-xl font-black text-neutral-100">
+                    <h2 className="truncate text-xl font-black text-[var(--yggdra-primary-text)]">
                       Movimento do dia
                     </h2>
 
-                    <p className="mt-1 text-xs font-medium text-neutral-500">
+                    <p className="mt-1 text-xs font-medium text-[var(--yggdra-primary-text)] opacity-55">
                       {formatDateLabel(selectedDate)}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-6 border-t border-neutral-800 pt-6">
+              <div className="mt-6 border-t border-white/15 pt-6">
                 <div className="flex divide-x divide-neutral-800">
                   <div className="min-w-0 flex-1 pr-5 sm:pr-6">
-                    <p className="text-xs font-medium text-neutral-500">
+                    <p className="text-xs font-medium text-[var(--yggdra-primary-text)] opacity-55">
                       Receita estimada
                     </p>
 
-                    <p className="mt-1 truncate text-2xl font-semibold text-neutral-100">
+                    <p className="mt-1 truncate text-2xl font-semibold text-[var(--yggdra-primary-text)]">
                       {formatCurrency(summary?.estimatedRevenue || 0)}
                     </p>
 
-                    <p className="mt-1 text-xs font-medium text-lime-400">
+                    <p className="mt-1 text-xs font-medium text-[var(--yggdra-accent)]">
                       {summary?.appointmentsByStatus.confirmed || 0} confirmados
                     </p>
                   </div>
 
                   <div className="min-w-0 flex-1 pl-5 sm:pl-6">
-                    <p className="text-xs font-medium text-neutral-500">
+                    <p className="text-xs font-medium text-[var(--yggdra-primary-text)] opacity-55">
                       Atendimentos
                     </p>
 
-                    <p className="mt-1 text-2xl font-semibold text-neutral-100">
+                    <p className="mt-1 text-2xl font-semibold text-[var(--yggdra-primary-text)]">
                       {totalAppointments}
                     </p>
 
-                    <p className="mt-1 text-xs font-medium text-[#61b7ff]">
+                    <p className="mt-1 text-xs font-medium text-[var(--yggdra-accent)]">
                       {summary?.appointmentsByStatus.finished || 0} finalizados
                     </p>
                   </div>
@@ -719,12 +719,12 @@ export function DashboardPage() {
                     >
                       <stop
                         offset="0%"
-                        stopColor="#a3e635"
+                        stopColor="var(--yggdra-accent)"
                         stopOpacity="0.22"
                       />
                       <stop
                         offset="100%"
-                        stopColor="#a3e635"
+                        stopColor="var(--yggdra-accent)"
                         stopOpacity="0"
                       />
                     </linearGradient>
@@ -733,7 +733,7 @@ export function DashboardPage() {
                   <path
                     d="M0,65 C50,20 80,80 150,70 S250,50 300,85"
                     fill="none"
-                    stroke="#a3e635"
+                    stroke="var(--yggdra-accent)"
                     strokeWidth="2.5"
                     strokeLinecap="round"
                   />
@@ -745,17 +745,17 @@ export function DashboardPage() {
                 </svg>
 
                 <div className="absolute right-0 top-[95px]">
-                  <div className="absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-lime-400 shadow-[0_0_18px_rgba(163,230,53,0.55)]" />
-                  <div className="absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full bg-lime-400/25" />
+                  <div className="absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--yggdra-accent)] shadow-[0_0_18px_var(--yggdra-shadow)]" />
+                  <div className="absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full bg-[var(--yggdra-accent)] opacity-25" />
                 </div>
               </div>
 
-              <div className="mt-7 flex items-center justify-between border-t border-neutral-800 pt-5 text-xs font-medium">
-                <span className="text-neutral-500">
+              <div className="mt-7 flex items-center justify-between border-t border-white/15 pt-5 text-xs font-medium">
+                <span className="text-[var(--yggdra-primary-text)] opacity-55">
                   Resumo da data selecionada
                 </span>
 
-                <span className="font-bold text-neutral-300">
+                <span className="font-bold text-[var(--yggdra-primary-text)]">
                   {totalAppointments} registros
                 </span>
               </div>
