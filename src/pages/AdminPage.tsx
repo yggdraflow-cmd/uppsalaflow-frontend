@@ -1061,47 +1061,118 @@ export function AdminPage() {
 
           <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
             <Card title="Pendências que exigem atenção">
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="py-2">
                 {[
                   {
                     label: "Aguardando pagamento",
                     value: overview?.summary.paymentPendingBusinesses || 0,
+                    description: "Empresas aguardando confirmação de pagamento",
                     icon: CreditCard,
                   },
                   {
                     label: "Em análise",
                     value: overview?.summary.underReviewBusinesses || 0,
+                    description: "Cadastros aguardando análise administrativa",
                     icon: ShieldCheck,
                   },
                   {
                     label: "Pagamentos atrasados",
                     value: overview?.summary.overduePayments || 0,
+                    description: "Cobranças vencidas que exigem atenção",
                     icon: AlertTriangle,
                   },
                   {
                     label: "Empresas suspensas",
                     value: overview?.summary.suspendedBusinesses || 0,
+                    description: "Empresas temporariamente sem acesso",
                     icon: PauseCircle,
                   },
-                ].map((item) => {
+                ].map((item, index, items) => {
                   const Icon = item.icon;
+                  const hasAttention = item.value > 0;
+                  const isLast = index === items.length - 1;
 
                   return (
                     <div
                       key={item.label}
-                      className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 p-4"
+                      className={[
+                        "relative flex gap-4",
+                        isLast ? "" : "pb-7",
+                      ].join(" ")}
                     >
-                      <div className="flex items-center gap-3">
-                        <span className="rounded-xl bg-white p-2 text-[#102b3a] shadow-sm">
-                          <Icon size={18} />
-                        </span>
-                        <span className="text-sm font-bold text-slate-600">
-                          {item.label}
+                      <div className="relative flex shrink-0 flex-col items-center">
+                        <div
+                          className={[
+                            "relative z-10 flex h-11 w-11 items-center justify-center rounded-full transition",
+                            hasAttention
+                              ? "border-2 border-[var(--admin-accent)] bg-[var(--admin-card)] text-[var(--admin-accent-text)]"
+                              : "bg-[var(--admin-primary)] text-[var(--admin-primary-text)] shadow-[0_8px_20px_var(--admin-shadow)]",
+                          ].join(" ")}
+                        >
+                          {hasAttention ? (
+                            <Icon size={19} />
+                          ) : (
+                            <CheckCircle2 size={20} />
+                          )}
+                        </div>
+
+                        {!isLast ? (
+                          <div
+                            className="absolute left-1/2 top-11 h-[calc(100%-44px)] w-[2px] -translate-x-1/2"
+                            style={{
+                              background: "var(--admin-muted)",
+                            }}
+                          />
+                        ) : null}
+                      </div>
+
+                      <div className="min-w-0 flex-1 pb-1">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <h3 className="text-base font-black text-slate-950">
+                              {item.label}
+                            </h3>
+
+                            <p className="mt-1 text-xs font-semibold leading-5 text-slate-400">
+                              {item.description}
+                            </p>
+                          </div>
+
+                          <strong
+                            className="text-2xl font-black"
+                            style={{
+                              color: hasAttention
+                                ? "var(--admin-accent-text)"
+                                : "var(--admin-primary)",
+                            }}
+                          >
+                            {item.value}
+                          </strong>
+                        </div>
+
+                        <span
+                          className="mt-3 inline-flex rounded-full px-3 py-1 text-xs font-black"
+                          style={
+                            hasAttention
+                              ? {
+                                  background: "var(--admin-accent)",
+                                  color: "var(--admin-accent-text)",
+                                }
+                              : {
+                                  background: "var(--admin-muted)",
+                                  color: "var(--admin-primary)",
+                                }
+                          }
+                        >
+                          {hasAttention
+                            ? `${item.value} ${
+                                item.value === 1
+                                  ? "pendência"
+                                  : "pendências"
+                              }`
+                            : "Sem pendências"}
                         </span>
                       </div>
-                      <strong className="text-xl font-black text-slate-950">
-                        {item.value}
-                      </strong>
                     </div>
                   );
                 })}
