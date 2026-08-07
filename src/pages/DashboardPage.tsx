@@ -621,33 +621,73 @@ export function DashboardPage() {
                 </div>
               </div>
 
-              <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3 xl:grid-cols-1 2xl:grid-cols-3">
-                <div className="min-w-0 overflow-hidden rounded-2xl bg-white/95 p-3 text-[#171717]">
-                  <UsersRound size={20} />
-                  <strong className="mt-4 block truncate text-2xl font-black">
-                    {clients.length}
-                  </strong>
-                  <span className="block truncate text-[11px] font-bold leading-4 text-[#777]">
-                    {copy.clientsLabel}
-                  </span>
-                </div>
+              <div className="yggdra-summary-carousel mt-8">
+                <div className="yggdra-summary-carousel-track">
+                  <div className="yggdra-summary-carousel-slide">
+                    <div className="flex min-h-[122px] items-center justify-between gap-5 bg-[var(--yggdra-card)] px-6 py-5 text-[#171717]">
+                      <div>
+                        <span className="text-xs font-black uppercase tracking-[0.18em] text-[#777]">
+                          {copy.clientsLabel}
+                        </span>
 
-                <div className="min-w-0 overflow-hidden rounded-2xl bg-white/95 p-3 text-[#171717]">
-                  <CheckCircle2 size={20} />
-                  <strong className="mt-4 block truncate text-2xl font-black">
-                    {summary?.appointmentsByStatus.confirmed || 0}
-                  </strong>
-                  <span className="block truncate text-[11px] font-bold leading-4 text-[#777]">
-                    Confirmados
-                  </span>
-                </div>
+                        <strong className="mt-2 block text-4xl font-black">
+                          {clients.length}
+                        </strong>
 
-                <div className="min-w-0 overflow-hidden rounded-2xl bg-white/95 p-3 text-[#171717]">
-                  <CircleDollarSign size={20} />
-                  <strong className="mt-4 block truncate text-lg font-black">
-                    {formatCurrency(summary?.estimatedRevenue || 0)}
-                  </strong>
-                  <span className="block truncate text-[11px] font-bold leading-4 text-[#777]">Receita</span>
+                        <p className="mt-1 text-xs font-bold text-[#777]">
+                          cadastrados no negócio
+                        </p>
+                      </div>
+
+                      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[var(--yggdra-muted)] text-[var(--yggdra-primary)]">
+                        <UsersRound size={26} />
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="yggdra-summary-carousel-slide">
+                    <div className="flex min-h-[122px] items-center justify-between gap-5 bg-[var(--yggdra-card)] px-6 py-5 text-[#171717]">
+                      <div>
+                        <span className="text-xs font-black uppercase tracking-[0.18em] text-[#777]">
+                          Confirmados
+                        </span>
+
+                        <strong className="mt-2 block text-4xl font-black">
+                          {summary?.appointmentsByStatus.confirmed || 0}
+                        </strong>
+
+                        <p className="mt-1 text-xs font-bold text-[#777]">
+                          atendimentos confirmados
+                        </p>
+                      </div>
+
+                      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[var(--yggdra-muted)] text-[var(--yggdra-primary)]">
+                        <CheckCircle2 size={26} />
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="yggdra-summary-carousel-slide">
+                    <div className="flex min-h-[122px] items-center justify-between gap-5 bg-[var(--yggdra-card)] px-6 py-5 text-[#171717]">
+                      <div className="min-w-0">
+                        <span className="text-xs font-black uppercase tracking-[0.18em] text-[#777]">
+                          Receita estimada
+                        </span>
+
+                        <strong className="mt-2 block truncate text-3xl font-black">
+                          {formatCurrency(summary?.estimatedRevenue || 0)}
+                        </strong>
+
+                        <p className="mt-1 text-xs font-bold text-[#777]">
+                          movimentação da data selecionada
+                        </p>
+                      </div>
+
+                      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[var(--yggdra-muted)] text-[var(--yggdra-primary)]">
+                        <CircleDollarSign size={26} />
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </article>

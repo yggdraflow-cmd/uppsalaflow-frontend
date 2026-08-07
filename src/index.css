@@ -248,3 +248,59 @@ button {
   }
 }
 
+
+
+/* Dashboard - indicadores animados */
+.yggdra-summary-carousel {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 22px;
+  box-shadow:
+    inset 0 36px 32px rgba(255, 255, 255, 0.04),
+    inset 0 -36px 32px rgba(0, 0, 0, 0.04),
+    0 14px 30px var(--yggdra-shadow);
+}
+
+.yggdra-summary-carousel-track {
+  display: flex;
+  width: 300%;
+  height: 100%;
+  transform: translateX(0%);
+  animation:
+    yggdra-summary-carousel-animation
+    9s
+    infinite
+    cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.yggdra-summary-carousel-slide {
+  width: 33.333333%;
+  flex-shrink: 0;
+}
+
+@keyframes yggdra-summary-carousel-animation {
+  0%,
+  20% {
+    transform: translateX(0%);
+  }
+
+  30%,
+  60% {
+    transform: translateX(-33.333333%);
+  }
+
+  70%,
+  99.99% {
+    transform: translateX(-66.666667%);
+  }
+
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .yggdra-summary-carousel-track {
+    animation: none;
+  }
+}
