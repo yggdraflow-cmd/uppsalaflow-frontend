@@ -652,51 +652,112 @@ export function DashboardPage() {
               </div>
             </article>
 
-            <article className="min-w-0 w-full max-w-full rounded-[24px] bg-[var(--yggdra-card)] p-4 shadow-[0_18px_45px_var(--yggdra-shadow)] backdrop-blur-xl sm:rounded-[28px] sm:p-5 md:rounded-[30px] md:p-7">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h2 className="text-xl font-black text-[#171717]">
-                    Movimento do dia
-                  </h2>
-                  <p className="mt-2 text-xs font-bold text-[#777]">
-                    {formatDateLabel(selectedDate)}
-                  </p>
-                </div>
+            <article className="min-w-0 w-full max-w-full overflow-hidden rounded-[24px] border border-white/10 bg-[#090c08] p-5 text-white shadow-[0_24px_60px_rgba(0,0,0,0.22)] sm:rounded-[28px] sm:p-6 md:rounded-[30px] md:p-7">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex min-w-0 items-center gap-4">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#19250d] text-lime-400">
+                    <Activity size={24} />
+                  </span>
 
-                <Activity size={22} className="text-[var(--yggdra-primary)]" />
+                  <div className="min-w-0">
+                    <h2 className="truncate text-xl font-black text-neutral-100">
+                      Movimento do dia
+                    </h2>
+
+                    <p className="mt-1 text-xs font-medium text-neutral-500">
+                      {formatDateLabel(selectedDate)}
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <div className="mt-6 h-[170px] min-w-0 max-w-full overflow-hidden rounded-[24px] border border-white/80 bg-[var(--yggdra-muted)] p-3 sm:mt-8 sm:h-[190px] sm:p-5">
+              <div className="mt-6 border-t border-neutral-800 pt-6">
+                <div className="flex divide-x divide-neutral-800">
+                  <div className="min-w-0 flex-1 pr-5 sm:pr-6">
+                    <p className="text-xs font-medium text-neutral-500">
+                      Receita estimada
+                    </p>
+
+                    <p className="mt-1 truncate text-2xl font-semibold text-neutral-100">
+                      {formatCurrency(summary?.estimatedRevenue || 0)}
+                    </p>
+
+                    <p className="mt-1 text-xs font-medium text-lime-400">
+                      {summary?.appointmentsByStatus.confirmed || 0} confirmados
+                    </p>
+                  </div>
+
+                  <div className="min-w-0 flex-1 pl-5 sm:pl-6">
+                    <p className="text-xs font-medium text-neutral-500">
+                      Atendimentos
+                    </p>
+
+                    <p className="mt-1 text-2xl font-semibold text-neutral-100">
+                      {totalAppointments}
+                    </p>
+
+                    <p className="mt-1 text-xs font-medium text-[#61b7ff]">
+                      {summary?.appointmentsByStatus.finished || 0} finalizados
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative mt-8 h-28 w-full">
                 <svg
-                  viewBox="0 0 420 150"
+                  className="h-full w-full"
+                  viewBox="0 0 300 100"
                   preserveAspectRatio="none"
-                  className="block h-full min-w-0 w-full max-w-full"
                 >
+                  <defs>
+                    <linearGradient
+                      id="dashboard-movement-gradient"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="0%"
+                        stopColor="#a3e635"
+                        stopOpacity="0.22"
+                      />
+                      <stop
+                        offset="100%"
+                        stopColor="#a3e635"
+                        stopOpacity="0"
+                      />
+                    </linearGradient>
+                  </defs>
+
                   <path
-                    d="M10 115 C 60 35, 100 45, 145 82 S 230 130, 270 55 S 350 15, 410 78"
+                    d="M0,65 C50,20 80,80 150,70 S250,50 300,85"
                     fill="none"
-                    stroke="var(--yggdra-primary)"
-                    strokeWidth="5"
+                    stroke="#a3e635"
+                    strokeWidth="2.5"
                     strokeLinecap="round"
                   />
+
                   <path
-                    d="M10 105 C 65 95, 95 120, 145 72 S 220 20, 270 80 S 340 115, 410 45"
-                    fill="none"
-                    stroke="var(--yggdra-accent-text)"
-                    strokeOpacity="0.35"
-                    strokeWidth="4"
-                    strokeLinecap="round"
+                    d="M0,100 L0,65 C50,20 80,80 150,70 S250,50 300,85 L300,100 Z"
+                    fill="url(#dashboard-movement-gradient)"
                   />
                 </svg>
+
+                <div className="absolute right-0 top-[95px]">
+                  <div className="absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-lime-400 shadow-[0_0_18px_rgba(163,230,53,0.55)]" />
+                  <div className="absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full bg-lime-400/25" />
+                </div>
               </div>
 
-              <div className="mt-4 grid min-w-0 grid-cols-6 gap-1 text-center text-[10px] font-black text-[#777] sm:mt-5 sm:gap-2 sm:text-xs">
-                <span>A</span>
-                <span>C</span>
-                <span>E</span>
-                <span>F</span>
-                <span>CA</span>
-                <span>N</span>
+              <div className="mt-7 flex items-center justify-between border-t border-neutral-800 pt-5 text-xs font-medium">
+                <span className="text-neutral-500">
+                  Resumo da data selecionada
+                </span>
+
+                <span className="font-bold text-neutral-300">
+                  {totalAppointments} registros
+                </span>
               </div>
             </article>
 
