@@ -50,9 +50,10 @@ export function RegisterPage() {
   }
 
   return (
-    <AuthLayout variant="plain">
+    <AuthLayout variant="plain" registerTheme="business">
       <RegisterPanel
         accountType="business"
+        theme="business"
         title="Criar conta da empresa"
         description="Cadastre seu acesso para gerenciar agenda, clientes, serviços e profissionais."
         onSubmit={handleSubmit}

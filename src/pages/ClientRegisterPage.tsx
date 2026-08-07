@@ -63,9 +63,10 @@ export function ClientRegisterPage() {
   }
 
   return (
-    <AuthLayout variant="plain">
+    <AuthLayout variant="plain" registerTheme="client">
       <RegisterPanel
         accountType="client"
+        theme="client"
         title="Criar conta de cliente"
         description="Crie seu acesso para agendar horários e acompanhar seus atendimentos."
         onSubmit={handleSubmit}
