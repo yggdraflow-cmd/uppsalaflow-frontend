@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import { Check, X } from "lucide-react";
 
 import {
@@ -24,7 +25,7 @@ export function ThemePickerDialog({
   onClose,
   closeLabel = "Fechar seleção de tema",
 }: ThemePickerDialogProps) {
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-[120] flex items-center justify-center bg-black/45 p-3 backdrop-blur-[4px] sm:p-5"
       role="presentation"
@@ -128,6 +129,7 @@ export function ThemePickerDialog({
           </div>
         </div>
       </section>
-    </div>
+    </div>,
+    document.body
   );
 }
