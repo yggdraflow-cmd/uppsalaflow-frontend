@@ -88,18 +88,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <div
-      className="min-h-screen p-3 text-[#17222b] sm:p-4"
-      style={{ background: "var(--admin-background, #eef2f3)" }}
-    >
-      <div className="mx-auto min-h-[calc(100vh-24px)] max-w-[1600px] overflow-hidden rounded-[28px] border border-white/90 bg-white/65 shadow-[0_28px_90px_rgba(25,45,55,0.16)] backdrop-blur-3xl sm:min-h-[calc(100vh-32px)] sm:rounded-[34px]">
+    <div className="admin-premium-shell min-h-screen p-3 text-[#17222b] sm:p-4">
+      <div className="admin-premium-frame mx-auto min-h-[calc(100vh-24px)] max-w-[1600px] overflow-hidden rounded-[28px] border border-white/90 bg-white/65 shadow-[0_28px_90px_rgba(25,45,55,0.16)] backdrop-blur-3xl sm:min-h-[calc(100vh-32px)] sm:rounded-[34px]">
         <div className="grid min-h-[calc(100vh-24px)] lg:grid-cols-[270px_minmax(0,1fr)] sm:min-h-[calc(100vh-32px)]">
-          <aside
-            className="border-b border-slate-200/80 p-5 text-white lg:border-b-0 lg:border-r lg:border-white/10 lg:p-6"
-            style={{ background: "var(--admin-primary, #102b3a)" }}
-          >
+          <aside className="admin-premium-sidebar border-b border-slate-200/80 p-5 text-white lg:border-b-0 lg:border-r lg:border-white/10 lg:p-6">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[var(--admin-primary)] shadow-lg">
+              <div className="admin-premium-brand flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[var(--admin-primary)] shadow-lg">
                 <ShieldCheck size={25} />
               </div>
 
@@ -114,7 +108,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               </div>
             </div>
 
-            <nav className="mt-6 flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
+            <nav className="admin-premium-nav mt-6 flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
               {navigationItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = currentView === item.view;
@@ -124,7 +118,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                     key={item.view}
                     to={item.to}
                     className={[
-                      "flex shrink-0 items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition",
+                      "admin-premium-nav-link flex shrink-0 items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition",
                       isActive
                         ? "bg-white text-[var(--admin-primary)] shadow-lg"
                         : "text-slate-300 hover:bg-white/10 hover:text-white",
@@ -158,7 +152,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </aside>
 
           <div className="min-w-0">
-            <header className="flex min-h-[82px] items-center justify-between gap-4 border-b border-slate-200/80 px-5 py-4 sm:px-8">
+            <header className="admin-premium-topbar flex min-h-[82px] items-center justify-between gap-4 border-b border-slate-200/80 px-5 py-4 sm:px-8">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.2em] text-[var(--admin-primary)]">
                   Operação central
@@ -174,7 +168,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
                 <Link
                   to="/admin/account"
-                  className="flex min-w-0 items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm transition hover:border-slate-300 sm:px-4"
+                  className="admin-premium-profile flex min-w-0 items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm transition hover:border-slate-300 sm:px-4"
                 >
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[var(--admin-muted)] text-[var(--admin-primary)]">
                     {profileImageUrl ? (
@@ -210,7 +204,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               </div>
             </header>
 
-            <main className="min-w-0 px-5 py-6 sm:px-8 sm:py-8">
+            <main className="admin-premium-content min-w-0 px-5 py-6 sm:px-8 sm:py-8">
               {children}
             </main>
           </div>
