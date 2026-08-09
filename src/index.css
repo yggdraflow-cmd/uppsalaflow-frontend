@@ -1377,30 +1377,65 @@ button {
   }
 }
 
-
 /* ===== SUPER ADMIN REFERENCE COLORS ===== */
 
 /*
- * Super Admin
- * Visual baseado diretamente na referência enviada.
+ * Paleta fixa baseada na referência enviada.
  *
- * Background: #09090b
- * Surface:    #0c0c0f
- * Card:       #09090b / #0f0f12
- * Border:     #27272a
- * Foreground: #fafafa
- * Muted:      #a1a1aa
- * Brand:      hsl(27 96% 61%)
+ * Dark shadcn:
+ * background ........ #09090b
+ * surface/card ...... #0c0c0f
+ * secondary/muted ... #27272a
+ * border ............ #27272a
+ * foreground ........ #fafafa
+ * muted foreground .. #a1a1aa
+ *
+ * Prompt original:
+ * --brand ............ 31 97% 72%
+ * --brand-foreground . 27 96% 61%
  */
 
 .admin-dashboard-shell {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 240 4.9% 83.9%;
+
+  --brand: 31 97% 72%;
+  --brand-foreground: 27 96% 61%;
+
+  /*
+   * Compatibilidade com componentes antigos do Super Admin.
+   * Nenhuma dessas variáveis aponta mais para as paletas cadastradas.
+   */
   --admin-primary: #09090b;
   --admin-primary-text: #fafafa;
-  --admin-accent: hsl(27 96% 61%);
+  --admin-card: #0c0c0f;
+  --admin-muted: #27272a;
+  --admin-accent: hsl(31 97% 72%);
   --admin-accent-text: #09090b;
-  --admin-muted: #18181b;
-  --admin-card: #fafafa;
-  --admin-shadow: rgba(0, 0, 0, 0.5);
+  --admin-background: #09090b;
+  --admin-shadow: rgba(0, 0, 0, 0.55);
 
   --admin-dash-base: #09090b;
   --admin-dash-surface: #0c0c0f;
@@ -1411,14 +1446,20 @@ button {
   min-height: 100vh;
   padding: 12px;
 
+  color: #fafafa;
+
   background:
     radial-gradient(
-      ellipse 55% 28% at 50% 100%,
-      hsl(27 96% 61% / 0.12),
+      ellipse 55% 25% at 50% 100%,
+      hsl(27 96% 61% / 0.08),
       transparent 70%
     ),
     #09090b;
 }
+
+/* ==========================
+   JANELA PRINCIPAL
+========================== */
 
 .admin-dashboard-window {
   min-height: calc(100vh - 24px);
@@ -1436,9 +1477,9 @@ button {
     0 24px 80px rgba(0, 0, 0, 0.5);
 }
 
-/* ============================
-   TOP NAV
-============================ */
+/* ==========================
+   NAVBAR
+========================== */
 
 .admin-dashboard-navbar {
   min-height: 64px;
@@ -1446,8 +1487,8 @@ button {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-
   gap: 24px;
+
   padding: 10px 18px;
 
   border-bottom: 1px solid #27272a;
@@ -1460,19 +1501,6 @@ button {
   color: #fafafa;
 }
 
-.admin-dashboard-brand-icon {
-  width: 36px;
-  height: 36px;
-
-  border: 1px solid #27272a;
-  border-radius: 8px;
-
-  background: #0c0c0f;
-  color: hsl(27 96% 61%);
-
-  box-shadow: none;
-}
-
 .admin-dashboard-brand strong {
   color: #fafafa;
 }
@@ -1481,41 +1509,40 @@ button {
   color: #71717a;
 }
 
+.admin-dashboard-brand-icon {
+  border: 1px solid #27272a;
+  border-radius: 8px;
+
+  background: #0c0c0f;
+  color: hsl(31 97% 72%);
+
+  box-shadow: none;
+}
+
 .admin-dashboard-nav-link {
   border-radius: 7px;
 
+  background: transparent;
   color: #a1a1aa;
 
-  background: transparent;
-
   transition:
-    color 160ms ease,
-    background 160ms ease;
+    background 160ms ease,
+    color 160ms ease;
 }
 
 .admin-dashboard-nav-link:hover {
-  color: #fafafa;
   background: #18181b;
+  color: #fafafa;
 }
 
 .admin-dashboard-nav-link.is-active {
-  color: #fafafa;
   background: #18181b;
+  color: #fafafa;
 }
 
 .admin-dashboard-nav-link.is-active::after {
-  right: 10px;
-  bottom: 2px;
-  left: 10px;
-
-  height: 2px;
-
-  background: hsl(27 96% 61%);
+  background: hsl(31 97% 72%);
 }
-
-/* ============================
-   PROFILE
-============================ */
 
 .admin-dashboard-profile {
   border: 1px solid #27272a;
@@ -1547,12 +1574,11 @@ button {
 
 .admin-dashboard-logout {
   border: 1px solid #27272a !important;
-  border-radius: 8px;
 
   background: #0c0c0f !important;
   color: #a1a1aa !important;
 
-  box-shadow: none;
+  box-shadow: none !important;
 }
 
 .admin-dashboard-logout:hover {
@@ -1560,9 +1586,9 @@ button {
   color: #fafafa !important;
 }
 
-/* ============================
-   MAIN
-============================ */
+/* ==========================
+   CONTEÚDO
+========================== */
 
 .admin-dashboard-main {
   background: #09090b;
@@ -1577,29 +1603,26 @@ button {
 }
 
 .admin-dashboard-kicker {
-  color: hsl(27 96% 61%);
+  color: hsl(31 97% 72%);
 }
 
 .admin-dashboard-title {
   color: #fafafa;
 
-  background: none;
+  background: none !important;
+
   -webkit-text-fill-color: initial;
+
   text-shadow: none;
 }
 
-.admin-dashboard-description {
+.admin-dashboard-description,
+.admin-dashboard-muted {
   color: #a1a1aa;
 }
 
-/* ============================
-   BOTÃO ATUALIZAR
-============================ */
-
 .admin-dashboard-refresh {
   border: 1px solid #fafafa;
-
-  border-radius: 7px;
 
   background: #fafafa;
   color: #09090b;
@@ -1614,9 +1637,9 @@ button {
   transform: none;
 }
 
-/* ============================
+/* ==========================
    CARDS
-============================ */
+========================== */
 
 .admin-dashboard-page .upp-card,
 .admin-dashboard-page .upp-card-soft {
@@ -1646,6 +1669,10 @@ button {
     background 160ms ease;
 }
 
+.admin-dashboard-summary-grid > *::before {
+  display: none !important;
+}
+
 .admin-dashboard-summary-grid > *:hover {
   border-color: #3f3f46 !important;
 
@@ -1656,29 +1683,28 @@ button {
   box-shadow: none !important;
 }
 
-.admin-dashboard-summary-grid > *::before {
-  display: none !important;
-}
-
-.admin-dashboard-summary-grid .text-slate-500,
-.admin-dashboard-summary-grid .text-slate-400 {
-  color: #71717a !important;
-}
-
 .admin-dashboard-summary-grid .text-slate-950 {
   color: #fafafa !important;
 }
 
+.admin-dashboard-summary-grid .text-slate-500 {
+  color: #a1a1aa !important;
+}
+
+.admin-dashboard-summary-grid .text-slate-400 {
+  color: #71717a !important;
+}
+
 .admin-dashboard-summary-grid span.rounded-2xl {
-  border: 0;
+  border: 0 !important;
 
   background: transparent !important;
   color: #71717a !important;
 }
 
-/* ============================
-   GRÁFICO + RECENTES
-============================ */
+/* ==========================
+   RECEITA / GRÁFICO
+========================== */
 
 .admin-dashboard-chart-panel,
 .admin-dashboard-recent-panel {
@@ -1686,15 +1712,16 @@ button {
 
   border-radius: 12px;
 
-  background: #0c0c0f;
-
+  background: #0c0c0f !important;
   color: #fafafa;
 
-  box-shadow: none;
+  box-shadow: none !important;
 }
 
 .admin-dashboard-chart-panel h2,
-.admin-dashboard-recent-panel h2 {
+.admin-dashboard-recent-panel h2,
+.admin-dashboard-chart-panel strong,
+.admin-dashboard-recent-panel strong {
   color: #fafafa;
 }
 
@@ -1703,32 +1730,24 @@ button {
   color: #a1a1aa;
 }
 
-.admin-dashboard-chart-panel .border-t {
+.admin-dashboard-chart-panel .border-t,
+.admin-dashboard-chart-panel .border-[var(--admin-muted)] {
   border-color: #27272a !important;
 }
 
-.admin-dashboard-bar-chart {
-  height: 270px;
-}
-
 .admin-dashboard-bar-track {
-  position: relative;
-
   border-bottom: 1px solid #27272a;
 }
 
 .admin-dashboard-bar {
-  width: min(40px, 68%);
-
-  border-radius: 3px 3px 0 0;
-
   background: #fafafa;
 
   box-shadow: none;
 }
 
 .admin-dashboard-bar:hover {
-  background: hsl(27 96% 61%);
+  background: hsl(31 97% 72%);
+
   filter: none;
 }
 
@@ -1736,45 +1755,42 @@ button {
   color: #71717a;
 }
 
-/* ============================
+/* ==========================
    PAGAMENTOS RECENTES
-============================ */
+========================== */
 
 .admin-dashboard-recent-row {
   border-bottom: 1px solid #27272a;
+}
+
+.admin-dashboard-recent-avatar {
+  background: #fafafa;
+  color: #09090b;
 }
 
 .admin-dashboard-recent-row strong {
   color: #fafafa;
 }
 
-.admin-dashboard-recent-row .admin-dashboard-muted {
+.admin-dashboard-recent-row
+  .admin-dashboard-muted {
   color: #71717a;
 }
 
-.admin-dashboard-recent-avatar {
-  border: 0;
-
-  background: #fafafa;
-  color: #09090b;
-}
-
-/* ============================
+/* ==========================
    ALERTA
-============================ */
+========================== */
 
 .admin-dashboard-alert {
   border: 1px solid
-    hsl(27 96% 61% / 0.35) !important;
-
-  border-radius: 10px;
+    hsl(31 97% 72% / 0.28) !important;
 
   background:
-    hsl(27 96% 61% / 0.08) !important;
+    hsl(27 96% 61% / 0.07) !important;
 
   color: hsl(31 97% 72%) !important;
 
-  box-shadow: none;
+  box-shadow: none !important;
 }
 
 .admin-dashboard-alert strong,
@@ -1783,18 +1799,134 @@ button {
   color: hsl(31 97% 72%) !important;
 }
 
-/* ============================
-   LISTAS EMPRESAS / APROVAÇÕES
-============================ */
+/* ==========================
+   PENDÊNCIAS
+========================== */
+
+/*
+ * Estes componentes ainda utilizam as antigas variáveis
+ * --admin-card, --admin-muted etc.
+ * Agora elas também apontam para a paleta escura.
+ */
+
+.admin-dashboard-page
+  .admin-summary-carousel {
+  border: 1px solid #27272a;
+
+  background: #0c0c0f;
+
+  box-shadow: none;
+}
+
+.admin-dashboard-page
+  .admin-summary-carousel-slide > div {
+  background: #0c0c0f !important;
+  color: #fafafa !important;
+}
+
+.admin-dashboard-page
+  .admin-summary-carousel-slide strong,
+.admin-dashboard-page
+  .admin-summary-carousel-slide span {
+  color: #fafafa;
+}
+
+.admin-dashboard-page
+  .admin-summary-carousel-slide p {
+  color: #71717a !important;
+}
+
+/* Card principal das pendências */
+
+.admin-dashboard-page
+  [style*="background: var(--admin-muted)"] {
+  background: #18181b !important;
+}
+
+.admin-dashboard-page
+  [style*="background: var(--admin-card)"] {
+  background: #0c0c0f !important;
+}
+
+.admin-dashboard-page
+  [style*="color: var(--admin-primary)"] {
+  color: #fafafa !important;
+}
+
+.admin-dashboard-page
+  [style*="color: var(--admin-primary-text)"] {
+  color: #fafafa !important;
+}
+
+.admin-dashboard-page
+  [style*="color: var(--admin-accent-text)"] {
+  color: #09090b !important;
+}
+
+/* ==========================
+   SAÚDE DA PLATAFORMA
+========================== */
+
+.admin-dashboard-page
+  .admin-health-palette-title {
+  color: #fafafa;
+}
+
+.admin-dashboard-page
+  .admin-health-palette-subtitle,
+.admin-dashboard-page
+  .admin-health-palette-footer {
+  color: #71717a;
+
+  opacity: 1;
+}
+
+.admin-dashboard-page
+  .admin-health-palette-list {
+  overflow: hidden;
+
+  border: 1px solid #27272a;
+  border-radius: 10px;
+
+  background: #0c0c0f;
+
+  box-shadow: none;
+}
+
+.admin-dashboard-page
+  .admin-health-palette-row {
+  border-bottom: 1px solid #27272a !important;
+
+  background: #0c0c0f !important;
+  color: #fafafa !important;
+}
+
+.admin-dashboard-page
+  .admin-health-palette-row:last-child {
+  border-bottom: 0 !important;
+}
+
+.admin-dashboard-page
+  .admin-health-palette-row strong {
+  color: #fafafa;
+}
+
+.admin-dashboard-page
+  .admin-health-palette-accent strong {
+  color: hsl(31 97% 72%);
+}
+
+/* ==========================
+   EMPRESAS / APROVAÇÕES
+========================== */
 
 .admin-dashboard-list-card {
   border: 1px solid #27272a !important;
 
-  border-radius: 12px !important;
-
   background: #0c0c0f !important;
+  color: #fafafa !important;
 
-  color: #fafafa;
+  box-shadow: none !important;
 }
 
 .admin-dashboard-list-card:hover {
@@ -1807,25 +1939,32 @@ button {
   box-shadow: none;
 }
 
-.admin-dashboard-list-card .text-slate-950,
-.admin-dashboard-list-card .text-slate-900 {
+.admin-dashboard-list-card
+  .text-slate-950,
+.admin-dashboard-list-card
+  .text-slate-900 {
   color: #fafafa !important;
 }
 
-.admin-dashboard-list-card .text-slate-500,
-.admin-dashboard-list-card .text-slate-600,
-.admin-dashboard-list-card .text-slate-700 {
+.admin-dashboard-list-card
+  .text-slate-700,
+.admin-dashboard-list-card
+  .text-slate-600,
+.admin-dashboard-list-card
+  .text-slate-500 {
   color: #a1a1aa !important;
 }
 
-.admin-dashboard-list-card .bg-white,
-.admin-dashboard-list-card .bg-slate-50 {
+.admin-dashboard-list-card
+  .bg-white,
+.admin-dashboard-list-card
+  .bg-slate-50 {
   background: #111114 !important;
 }
 
-/* ============================
-   INPUTS
-============================ */
+/* ==========================
+   INPUTS / SELECTS
+========================== */
 
 .admin-dashboard-page input,
 .admin-dashboard-page select,
@@ -1867,16 +2006,14 @@ button {
   color: #fafafa;
 }
 
-/* ============================
-   TABLE
-============================ */
+/* ==========================
+   TABELAS
+========================== */
 
 .admin-dashboard-table {
   border: 1px solid #27272a !important;
 
-  border-radius: 10px;
-
-  background: #09090b;
+  background: #09090b !important;
 }
 
 .admin-dashboard-table thead {
@@ -1898,72 +2035,21 @@ button {
   background: #0f0f12;
 }
 
-.admin-dashboard-table .text-slate-950 {
+.admin-dashboard-table
+  .text-slate-950 {
   color: #fafafa !important;
 }
 
-.admin-dashboard-table .text-slate-500,
-.admin-dashboard-table .text-slate-600 {
+.admin-dashboard-table
+  .text-slate-600,
+.admin-dashboard-table
+  .text-slate-500 {
   color: #a1a1aa !important;
 }
 
-/* ============================
-   SAÚDE DA PLATAFORMA
-============================ */
-
-.admin-dashboard-page .admin-health-palette-title {
-  color: #fafafa;
-}
-
-.admin-dashboard-page .admin-health-palette-subtitle,
-.admin-dashboard-page .admin-health-palette-footer {
-  color: #71717a;
-}
-
-.admin-dashboard-page .admin-health-palette-list {
-  border: 1px solid #27272a;
-
-  border-radius: 10px;
-
-  box-shadow: none;
-}
-
-.admin-dashboard-page .admin-health-palette-row {
-  border-bottom: 1px solid #27272a;
-
-  background: #0c0c0f;
-  color: #fafafa;
-}
-
-.admin-dashboard-page .admin-health-palette-row:last-child {
-  border-bottom: 0;
-}
-
-.admin-dashboard-page .admin-health-palette-accent {
-  color: hsl(31 97% 72%);
-}
-
-/* ============================
-   PENDÊNCIAS
-============================ */
-
-.admin-dashboard-page
-  .admin-summary-carousel {
-  border: 1px solid #27272a;
-
-  box-shadow: none;
-}
-
-.admin-dashboard-page
-  .admin-summary-carousel-slide
-  > div {
-  background: #0c0c0f !important;
-  color: #fafafa !important;
-}
-
-/* ============================
+/* ==========================
    EMPTY STATE
-============================ */
+========================== */
 
 .admin-dashboard-empty {
   border: 1px dashed #3f3f46 !important;
@@ -1971,71 +2057,92 @@ button {
   background: #09090b !important;
 }
 
-.admin-dashboard-empty .text-slate-900 {
+.admin-dashboard-empty
+  .text-slate-900 {
   color: #fafafa !important;
 }
 
-.admin-dashboard-empty .text-slate-500,
-.admin-dashboard-empty .text-slate-400 {
+.admin-dashboard-empty
+  .text-slate-500,
+.admin-dashboard-empty
+  .text-slate-400 {
   color: #71717a !important;
 }
 
-/* ============================
+/* ==========================
    MODAL
-============================ */
+========================== */
 
 .admin-dashboard-modal {
   border: 1px solid #27272a !important;
 
-  border-radius: 12px;
-
   background: #0c0c0f !important;
-  color: #fafafa;
+  color: #fafafa !important;
 
   box-shadow:
     0 30px 80px rgba(0, 0, 0, 0.65);
 }
 
-.admin-dashboard-modal .text-slate-950,
-.admin-dashboard-modal .text-slate-900,
-.admin-dashboard-modal .text-slate-700,
-.admin-dashboard-modal .text-slate-600 {
-  color: #fafafa !important;
-}
-
-.admin-dashboard-modal .text-slate-500,
-.admin-dashboard-modal .text-slate-400 {
-  color: #a1a1aa !important;
-}
-
-.admin-dashboard-modal .bg-slate-50,
-.admin-dashboard-modal .bg-slate-100,
-.admin-dashboard-modal .bg-white {
+.admin-dashboard-modal
+  .bg-white,
+.admin-dashboard-modal
+  .bg-slate-50,
+.admin-dashboard-modal
+  .bg-slate-100 {
   background: #111114 !important;
 }
 
-/* ============================
-   RESET DE CORES TAILWIND
-============================ */
+.admin-dashboard-modal
+  .text-slate-950,
+.admin-dashboard-modal
+  .text-slate-900,
+.admin-dashboard-modal
+  .text-slate-700,
+.admin-dashboard-modal
+  .text-slate-600 {
+  color: #fafafa !important;
+}
 
-.admin-dashboard-page .text-slate-950,
-.admin-dashboard-page .text-slate-900 {
+.admin-dashboard-modal
+  .text-slate-500,
+.admin-dashboard-modal
+  .text-slate-400 {
+  color: #a1a1aa !important;
+}
+
+/* ==========================
+   RESET FINAL
+========================== */
+
+.admin-dashboard-page
+  .text-slate-950,
+.admin-dashboard-page
+  .text-slate-900 {
   color: #fafafa;
 }
 
-.admin-dashboard-page .text-slate-700,
-.admin-dashboard-page .text-slate-600,
-.admin-dashboard-page .text-slate-500 {
+.admin-dashboard-page
+  .text-slate-700,
+.admin-dashboard-page
+  .text-slate-600,
+.admin-dashboard-page
+  .text-slate-500 {
   color: #a1a1aa;
 }
 
-.admin-dashboard-page .text-slate-400 {
+.admin-dashboard-page
+  .text-slate-400 {
   color: #71717a;
 }
 
-/* ============================
-   RESPONSIVO
-============================ */
+/* Remove qualquer superfície clara herdada da paleta antiga */
+
+.admin-dashboard-page
+  .admin-health-palette,
+.admin-dashboard-page
+  .admin-health-palette-header {
+  background: transparent !important;
+}
 
 @media (max-width: 720px) {
   .admin-dashboard-shell {
