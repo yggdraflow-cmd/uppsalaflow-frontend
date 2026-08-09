@@ -1156,7 +1156,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
                       <div className="flex items-start gap-5">
                         <div className="relative flex shrink-0 flex-col items-center">
                           <div
-                            className="flex h-16 w-16 items-center justify-center rounded-full shadow-[0_12px_30px_var(--admin-shadow)]"
+                            className="admin-attention-icon flex h-16 w-16 items-center justify-center rounded-full shadow-[0_12px_30px_var(--admin-shadow)]"
                             style={
                               hasAttention
                                 ? {
@@ -1184,7 +1184,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
                           </h3>
 
                           <span
-                            className="mt-3 inline-flex rounded-full px-4 py-1.5 text-sm font-black"
+                            className="admin-attention-badge mt-3 inline-flex rounded-full px-4 py-1.5 text-sm font-black"
                             style={
                               hasAttention
                                 ? {
@@ -1221,7 +1221,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
                             </p>
 
                             <strong
-                              className="mt-2 block text-4xl font-black"
+                              className="admin-attention-total mt-2 block text-4xl font-black"
                               style={{
                                 color: hasAttention
                                   ? "var(--admin-accent-text)"

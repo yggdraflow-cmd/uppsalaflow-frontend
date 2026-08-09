@@ -2692,3 +2692,33 @@ button {
 .admin-account-page .admin-account-card .upp-label {
   color: #a1a1aa !important;
 }
+
+
+/* ===== SUPER ADMIN ATTENTION CAROUSEL FIX ===== */
+
+/*
+ * Os quatro estados do carrossel usam a mesma identidade.
+ * hasAttention continua alterando apenas conteúdo e ícone.
+ */
+
+.admin-attention-icon {
+  border: 1px solid #27272a !important;
+  background: #18181b !important;
+  color: #fafafa !important;
+  box-shadow: none !important;
+}
+
+.admin-attention-icon svg {
+  color: #fafafa !important;
+  stroke: currentColor !important;
+}
+
+.admin-attention-badge {
+  border: 1px solid #27272a !important;
+  background: #18181b !important;
+  color: #fafafa !important;
+}
+
+.admin-attention-total {
+  color: #fafafa !important;
+}
