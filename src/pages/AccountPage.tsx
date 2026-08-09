@@ -349,7 +349,7 @@ export function AccountPage() {
               : "grid gap-6 xl:col-start-1 xl:row-start-1"
           }
         >
-          <Card title="Usuário logado">
+          <Card title="Usuário logado" className={isAdmin ? "admin-account-card" : ""}>
             <div className="flex flex-col gap-5">
               <div className="flex items-start gap-4">
                 <span className="admin-account-avatar flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-3xl bg-[var(--yggdra-primary)] text-[var(--yggdra-primary-text)] shadow-[0_16px_38px_var(--yggdra-shadow)]">
@@ -529,7 +529,7 @@ export function AccountPage() {
               : "grid gap-6 xl:col-start-1 xl:row-start-2"
           }
         >
-          <Card title="Alterar senha">
+          <Card title="Alterar senha" className={isAdmin ? "admin-account-card" : ""}>
             <form onSubmit={handleSubmit} className="space-y-4">
               <PasswordField
                 label="Senha atual"

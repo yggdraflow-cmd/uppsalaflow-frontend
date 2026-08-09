@@ -2645,3 +2645,50 @@ button {
 .admin-account-page .text-red-700 {
   color: #fca5a5 !important;
 }
+
+
+/* ===== SUPER ADMIN ACCOUNT CARD FIX ===== */
+
+/*
+ * Card.tsx possui bg-white/82 e text-[#171717] próprios.
+ * Estes overrides valem somente para os cards da conta ADMIN.
+ */
+
+.admin-account-page .admin-account-card {
+  border: 1px solid #27272a !important;
+  border-radius: 12px !important;
+
+  background: #09090b !important;
+  color: #fafafa !important;
+
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.admin-account-page .admin-account-card > h2 {
+  color: #fafafa !important;
+}
+
+.admin-account-page .admin-account-card h2,
+.admin-account-page .admin-account-card strong {
+  color: #fafafa !important;
+}
+
+.admin-account-page .admin-account-card .text-zinc-950,
+.admin-account-page .admin-account-card .text-zinc-900 {
+  color: #fafafa !important;
+}
+
+.admin-account-page .admin-account-card .text-zinc-700,
+.admin-account-page .admin-account-card .text-zinc-600,
+.admin-account-page .admin-account-card .text-zinc-500 {
+  color: #a1a1aa !important;
+}
+
+.admin-account-page .admin-account-card .text-zinc-400 {
+  color: #71717a !important;
+}
+
+.admin-account-page .admin-account-card .upp-label {
+  color: #a1a1aa !important;
+}
