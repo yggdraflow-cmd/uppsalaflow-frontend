@@ -2495,3 +2495,153 @@ button {
   background: #09090b !important;
   color: #fafafa !important;
 }
+
+
+/* ===== SUPER ADMIN ACCOUNT FINAL ===== */
+
+.admin-account-page {
+  color: #fafafa;
+}
+
+.admin-account-page .admin-account-kicker {
+  color: #71717a !important;
+}
+
+.admin-account-page .admin-account-title {
+  color: #fafafa !important;
+}
+
+.admin-account-page .admin-account-description {
+  color: #a1a1aa !important;
+}
+
+.admin-account-page .upp-card,
+.admin-account-page .upp-card-soft {
+  border: 1px solid #27272a !important;
+  border-radius: 12px !important;
+  background: #09090b !important;
+  color: #fafafa !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.admin-account-page .upp-card > h2,
+.admin-account-page .upp-card h2 {
+  color: #fafafa !important;
+}
+
+.admin-account-page .text-zinc-950,
+.admin-account-page .text-zinc-900 {
+  color: #fafafa !important;
+}
+
+.admin-account-page .text-zinc-700,
+.admin-account-page .text-zinc-600,
+.admin-account-page .text-zinc-500 {
+  color: #a1a1aa !important;
+}
+
+.admin-account-page .text-zinc-400 {
+  color: #71717a !important;
+}
+
+.admin-account-page .upp-label {
+  color: #a1a1aa !important;
+}
+
+.admin-account-page .admin-account-avatar {
+  border: 1px solid #27272a !important;
+  border-radius: 12px !important;
+  background: #18181b !important;
+  color: #fafafa !important;
+  box-shadow: none !important;
+}
+
+.admin-account-page .admin-account-role {
+  border: 1px solid #27272a !important;
+  background: #18181b !important;
+  color: #fafafa !important;
+}
+
+.admin-account-page .admin-account-upload {
+  border: 1px solid #27272a !important;
+  border-radius: 8px !important;
+  background: #0c0c0f !important;
+  color: #fafafa !important;
+  box-shadow: none !important;
+}
+
+.admin-account-page .admin-account-upload:hover {
+  border-color: #3f3f46 !important;
+  background: #18181b !important;
+  color: #fafafa !important;
+}
+
+.admin-account-page .upp-input {
+  border: 1px solid #27272a !important;
+  border-radius: 8px !important;
+  background: #09090b !important;
+  color: #fafafa !important;
+  box-shadow: none !important;
+}
+
+.admin-account-page .upp-input:hover {
+  border-color: #3f3f46 !important;
+}
+
+.admin-account-page .upp-input:focus {
+  border-color: #52525b !important;
+  background: #09090b !important;
+  box-shadow: 0 0 0 1px #52525b !important;
+}
+
+.admin-account-page button[aria-label="Mostrar senha"],
+.admin-account-page button[aria-label="Ocultar senha"] {
+  color: #71717a !important;
+}
+
+.admin-account-page button[aria-label="Mostrar senha"]:hover,
+.admin-account-page button[aria-label="Ocultar senha"]:hover {
+  color: #fafafa !important;
+}
+
+.admin-account-page .admin-account-security {
+  border: 1px solid #27272a !important;
+  background: #0c0c0f !important;
+  color: #a1a1aa !important;
+}
+
+.admin-account-page .admin-account-security svg {
+  color: #a1a1aa !important;
+}
+
+.admin-account-page form button[type="submit"] {
+  border: 1px solid #fafafa !important;
+  border-radius: 8px !important;
+  background: #fafafa !important;
+  color: #09090b !important;
+  box-shadow: none !important;
+}
+
+.admin-account-page form button[type="submit"]:hover {
+  background: #e4e4e7 !important;
+  color: #09090b !important;
+}
+
+.admin-account-page .bg-emerald-50 {
+  border-color: rgba(16, 185, 129, 0.35) !important;
+  background: rgba(6, 78, 59, 0.22) !important;
+}
+
+.admin-account-page .text-emerald-700 {
+  color: #6ee7b7 !important;
+}
+
+.admin-account-page .bg-red-50 {
+  border-color: rgba(239, 68, 68, 0.35) !important;
+  background: rgba(127, 29, 29, 0.18) !important;
+}
+
+.admin-account-page .text-red-700 {
+  color: #fca5a5 !important;
+}
