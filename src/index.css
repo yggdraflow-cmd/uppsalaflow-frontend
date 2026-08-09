@@ -1376,3 +1376,674 @@ button {
     transition: none;
   }
 }
+
+
+/* ===== SUPER ADMIN REFERENCE COLORS ===== */
+
+/*
+ * Super Admin
+ * Visual baseado diretamente na referência enviada.
+ *
+ * Background: #09090b
+ * Surface:    #0c0c0f
+ * Card:       #09090b / #0f0f12
+ * Border:     #27272a
+ * Foreground: #fafafa
+ * Muted:      #a1a1aa
+ * Brand:      hsl(27 96% 61%)
+ */
+
+.admin-dashboard-shell {
+  --admin-primary: #09090b;
+  --admin-primary-text: #fafafa;
+  --admin-accent: hsl(27 96% 61%);
+  --admin-accent-text: #09090b;
+  --admin-muted: #18181b;
+  --admin-card: #fafafa;
+  --admin-shadow: rgba(0, 0, 0, 0.5);
+
+  --admin-dash-base: #09090b;
+  --admin-dash-surface: #0c0c0f;
+  --admin-dash-card: #0c0c0f;
+  --admin-dash-border: #27272a;
+  --admin-dash-muted: #a1a1aa;
+
+  min-height: 100vh;
+  padding: 12px;
+
+  background:
+    radial-gradient(
+      ellipse 55% 28% at 50% 100%,
+      hsl(27 96% 61% / 0.12),
+      transparent 70%
+    ),
+    #09090b;
+}
+
+.admin-dashboard-window {
+  min-height: calc(100vh - 24px);
+  max-width: 1600px;
+  margin: 0 auto;
+  overflow: hidden;
+
+  border: 1px solid #27272a;
+  border-radius: 12px;
+
+  background: #09090b;
+  color: #fafafa;
+
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.5);
+}
+
+/* ============================
+   TOP NAV
+============================ */
+
+.admin-dashboard-navbar {
+  min-height: 64px;
+
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+
+  gap: 24px;
+  padding: 10px 18px;
+
+  border-bottom: 1px solid #27272a;
+
+  background: #09090b;
+  color: #fafafa;
+}
+
+.admin-dashboard-brand {
+  color: #fafafa;
+}
+
+.admin-dashboard-brand-icon {
+  width: 36px;
+  height: 36px;
+
+  border: 1px solid #27272a;
+  border-radius: 8px;
+
+  background: #0c0c0f;
+  color: hsl(27 96% 61%);
+
+  box-shadow: none;
+}
+
+.admin-dashboard-brand strong {
+  color: #fafafa;
+}
+
+.admin-dashboard-brand small {
+  color: #71717a;
+}
+
+.admin-dashboard-nav-link {
+  border-radius: 7px;
+
+  color: #a1a1aa;
+
+  background: transparent;
+
+  transition:
+    color 160ms ease,
+    background 160ms ease;
+}
+
+.admin-dashboard-nav-link:hover {
+  color: #fafafa;
+  background: #18181b;
+}
+
+.admin-dashboard-nav-link.is-active {
+  color: #fafafa;
+  background: #18181b;
+}
+
+.admin-dashboard-nav-link.is-active::after {
+  right: 10px;
+  bottom: 2px;
+  left: 10px;
+
+  height: 2px;
+
+  background: hsl(27 96% 61%);
+}
+
+/* ============================
+   PROFILE
+============================ */
+
+.admin-dashboard-profile {
+  border: 1px solid #27272a;
+  border-radius: 8px;
+
+  background: #0c0c0f;
+  color: #fafafa;
+
+  box-shadow: none;
+}
+
+.admin-dashboard-profile:hover {
+  border-color: #3f3f46;
+  background: #111114;
+}
+
+.admin-dashboard-avatar {
+  background: #fafafa;
+  color: #09090b;
+}
+
+.admin-dashboard-profile-copy strong {
+  color: #fafafa;
+}
+
+.admin-dashboard-profile-copy small {
+  color: #71717a;
+}
+
+.admin-dashboard-logout {
+  border: 1px solid #27272a !important;
+  border-radius: 8px;
+
+  background: #0c0c0f !important;
+  color: #a1a1aa !important;
+
+  box-shadow: none;
+}
+
+.admin-dashboard-logout:hover {
+  border-color: #3f3f46 !important;
+  color: #fafafa !important;
+}
+
+/* ============================
+   MAIN
+============================ */
+
+.admin-dashboard-main {
+  background: #09090b;
+}
+
+.admin-dashboard-page {
+  color: #fafafa;
+}
+
+.admin-dashboard-heading {
+  background: transparent;
+}
+
+.admin-dashboard-kicker {
+  color: hsl(27 96% 61%);
+}
+
+.admin-dashboard-title {
+  color: #fafafa;
+
+  background: none;
+  -webkit-text-fill-color: initial;
+  text-shadow: none;
+}
+
+.admin-dashboard-description {
+  color: #a1a1aa;
+}
+
+/* ============================
+   BOTÃO ATUALIZAR
+============================ */
+
+.admin-dashboard-refresh {
+  border: 1px solid #fafafa;
+
+  border-radius: 7px;
+
+  background: #fafafa;
+  color: #09090b;
+
+  box-shadow: none;
+}
+
+.admin-dashboard-refresh:hover {
+  background: #e4e4e7;
+  color: #09090b;
+
+  transform: none;
+}
+
+/* ============================
+   CARDS
+============================ */
+
+.admin-dashboard-page .upp-card,
+.admin-dashboard-page .upp-card-soft {
+  border: 1px solid #27272a !important;
+
+  border-radius: 12px !important;
+
+  background: #0c0c0f !important;
+  color: #fafafa !important;
+
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.admin-dashboard-summary-grid > * {
+  min-height: 118px;
+
+  border: 1px solid #27272a !important;
+  border-radius: 12px !important;
+
+  background: #0c0c0f !important;
+
+  box-shadow: none !important;
+
+  transition:
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.admin-dashboard-summary-grid > *:hover {
+  border-color: #3f3f46 !important;
+
+  background: #0f0f12 !important;
+
+  transform: none !important;
+
+  box-shadow: none !important;
+}
+
+.admin-dashboard-summary-grid > *::before {
+  display: none !important;
+}
+
+.admin-dashboard-summary-grid .text-slate-500,
+.admin-dashboard-summary-grid .text-slate-400 {
+  color: #71717a !important;
+}
+
+.admin-dashboard-summary-grid .text-slate-950 {
+  color: #fafafa !important;
+}
+
+.admin-dashboard-summary-grid span.rounded-2xl {
+  border: 0;
+
+  background: transparent !important;
+  color: #71717a !important;
+}
+
+/* ============================
+   GRÁFICO + RECENTES
+============================ */
+
+.admin-dashboard-chart-panel,
+.admin-dashboard-recent-panel {
+  border: 1px solid #27272a;
+
+  border-radius: 12px;
+
+  background: #0c0c0f;
+
+  color: #fafafa;
+
+  box-shadow: none;
+}
+
+.admin-dashboard-chart-panel h2,
+.admin-dashboard-recent-panel h2 {
+  color: #fafafa;
+}
+
+.admin-dashboard-chart-panel p,
+.admin-dashboard-recent-panel p {
+  color: #a1a1aa;
+}
+
+.admin-dashboard-chart-panel .border-t {
+  border-color: #27272a !important;
+}
+
+.admin-dashboard-bar-chart {
+  height: 270px;
+}
+
+.admin-dashboard-bar-track {
+  position: relative;
+
+  border-bottom: 1px solid #27272a;
+}
+
+.admin-dashboard-bar {
+  width: min(40px, 68%);
+
+  border-radius: 3px 3px 0 0;
+
+  background: #fafafa;
+
+  box-shadow: none;
+}
+
+.admin-dashboard-bar:hover {
+  background: hsl(27 96% 61%);
+  filter: none;
+}
+
+.admin-dashboard-bar-column > span {
+  color: #71717a;
+}
+
+/* ============================
+   PAGAMENTOS RECENTES
+============================ */
+
+.admin-dashboard-recent-row {
+  border-bottom: 1px solid #27272a;
+}
+
+.admin-dashboard-recent-row strong {
+  color: #fafafa;
+}
+
+.admin-dashboard-recent-row .admin-dashboard-muted {
+  color: #71717a;
+}
+
+.admin-dashboard-recent-avatar {
+  border: 0;
+
+  background: #fafafa;
+  color: #09090b;
+}
+
+/* ============================
+   ALERTA
+============================ */
+
+.admin-dashboard-alert {
+  border: 1px solid
+    hsl(27 96% 61% / 0.35) !important;
+
+  border-radius: 10px;
+
+  background:
+    hsl(27 96% 61% / 0.08) !important;
+
+  color: hsl(31 97% 72%) !important;
+
+  box-shadow: none;
+}
+
+.admin-dashboard-alert strong,
+.admin-dashboard-alert p,
+.admin-dashboard-alert svg {
+  color: hsl(31 97% 72%) !important;
+}
+
+/* ============================
+   LISTAS EMPRESAS / APROVAÇÕES
+============================ */
+
+.admin-dashboard-list-card {
+  border: 1px solid #27272a !important;
+
+  border-radius: 12px !important;
+
+  background: #0c0c0f !important;
+
+  color: #fafafa;
+}
+
+.admin-dashboard-list-card:hover {
+  border-color: #3f3f46 !important;
+
+  background: #0f0f12 !important;
+
+  transform: none;
+
+  box-shadow: none;
+}
+
+.admin-dashboard-list-card .text-slate-950,
+.admin-dashboard-list-card .text-slate-900 {
+  color: #fafafa !important;
+}
+
+.admin-dashboard-list-card .text-slate-500,
+.admin-dashboard-list-card .text-slate-600,
+.admin-dashboard-list-card .text-slate-700 {
+  color: #a1a1aa !important;
+}
+
+.admin-dashboard-list-card .bg-white,
+.admin-dashboard-list-card .bg-slate-50 {
+  background: #111114 !important;
+}
+
+/* ============================
+   INPUTS
+============================ */
+
+.admin-dashboard-page input,
+.admin-dashboard-page select,
+.admin-dashboard-page textarea {
+  border: 1px solid #27272a !important;
+
+  border-radius: 8px !important;
+
+  background: #09090b !important;
+  color: #fafafa !important;
+
+  box-shadow: none !important;
+}
+
+.admin-dashboard-page input:hover,
+.admin-dashboard-page select:hover,
+.admin-dashboard-page textarea:hover {
+  border-color: #3f3f46 !important;
+}
+
+.admin-dashboard-page input:focus,
+.admin-dashboard-page select:focus,
+.admin-dashboard-page textarea:focus {
+  border-color: #52525b !important;
+
+  outline: none;
+
+  box-shadow:
+    0 0 0 1px #52525b !important;
+}
+
+.admin-dashboard-page input::placeholder,
+.admin-dashboard-page textarea::placeholder {
+  color: #71717a !important;
+}
+
+.admin-dashboard-page select option {
+  background: #09090b;
+  color: #fafafa;
+}
+
+/* ============================
+   TABLE
+============================ */
+
+.admin-dashboard-table {
+  border: 1px solid #27272a !important;
+
+  border-radius: 10px;
+
+  background: #09090b;
+}
+
+.admin-dashboard-table thead {
+  border-bottom: 1px solid #27272a;
+
+  background: #0c0c0f !important;
+  color: #71717a !important;
+}
+
+.admin-dashboard-table tbody {
+  background: #09090b !important;
+}
+
+.admin-dashboard-table tbody tr {
+  border-color: #27272a;
+}
+
+.admin-dashboard-table tbody tr:hover {
+  background: #0f0f12;
+}
+
+.admin-dashboard-table .text-slate-950 {
+  color: #fafafa !important;
+}
+
+.admin-dashboard-table .text-slate-500,
+.admin-dashboard-table .text-slate-600 {
+  color: #a1a1aa !important;
+}
+
+/* ============================
+   SAÚDE DA PLATAFORMA
+============================ */
+
+.admin-dashboard-page .admin-health-palette-title {
+  color: #fafafa;
+}
+
+.admin-dashboard-page .admin-health-palette-subtitle,
+.admin-dashboard-page .admin-health-palette-footer {
+  color: #71717a;
+}
+
+.admin-dashboard-page .admin-health-palette-list {
+  border: 1px solid #27272a;
+
+  border-radius: 10px;
+
+  box-shadow: none;
+}
+
+.admin-dashboard-page .admin-health-palette-row {
+  border-bottom: 1px solid #27272a;
+
+  background: #0c0c0f;
+  color: #fafafa;
+}
+
+.admin-dashboard-page .admin-health-palette-row:last-child {
+  border-bottom: 0;
+}
+
+.admin-dashboard-page .admin-health-palette-accent {
+  color: hsl(31 97% 72%);
+}
+
+/* ============================
+   PENDÊNCIAS
+============================ */
+
+.admin-dashboard-page
+  .admin-summary-carousel {
+  border: 1px solid #27272a;
+
+  box-shadow: none;
+}
+
+.admin-dashboard-page
+  .admin-summary-carousel-slide
+  > div {
+  background: #0c0c0f !important;
+  color: #fafafa !important;
+}
+
+/* ============================
+   EMPTY STATE
+============================ */
+
+.admin-dashboard-empty {
+  border: 1px dashed #3f3f46 !important;
+
+  background: #09090b !important;
+}
+
+.admin-dashboard-empty .text-slate-900 {
+  color: #fafafa !important;
+}
+
+.admin-dashboard-empty .text-slate-500,
+.admin-dashboard-empty .text-slate-400 {
+  color: #71717a !important;
+}
+
+/* ============================
+   MODAL
+============================ */
+
+.admin-dashboard-modal {
+  border: 1px solid #27272a !important;
+
+  border-radius: 12px;
+
+  background: #0c0c0f !important;
+  color: #fafafa;
+
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.65);
+}
+
+.admin-dashboard-modal .text-slate-950,
+.admin-dashboard-modal .text-slate-900,
+.admin-dashboard-modal .text-slate-700,
+.admin-dashboard-modal .text-slate-600 {
+  color: #fafafa !important;
+}
+
+.admin-dashboard-modal .text-slate-500,
+.admin-dashboard-modal .text-slate-400 {
+  color: #a1a1aa !important;
+}
+
+.admin-dashboard-modal .bg-slate-50,
+.admin-dashboard-modal .bg-slate-100,
+.admin-dashboard-modal .bg-white {
+  background: #111114 !important;
+}
+
+/* ============================
+   RESET DE CORES TAILWIND
+============================ */
+
+.admin-dashboard-page .text-slate-950,
+.admin-dashboard-page .text-slate-900 {
+  color: #fafafa;
+}
+
+.admin-dashboard-page .text-slate-700,
+.admin-dashboard-page .text-slate-600,
+.admin-dashboard-page .text-slate-500 {
+  color: #a1a1aa;
+}
+
+.admin-dashboard-page .text-slate-400 {
+  color: #71717a;
+}
+
+/* ============================
+   RESPONSIVO
+============================ */
+
+@media (max-width: 720px) {
+  .admin-dashboard-shell {
+    padding: 0;
+  }
+
+  .admin-dashboard-window {
+    border: 0;
+    border-radius: 0;
+  }
+}

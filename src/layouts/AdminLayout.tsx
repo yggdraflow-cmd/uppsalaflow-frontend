@@ -15,7 +15,6 @@ import {
   getApiAssetUrl,
 } from "../services/api";
 import { getUser } from "../services/authStorage";
-import { AdminThemePicker } from "../components/AdminThemePicker";
 
 type AdminLayoutProps = {
   children: ReactNode;
@@ -126,8 +125,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </nav>
 
           <div className="admin-dashboard-actions">
-            <AdminThemePicker />
-
             <Link
               to="/admin/account"
               className="admin-dashboard-profile"
