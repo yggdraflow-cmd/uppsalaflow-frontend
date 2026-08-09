@@ -1718,7 +1718,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
           <div className="admin-dashboard-modal w-full max-w-lg rounded-[28px] border border-white/80 bg-white p-6 sm:p-7">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#d97706]">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-zinc-400">
                   Ação administrativa
                 </p>
                 <h2 className="mt-2 text-2xl font-black text-slate-950">

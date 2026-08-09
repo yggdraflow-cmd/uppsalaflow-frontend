@@ -1380,19 +1380,11 @@ button {
 /* ===== SUPER ADMIN REFERENCE COLORS ===== */
 
 /*
- * Paleta fixa baseada na referência enviada.
+ * SUPER ADMIN — PALETA ESTRITA DA REFERÊNCIA
  *
- * Dark shadcn:
- * background ........ #09090b
- * surface/card ...... #0c0c0f
- * secondary/muted ... #27272a
- * border ............ #27272a
- * foreground ........ #fafafa
- * muted foreground .. #a1a1aa
- *
- * Prompt original:
- * --brand ............ 31 97% 72%
- * --brand-foreground . 27 96% 61%
+ * O dashboard é monocromático.
+ * BRAND não é a cor principal da interface.
+ * BRAND existe apenas para efeitos de glow.
  */
 
 .admin-dashboard-shell {
@@ -1401,9 +1393,6 @@ button {
 
   --card: 240 10% 3.9%;
   --card-foreground: 0 0% 98%;
-
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
 
   --primary: 0 0% 98%;
   --primary-foreground: 240 5.9% 10%;
@@ -1421,20 +1410,27 @@ button {
   --input: 240 3.7% 15.9%;
   --ring: 240 4.9% 83.9%;
 
+  /*
+   * Exatamente como no prompt enviado.
+   * Usado apenas no glow.
+   */
   --brand: 31 97% 72%;
   --brand-foreground: 27 96% 61%;
 
   /*
-   * Compatibilidade com componentes antigos do Super Admin.
-   * Nenhuma dessas variáveis aponta mais para as paletas cadastradas.
+   * Compatibilidade dos componentes antigos do Super Admin.
+   * Tudo agora aponta para a mesma identidade monocromática.
    */
   --admin-primary: #09090b;
   --admin-primary-text: #fafafa;
-  --admin-card: #0c0c0f;
-  --admin-muted: #27272a;
-  --admin-accent: hsl(31 97% 72%);
-  --admin-accent-text: #09090b;
   --admin-background: #09090b;
+
+  --admin-card: #0c0c0f;
+  --admin-muted: #18181b;
+
+  --admin-accent: #fafafa;
+  --admin-accent-text: #09090b;
+
   --admin-shadow: rgba(0, 0, 0, 0.55);
 
   --admin-dash-base: #09090b;
@@ -1443,139 +1439,147 @@ button {
   --admin-dash-border: #27272a;
   --admin-dash-muted: #a1a1aa;
 
+  position: relative;
+
   min-height: 100vh;
+
   padding: 12px;
 
+  background: #09090b;
   color: #fafafa;
+}
+
+/*
+ * Glow do componente de referência.
+ * Ele fica atrás da aplicação e não pinta a UI de laranja.
+ */
+.admin-dashboard-shell::after {
+  content: "";
+
+  position: fixed;
+
+  z-index: 0;
+
+  left: 50%;
+  bottom: -260px;
+
+  width: 70%;
+  height: 420px;
+
+  pointer-events: none;
+
+  transform: translateX(-50%);
+
+  border-radius: 50%;
 
   background:
     radial-gradient(
-      ellipse 55% 25% at 50% 100%,
-      hsl(27 96% 61% / 0.08),
+      ellipse at center,
+      hsl(var(--brand-foreground) / 0.16) 0%,
+      hsl(var(--brand) / 0.07) 32%,
       transparent 70%
-    ),
-    #09090b;
-}
+    );
 
-/* ==========================
-   JANELA PRINCIPAL
-========================== */
+  filter: blur(35px);
+}
 
 .admin-dashboard-window {
-  min-height: calc(100vh - 24px);
-  max-width: 1600px;
-  margin: 0 auto;
-  overflow: hidden;
+  position: relative;
 
-  border: 1px solid #27272a;
-  border-radius: 12px;
+  z-index: 1;
 
-  background: #09090b;
-  color: #fafafa;
+  border: 1px solid #27272a !important;
+
+  background: #09090b !important;
+  color: #fafafa !important;
 
   box-shadow:
-    0 24px 80px rgba(0, 0, 0, 0.5);
+    0 24px 80px rgba(0, 0, 0, 0.55) !important;
 }
 
-/* ==========================
-   NAVBAR
-========================== */
+/* ===== NAVBAR ===== */
 
 .admin-dashboard-navbar {
-  min-height: 64px;
+  border-bottom: 1px solid #27272a !important;
 
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 24px;
-
-  padding: 10px 18px;
-
-  border-bottom: 1px solid #27272a;
-
-  background: #09090b;
-  color: #fafafa;
+  background: #09090b !important;
+  color: #fafafa !important;
 }
 
-.admin-dashboard-brand {
-  color: #fafafa;
-}
-
+.admin-dashboard-brand,
 .admin-dashboard-brand strong {
-  color: #fafafa;
+  color: #fafafa !important;
 }
 
 .admin-dashboard-brand small {
-  color: #71717a;
+  color: #71717a !important;
 }
 
 .admin-dashboard-brand-icon {
-  border: 1px solid #27272a;
-  border-radius: 8px;
+  border: 1px solid #27272a !important;
 
-  background: #0c0c0f;
-  color: hsl(31 97% 72%);
+  background: #0c0c0f !important;
+  color: #fafafa !important;
 
-  box-shadow: none;
+  box-shadow: none !important;
 }
 
 .admin-dashboard-nav-link {
-  border-radius: 7px;
-
-  background: transparent;
-  color: #a1a1aa;
-
-  transition:
-    background 160ms ease,
-    color 160ms ease;
+  background: transparent !important;
+  color: #a1a1aa !important;
 }
 
 .admin-dashboard-nav-link:hover {
-  background: #18181b;
-  color: #fafafa;
+  background: #18181b !important;
+  color: #fafafa !important;
 }
 
 .admin-dashboard-nav-link.is-active {
-  background: #18181b;
-  color: #fafafa;
+  background: #18181b !important;
+  color: #fafafa !important;
 }
 
+/*
+ * A referência não usa underline laranja no menu.
+ */
 .admin-dashboard-nav-link.is-active::after {
-  background: hsl(31 97% 72%);
+  display: none !important;
 }
+
+/* ===== CONTA ===== */
 
 .admin-dashboard-profile {
-  border: 1px solid #27272a;
-  border-radius: 8px;
+  border: 1px solid #27272a !important;
 
-  background: #0c0c0f;
-  color: #fafafa;
+  background: #09090b !important;
+  color: #fafafa !important;
 
-  box-shadow: none;
+  box-shadow: none !important;
 }
 
 .admin-dashboard-profile:hover {
-  border-color: #3f3f46;
-  background: #111114;
-}
+  border-color: #3f3f46 !important;
 
-.admin-dashboard-avatar {
-  background: #fafafa;
-  color: #09090b;
+  background: #0c0c0f !important;
 }
 
 .admin-dashboard-profile-copy strong {
-  color: #fafafa;
+  color: #fafafa !important;
 }
 
 .admin-dashboard-profile-copy small {
-  color: #71717a;
+  color: #71717a !important;
+}
+
+.admin-dashboard-avatar {
+  background: #fafafa !important;
+  color: #09090b !important;
 }
 
 .admin-dashboard-logout {
   border: 1px solid #27272a !important;
 
-  background: #0c0c0f !important;
+  background: #09090b !important;
   color: #a1a1aa !important;
 
   box-shadow: none !important;
@@ -1583,63 +1587,60 @@ button {
 
 .admin-dashboard-logout:hover {
   border-color: #3f3f46 !important;
+
+  background: #18181b !important;
   color: #fafafa !important;
 }
 
-/* ==========================
-   CONTEÚDO
-========================== */
+/* ===== CABEÇALHO ===== */
 
 .admin-dashboard-main {
-  background: #09090b;
+  background: #09090b !important;
 }
 
 .admin-dashboard-page {
-  color: #fafafa;
+  background: transparent !important;
+  color: #fafafa !important;
 }
 
-.admin-dashboard-heading {
-  background: transparent;
-}
-
+/*
+ * A referência do dashboard não possui a etiqueta laranja.
+ */
 .admin-dashboard-kicker {
-  color: hsl(31 97% 72%);
+  display: none !important;
 }
 
 .admin-dashboard-title {
-  color: #fafafa;
-
   background: none !important;
 
-  -webkit-text-fill-color: initial;
+  color: #fafafa !important;
 
-  text-shadow: none;
+  -webkit-text-fill-color: #fafafa !important;
+
+  text-shadow: none !important;
 }
 
-.admin-dashboard-description,
-.admin-dashboard-muted {
-  color: #a1a1aa;
+.admin-dashboard-description {
+  color: #a1a1aa !important;
 }
 
 .admin-dashboard-refresh {
-  border: 1px solid #fafafa;
+  border: 1px solid #e4e4e7 !important;
 
-  background: #fafafa;
-  color: #09090b;
+  background: #fafafa !important;
+  color: #09090b !important;
 
-  box-shadow: none;
+  box-shadow: none !important;
 }
 
 .admin-dashboard-refresh:hover {
-  background: #e4e4e7;
-  color: #09090b;
+  background: #e4e4e7 !important;
+  color: #09090b !important;
 
-  transform: none;
+  transform: none !important;
 }
 
-/* ==========================
-   CARDS
-========================== */
+/* ===== CARDS GERAIS ===== */
 
 .admin-dashboard-page .upp-card,
 .admin-dashboard-page .upp-card-soft {
@@ -1647,26 +1648,21 @@ button {
 
   border-radius: 12px !important;
 
-  background: #0c0c0f !important;
+  background: #09090b !important;
   color: #fafafa !important;
 
-  box-shadow: none !important;
   backdrop-filter: none !important;
+
+  box-shadow: none !important;
 }
 
 .admin-dashboard-summary-grid > * {
-  min-height: 118px;
-
   border: 1px solid #27272a !important;
-  border-radius: 12px !important;
 
-  background: #0c0c0f !important;
+  background: #09090b !important;
+  color: #fafafa !important;
 
   box-shadow: none !important;
-
-  transition:
-    border-color 160ms ease,
-    background 160ms ease;
 }
 
 .admin-dashboard-summary-grid > *::before {
@@ -1676,7 +1672,7 @@ button {
 .admin-dashboard-summary-grid > *:hover {
   border-color: #3f3f46 !important;
 
-  background: #0f0f12 !important;
+  background: #0c0c0f !important;
 
   transform: none !important;
 
@@ -1702,228 +1698,229 @@ button {
   color: #71717a !important;
 }
 
-/* ==========================
-   RECEITA / GRÁFICO
-========================== */
+/* ===== GRÁFICO ===== */
 
 .admin-dashboard-chart-panel,
 .admin-dashboard-recent-panel {
-  border: 1px solid #27272a;
+  border: 1px solid #27272a !important;
 
-  border-radius: 12px;
-
-  background: #0c0c0f !important;
-  color: #fafafa;
+  background: #09090b !important;
+  color: #fafafa !important;
 
   box-shadow: none !important;
 }
 
 .admin-dashboard-chart-panel h2,
-.admin-dashboard-recent-panel h2,
 .admin-dashboard-chart-panel strong,
+.admin-dashboard-recent-panel h2,
 .admin-dashboard-recent-panel strong {
-  color: #fafafa;
+  color: #fafafa !important;
 }
 
 .admin-dashboard-chart-panel p,
 .admin-dashboard-recent-panel p {
-  color: #a1a1aa;
+  color: #a1a1aa !important;
 }
 
-.admin-dashboard-chart-panel .border-t,
-.admin-dashboard-chart-panel .border-[var(--admin-muted)] {
+.admin-dashboard-chart-panel .border-t {
   border-color: #27272a !important;
 }
 
 .admin-dashboard-bar-track {
-  border-bottom: 1px solid #27272a;
+  border-bottom: 1px solid #27272a !important;
 }
 
 .admin-dashboard-bar {
-  background: #fafafa;
-
-  box-shadow: none;
-}
-
-.admin-dashboard-bar:hover {
-  background: hsl(31 97% 72%);
-
-  filter: none;
-}
-
-.admin-dashboard-bar-column > span {
-  color: #71717a;
-}
-
-/* ==========================
-   PAGAMENTOS RECENTES
-========================== */
-
-.admin-dashboard-recent-row {
-  border-bottom: 1px solid #27272a;
-}
-
-.admin-dashboard-recent-avatar {
-  background: #fafafa;
-  color: #09090b;
-}
-
-.admin-dashboard-recent-row strong {
-  color: #fafafa;
-}
-
-.admin-dashboard-recent-row
-  .admin-dashboard-muted {
-  color: #71717a;
-}
-
-/* ==========================
-   ALERTA
-========================== */
-
-.admin-dashboard-alert {
-  border: 1px solid
-    hsl(31 97% 72% / 0.28) !important;
-
-  background:
-    hsl(27 96% 61% / 0.07) !important;
-
-  color: hsl(31 97% 72%) !important;
+  background: #fafafa !important;
 
   box-shadow: none !important;
 }
 
-.admin-dashboard-alert strong,
-.admin-dashboard-alert p,
-.admin-dashboard-alert svg {
-  color: hsl(31 97% 72%) !important;
+.admin-dashboard-bar:hover {
+  background: #d4d4d8 !important;
+
+  filter: none !important;
 }
 
-/* ==========================
-   PENDÊNCIAS
-========================== */
-
-/*
- * Estes componentes ainda utilizam as antigas variáveis
- * --admin-card, --admin-muted etc.
- * Agora elas também apontam para a paleta escura.
- */
-
-.admin-dashboard-page
-  .admin-summary-carousel {
-  border: 1px solid #27272a;
-
-  background: #0c0c0f;
-
-  box-shadow: none;
+.admin-dashboard-bar-column > span {
+  color: #71717a !important;
 }
 
-.admin-dashboard-page
-  .admin-summary-carousel-slide > div {
+/* ===== PAGAMENTOS RECENTES ===== */
+
+.admin-dashboard-recent-row {
+  border-bottom: 1px solid #27272a !important;
+}
+
+.admin-dashboard-recent-avatar {
+  background: #fafafa !important;
+  color: #09090b !important;
+}
+
+.admin-dashboard-recent-row strong {
+  color: #fafafa !important;
+}
+
+.admin-dashboard-recent-row .admin-dashboard-muted {
+  color: #71717a !important;
+}
+
+/* ===== ALERTA ===== */
+
+.admin-dashboard-alert {
+  border: 1px solid #27272a !important;
+
   background: #0c0c0f !important;
+  color: #fafafa !important;
+
+  box-shadow: none !important;
+}
+
+.admin-dashboard-alert strong {
+  color: #fafafa !important;
+}
+
+.admin-dashboard-alert p {
+  color: #a1a1aa !important;
+}
+
+.admin-dashboard-alert svg {
+  color: #a1a1aa !important;
+}
+
+/* ===== PENDÊNCIAS ===== */
+
+.admin-dashboard-page .admin-summary-carousel {
+  border: 1px solid #27272a !important;
+
+  background: #09090b !important;
+
+  box-shadow: none !important;
+}
+
+.admin-dashboard-page
+.admin-summary-carousel-slide > div {
+  background: #09090b !important;
   color: #fafafa !important;
 }
 
 .admin-dashboard-page
-  .admin-summary-carousel-slide strong,
-.admin-dashboard-page
-  .admin-summary-carousel-slide span {
-  color: #fafafa;
+.admin-summary-carousel-slide strong {
+  color: #fafafa !important;
 }
 
 .admin-dashboard-page
-  .admin-summary-carousel-slide p {
+.admin-summary-carousel-slide span,
+.admin-dashboard-page
+.admin-summary-carousel-slide p {
   color: #71717a !important;
 }
 
-/* Card principal das pendências */
+/*
+ * Elementos que continuam usando styles inline com
+ * as variáveis antigas passam a receber essas variáveis
+ * já convertidas para o tema monocromático.
+ */
 
 .admin-dashboard-page
-  [style*="background: var(--admin-muted)"] {
+[style*="var(--admin-muted)"] {
+  border-color: #27272a !important;
+}
+
+.admin-dashboard-page
+[style*="background: var(--admin-muted)"] {
   background: #18181b !important;
 }
 
 .admin-dashboard-page
-  [style*="background: var(--admin-card)"] {
-  background: #0c0c0f !important;
+[style*="background: var(--admin-card)"] {
+  background: #09090b !important;
 }
 
 .admin-dashboard-page
-  [style*="color: var(--admin-primary)"] {
-  color: #fafafa !important;
+[style*="background: var(--admin-primary)"] {
+  background: #fafafa !important;
 }
 
 .admin-dashboard-page
-  [style*="color: var(--admin-primary-text)"] {
-  color: #fafafa !important;
-}
-
-.admin-dashboard-page
-  [style*="color: var(--admin-accent-text)"] {
+[style*="color: var(--admin-primary-text)"] {
   color: #09090b !important;
 }
 
-/* ==========================
-   SAÚDE DA PLATAFORMA
-========================== */
-
 .admin-dashboard-page
-  .admin-health-palette-title {
-  color: #fafafa;
-}
-
-.admin-dashboard-page
-  .admin-health-palette-subtitle,
-.admin-dashboard-page
-  .admin-health-palette-footer {
-  color: #71717a;
-
-  opacity: 1;
-}
-
-.admin-dashboard-page
-  .admin-health-palette-list {
-  overflow: hidden;
-
-  border: 1px solid #27272a;
-  border-radius: 10px;
-
-  background: #0c0c0f;
-
-  box-shadow: none;
-}
-
-.admin-dashboard-page
-  .admin-health-palette-row {
-  border-bottom: 1px solid #27272a !important;
-
-  background: #0c0c0f !important;
+[style*="color: var(--admin-primary)"] {
   color: #fafafa !important;
 }
 
 .admin-dashboard-page
-  .admin-health-palette-row:last-child {
+[style*="background: var(--admin-accent)"] {
+  background: #fafafa !important;
+}
+
+.admin-dashboard-page
+[style*="color: var(--admin-accent-text)"] {
+  color: #09090b !important;
+}
+
+/* ===== SAÚDE DA PLATAFORMA ===== */
+
+.admin-dashboard-page
+.admin-health-palette {
+  background: transparent !important;
+}
+
+.admin-dashboard-page
+.admin-health-palette-header {
+  background: transparent !important;
+}
+
+.admin-dashboard-page
+.admin-health-palette-title {
+  color: #fafafa !important;
+}
+
+.admin-dashboard-page
+.admin-health-palette-subtitle,
+.admin-dashboard-page
+.admin-health-palette-footer {
+  color: #71717a !important;
+
+  opacity: 1 !important;
+}
+
+.admin-dashboard-page
+.admin-health-palette-list {
+  border: 1px solid #27272a !important;
+
+  background: #09090b !important;
+
+  box-shadow: none !important;
+}
+
+.admin-dashboard-page
+.admin-health-palette-row {
+  border-bottom: 1px solid #27272a !important;
+
+  background: #09090b !important;
+  color: #fafafa !important;
+}
+
+.admin-dashboard-page
+.admin-health-palette-row:last-child {
   border-bottom: 0 !important;
 }
 
 .admin-dashboard-page
-  .admin-health-palette-row strong {
-  color: #fafafa;
+.admin-health-palette-row strong {
+  color: #fafafa !important;
 }
 
-.admin-dashboard-page
-  .admin-health-palette-accent strong {
-  color: hsl(31 97% 72%);
-}
-
-/* ==========================
-   EMPRESAS / APROVAÇÕES
-========================== */
+/* ===== EMPRESAS / APROVAÇÕES ===== */
 
 .admin-dashboard-list-card {
   border: 1px solid #27272a !important;
 
-  background: #0c0c0f !important;
+  background: #09090b !important;
   color: #fafafa !important;
 
   box-shadow: none !important;
@@ -1932,46 +1929,35 @@ button {
 .admin-dashboard-list-card:hover {
   border-color: #3f3f46 !important;
 
-  background: #0f0f12 !important;
+  background: #0c0c0f !important;
 
-  transform: none;
+  transform: none !important;
 
-  box-shadow: none;
+  box-shadow: none !important;
 }
 
-.admin-dashboard-list-card
-  .text-slate-950,
-.admin-dashboard-list-card
-  .text-slate-900 {
+.admin-dashboard-list-card .bg-white,
+.admin-dashboard-list-card .bg-slate-50 {
+  background: #0c0c0f !important;
+}
+
+.admin-dashboard-list-card .text-slate-950,
+.admin-dashboard-list-card .text-slate-900 {
   color: #fafafa !important;
 }
 
-.admin-dashboard-list-card
-  .text-slate-700,
-.admin-dashboard-list-card
-  .text-slate-600,
-.admin-dashboard-list-card
-  .text-slate-500 {
+.admin-dashboard-list-card .text-slate-700,
+.admin-dashboard-list-card .text-slate-600,
+.admin-dashboard-list-card .text-slate-500 {
   color: #a1a1aa !important;
 }
 
-.admin-dashboard-list-card
-  .bg-white,
-.admin-dashboard-list-card
-  .bg-slate-50 {
-  background: #111114 !important;
-}
-
-/* ==========================
-   INPUTS / SELECTS
-========================== */
+/* ===== INPUTS ===== */
 
 .admin-dashboard-page input,
 .admin-dashboard-page select,
 .admin-dashboard-page textarea {
   border: 1px solid #27272a !important;
-
-  border-radius: 8px !important;
 
   background: #09090b !important;
   color: #fafafa !important;
@@ -1990,7 +1976,7 @@ button {
 .admin-dashboard-page textarea:focus {
   border-color: #52525b !important;
 
-  outline: none;
+  outline: none !important;
 
   box-shadow:
     0 0 0 1px #52525b !important;
@@ -2002,13 +1988,11 @@ button {
 }
 
 .admin-dashboard-page select option {
-  background: #09090b;
-  color: #fafafa;
+  background: #09090b !important;
+  color: #fafafa !important;
 }
 
-/* ==========================
-   TABELAS
-========================== */
+/* ===== TABELA ===== */
 
 .admin-dashboard-table {
   border: 1px solid #27272a !important;
@@ -2017,8 +2001,6 @@ button {
 }
 
 .admin-dashboard-table thead {
-  border-bottom: 1px solid #27272a;
-
   background: #0c0c0f !important;
   color: #71717a !important;
 }
@@ -2028,28 +2010,23 @@ button {
 }
 
 .admin-dashboard-table tbody tr {
-  border-color: #27272a;
+  border-color: #27272a !important;
 }
 
 .admin-dashboard-table tbody tr:hover {
-  background: #0f0f12;
+  background: #0c0c0f !important;
 }
 
-.admin-dashboard-table
-  .text-slate-950 {
+.admin-dashboard-table .text-slate-950 {
   color: #fafafa !important;
 }
 
-.admin-dashboard-table
-  .text-slate-600,
-.admin-dashboard-table
-  .text-slate-500 {
+.admin-dashboard-table .text-slate-600,
+.admin-dashboard-table .text-slate-500 {
   color: #a1a1aa !important;
 }
 
-/* ==========================
-   EMPTY STATE
-========================== */
+/* ===== EMPTY ===== */
 
 .admin-dashboard-empty {
   border: 1px dashed #3f3f46 !important;
@@ -2057,21 +2034,16 @@ button {
   background: #09090b !important;
 }
 
-.admin-dashboard-empty
-  .text-slate-900 {
+.admin-dashboard-empty .text-slate-900 {
   color: #fafafa !important;
 }
 
-.admin-dashboard-empty
-  .text-slate-500,
-.admin-dashboard-empty
-  .text-slate-400 {
+.admin-dashboard-empty .text-slate-500,
+.admin-dashboard-empty .text-slate-400 {
   color: #71717a !important;
 }
 
-/* ==========================
-   MODAL
-========================== */
+/* ===== MODAL ===== */
 
 .admin-dashboard-modal {
   border: 1px solid #27272a !important;
@@ -2080,68 +2052,42 @@ button {
   color: #fafafa !important;
 
   box-shadow:
-    0 30px 80px rgba(0, 0, 0, 0.65);
+    0 30px 80px rgba(0, 0, 0, 0.7) !important;
 }
 
-.admin-dashboard-modal
-  .bg-white,
-.admin-dashboard-modal
-  .bg-slate-50,
-.admin-dashboard-modal
-  .bg-slate-100 {
-  background: #111114 !important;
+.admin-dashboard-modal .bg-white,
+.admin-dashboard-modal .bg-slate-50,
+.admin-dashboard-modal .bg-slate-100 {
+  background: #18181b !important;
 }
 
-.admin-dashboard-modal
-  .text-slate-950,
-.admin-dashboard-modal
-  .text-slate-900,
-.admin-dashboard-modal
-  .text-slate-700,
-.admin-dashboard-modal
-  .text-slate-600 {
+.admin-dashboard-modal .text-slate-950,
+.admin-dashboard-modal .text-slate-900,
+.admin-dashboard-modal .text-slate-700,
+.admin-dashboard-modal .text-slate-600 {
   color: #fafafa !important;
 }
 
-.admin-dashboard-modal
-  .text-slate-500,
-.admin-dashboard-modal
-  .text-slate-400 {
+.admin-dashboard-modal .text-slate-500,
+.admin-dashboard-modal .text-slate-400 {
   color: #a1a1aa !important;
 }
 
-/* ==========================
-   RESET FINAL
-========================== */
+/* ===== RESET FINAL ===== */
 
-.admin-dashboard-page
-  .text-slate-950,
-.admin-dashboard-page
-  .text-slate-900 {
+.admin-dashboard-page .text-slate-950,
+.admin-dashboard-page .text-slate-900 {
   color: #fafafa;
 }
 
-.admin-dashboard-page
-  .text-slate-700,
-.admin-dashboard-page
-  .text-slate-600,
-.admin-dashboard-page
-  .text-slate-500 {
+.admin-dashboard-page .text-slate-700,
+.admin-dashboard-page .text-slate-600,
+.admin-dashboard-page .text-slate-500 {
   color: #a1a1aa;
 }
 
-.admin-dashboard-page
-  .text-slate-400 {
+.admin-dashboard-page .text-slate-400 {
   color: #71717a;
-}
-
-/* Remove qualquer superfície clara herdada da paleta antiga */
-
-.admin-dashboard-page
-  .admin-health-palette,
-.admin-dashboard-page
-  .admin-health-palette-header {
-  background: transparent !important;
 }
 
 @media (max-width: 720px) {
@@ -2150,7 +2096,7 @@ button {
   }
 
   .admin-dashboard-window {
-    border: 0;
+    border: 0 !important;
     border-radius: 0;
   }
 }
