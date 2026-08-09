@@ -846,7 +846,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="admin-dashboard-card">
         <div className="flex min-h-64 items-center justify-center gap-3 text-sm font-bold text-slate-500">
           <LoaderCircle className="animate-spin" size={22} />
           Carregando administração da plataforma...
@@ -938,7 +938,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
               const Icon = item.icon;
 
               return (
-                <Card key={item.title}>
+                <Card className="admin-dashboard-card" key={item.title}>
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-sm font-bold text-slate-500">
@@ -1114,7 +1114,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
           </div>
 
           <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
-            <Card title="Pendências que exigem atenção">
+            <Card className="admin-dashboard-card" title="Pendências que exigem atenção">
               {activeAttentionItem ? (() => {
                 const Icon = activeAttentionItem.icon;
                 const hasAttention = activeAttentionItem.value > 0;
@@ -1274,7 +1274,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
               })() : null}
             </Card>
 
-            <Card>
+            <Card className="admin-dashboard-card">
               <div className="admin-health-palette">
                 <div className="admin-health-palette-header">
                   <h2 className="admin-health-palette-title">
@@ -1322,7 +1322,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
       ) : null}
 
       {currentView === "approvals" ? (
-        <Card title={`Fila de liberações (${approvals.length})`}>
+        <Card className="admin-dashboard-card" title={`Fila de liberações (${approvals.length})`}>
           {approvals.length === 0 ? (
             <EmptyState
               title="Nenhuma liberação pendente"
@@ -1449,7 +1449,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
       ) : null}
 
       {currentView === "businesses" ? (
-        <Card title={`Empresas cadastradas (${filteredBusinesses.length})`}>
+        <Card className="admin-dashboard-card" title={`Empresas cadastradas (${filteredBusinesses.length})`}>
           <div className="mb-5 grid gap-3 md:grid-cols-[minmax(0,1fr)_230px]">
             <label className="relative block">
               <Search
@@ -1631,7 +1631,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
         <div className="space-y-6">
           <AdminPaymentSettings />
 
-          <Card title={`Pagamentos (${filteredPayments.length})`}>
+          <Card className="admin-dashboard-card" title={`Pagamentos (${filteredPayments.length})`}>
           <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-slate-500">
               Histórico financeiro registrado pela plataforma.

@@ -2100,3 +2100,398 @@ button {
     border-radius: 0;
   }
 }
+
+
+/* ===== SUPER ADMIN FINAL UNIFIED SURFACES ===== */
+
+/*
+ * Paleta única do Super Admin:
+ *
+ * página ............. #09090b
+ * cards .............. #09090b / #0c0c0f
+ * superfície elevada . #18181b
+ * borda .............. #27272a
+ * texto .............. #fafafa
+ * texto secundário ... #a1a1aa
+ * texto discreto ..... #71717a
+ */
+
+/* =========================================================
+   CARD GLOBAL, MAS SOMENTE QUANDO USADO NO SUPER ADMIN
+========================================================= */
+
+.admin-dashboard-card {
+  border: 1px solid #27272a !important;
+  border-radius: 12px !important;
+
+  background: #09090b !important;
+  color: #fafafa !important;
+
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.admin-dashboard-card > h2 {
+  color: #fafafa !important;
+}
+
+.admin-dashboard-card .bg-white {
+  background: #0c0c0f !important;
+}
+
+.admin-dashboard-card .bg-slate-50 {
+  background: #0c0c0f !important;
+}
+
+.admin-dashboard-card .bg-slate-100 {
+  background: #18181b !important;
+}
+
+.admin-dashboard-card .border-slate-200,
+.admin-dashboard-card .border-slate-300 {
+  border-color: #27272a !important;
+}
+
+.admin-dashboard-card .divide-slate-200 > :not(:last-child) {
+  border-color: #27272a !important;
+}
+
+.admin-dashboard-card .ring-slate-200 {
+  --tw-ring-color: #27272a !important;
+}
+
+.admin-dashboard-card .text-slate-950,
+.admin-dashboard-card .text-slate-900 {
+  color: #fafafa !important;
+}
+
+.admin-dashboard-card .text-slate-700,
+.admin-dashboard-card .text-slate-600,
+.admin-dashboard-card .text-slate-500 {
+  color: #a1a1aa !important;
+}
+
+.admin-dashboard-card .text-slate-400 {
+  color: #71717a !important;
+}
+
+/* =========================================================
+   PENDÊNCIAS
+========================================================= */
+
+.admin-dashboard-card
+  [style*="background: var(--admin-muted)"] {
+  background: #18181b !important;
+}
+
+.admin-dashboard-card
+  [style*="background: var(--admin-card)"] {
+  background: #0c0c0f !important;
+}
+
+.admin-dashboard-card
+  [style*="background: var(--admin-primary)"] {
+  background: #fafafa !important;
+}
+
+.admin-dashboard-card
+  [style*="color: var(--admin-primary-text)"] {
+  color: #09090b !important;
+}
+
+.admin-dashboard-card
+  [style*="color: var(--admin-primary)"] {
+  color: #fafafa !important;
+}
+
+.admin-dashboard-card
+  [style*="background: var(--admin-accent)"] {
+  background: #fafafa !important;
+}
+
+.admin-dashboard-card
+  [style*="color: var(--admin-accent-text)"] {
+  color: #09090b !important;
+}
+
+/* =========================================================
+   SAÚDE DA PLATAFORMA
+========================================================= */
+
+.admin-dashboard-card .admin-health-palette {
+  background: transparent !important;
+}
+
+.admin-dashboard-card .admin-health-palette-header {
+  background: transparent !important;
+}
+
+.admin-dashboard-card .admin-health-palette-title {
+  color: #fafafa !important;
+}
+
+.admin-dashboard-card .admin-health-palette-subtitle,
+.admin-dashboard-card .admin-health-palette-footer {
+  color: #71717a !important;
+  opacity: 1 !important;
+}
+
+.admin-dashboard-card .admin-health-palette-list {
+  border: 1px solid #27272a !important;
+
+  background: #09090b !important;
+
+  box-shadow: none !important;
+}
+
+.admin-dashboard-card .admin-health-palette-row {
+  border-bottom: 1px solid #27272a !important;
+
+  background: #09090b !important;
+  color: #fafafa !important;
+}
+
+.admin-dashboard-card
+  .admin-health-palette-row:last-child {
+  border-bottom: 0 !important;
+}
+
+.admin-dashboard-card
+  .admin-health-palette-row strong {
+  color: #fafafa !important;
+}
+
+/* =========================================================
+   EMPRESAS / APROVAÇÕES
+========================================================= */
+
+.admin-dashboard-card
+  .admin-dashboard-list-card {
+  border: 1px solid #27272a !important;
+
+  background: #0c0c0f !important;
+  color: #fafafa !important;
+
+  box-shadow: none !important;
+}
+
+.admin-dashboard-card
+  .admin-dashboard-list-card:hover {
+  border-color: #3f3f46 !important;
+
+  background: #111114 !important;
+
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* =========================================================
+   TABELA DE PAGAMENTOS
+========================================================= */
+
+.admin-dashboard-card
+  .admin-dashboard-table {
+  border: 1px solid #27272a !important;
+
+  background: #09090b !important;
+}
+
+.admin-dashboard-card
+  .admin-dashboard-table thead {
+  background: #0c0c0f !important;
+  color: #71717a !important;
+}
+
+.admin-dashboard-card
+  .admin-dashboard-table tbody {
+  background: #09090b !important;
+}
+
+.admin-dashboard-card
+  .admin-dashboard-table tbody tr {
+  border-color: #27272a !important;
+}
+
+.admin-dashboard-card
+  .admin-dashboard-table tbody tr:hover {
+  background: #0c0c0f !important;
+}
+
+/* =========================================================
+   ADMIN PAYMENT SETTINGS
+========================================================= */
+
+.admin-payment-settings {
+  border: 1px solid #27272a !important;
+  border-radius: 12px !important;
+
+  background: #09090b !important;
+  color: #fafafa !important;
+
+  box-shadow: none !important;
+}
+
+.admin-payment-settings
+  .border-slate-200,
+.admin-payment-settings
+  .border-slate-300 {
+  border-color: #27272a !important;
+}
+
+.admin-payment-settings
+  .bg-white {
+  background: #09090b !important;
+}
+
+.admin-payment-settings
+  .bg-slate-50 {
+  background: #0c0c0f !important;
+}
+
+.admin-payment-settings
+  .bg-slate-100 {
+  background: #18181b !important;
+}
+
+.admin-payment-settings
+  .text-slate-950,
+.admin-payment-settings
+  .text-slate-900 {
+  color: #fafafa !important;
+}
+
+.admin-payment-settings
+  .text-slate-700,
+.admin-payment-settings
+  .text-slate-600,
+.admin-payment-settings
+  .text-slate-500 {
+  color: #a1a1aa !important;
+}
+
+.admin-payment-settings
+  .text-slate-400 {
+  color: #71717a !important;
+}
+
+/* Cards dos planos */
+
+.admin-payment-settings article {
+  border: 1px solid #27272a !important;
+  border-radius: 12px !important;
+
+  background: #0c0c0f !important;
+  color: #fafafa !important;
+}
+
+/* Inputs */
+
+.admin-payment-settings input:not([type="checkbox"]),
+.admin-payment-settings textarea {
+  border: 1px solid #27272a !important;
+
+  background: #09090b !important;
+  color: #fafafa !important;
+
+  box-shadow: none !important;
+}
+
+.admin-payment-settings
+  input:not([type="checkbox"]):focus,
+.admin-payment-settings textarea:focus {
+  border-color: #52525b !important;
+
+  box-shadow:
+    0 0 0 1px #52525b !important;
+}
+
+.admin-payment-settings input::placeholder,
+.admin-payment-settings textarea::placeholder {
+  color: #71717a !important;
+}
+
+/* Área do checkbox */
+
+.admin-payment-settings label.bg-white {
+  border-color: #27272a !important;
+
+  background: #09090b !important;
+}
+
+.admin-payment-settings
+  input[type="checkbox"] {
+  accent-color: #fafafa !important;
+}
+
+/* Botões */
+
+.admin-payment-settings button {
+  border: 1px solid #e4e4e7 !important;
+
+  background: #fafafa !important;
+  color: #09090b !important;
+
+  box-shadow: none !important;
+}
+
+.admin-payment-settings button:hover {
+  background: #e4e4e7 !important;
+  color: #09090b !important;
+}
+
+.admin-payment-settings button:disabled {
+  opacity: 0.45 !important;
+}
+
+/* =========================================================
+   MENSAGENS SEM QUEBRAR O DARK MODE
+========================================================= */
+
+.admin-payment-settings .bg-red-50 {
+  background: rgba(127, 29, 29, 0.18) !important;
+}
+
+.admin-payment-settings .text-red-700 {
+  color: #fca5a5 !important;
+}
+
+.admin-payment-settings .border-red-200 {
+  border-color: rgba(239, 68, 68, 0.35) !important;
+}
+
+.admin-payment-settings .bg-emerald-50 {
+  background: rgba(6, 78, 59, 0.22) !important;
+}
+
+.admin-payment-settings .text-emerald-700 {
+  color: #6ee7b7 !important;
+}
+
+.admin-payment-settings .border-emerald-200 {
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+/* =========================================================
+   FILTROS
+========================================================= */
+
+.admin-dashboard-card input,
+.admin-dashboard-card select,
+.admin-dashboard-card textarea {
+  border-color: #27272a !important;
+
+  background: #09090b !important;
+  color: #fafafa !important;
+
+  box-shadow: none !important;
+}
+
+.admin-dashboard-card input::placeholder,
+.admin-dashboard-card textarea::placeholder {
+  color: #71717a !important;
+}
+
+.admin-dashboard-card select option {
+  background: #09090b !important;
+  color: #fafafa !important;
+}

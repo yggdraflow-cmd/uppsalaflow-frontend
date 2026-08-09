@@ -219,7 +219,7 @@ export function AdminPaymentSettings() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-52 items-center justify-center rounded-[28px] border border-slate-200 bg-white">
+      <div className="admin-payment-settings flex min-h-52 items-center justify-center rounded-[28px] border border-slate-200 bg-white">
         <div className="flex items-center gap-3 text-sm font-black text-slate-500">
           <LoaderCircle
             className="animate-spin"
@@ -232,10 +232,10 @@ export function AdminPaymentSettings() {
   }
 
   return (
-    <section className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+    <section className="admin-payment-settings rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-sm font-black text-[#d97706]">
+          <p className="text-sm font-black text-zinc-400">
             Cobrança da plataforma
           </p>
 
@@ -308,7 +308,7 @@ export function AdminPaymentSettings() {
                     {option.title}
                   </h3>
 
-                  <p className="mt-2 text-sm font-black text-[#d97706]">
+                  <p className="mt-2 text-sm font-black text-zinc-400">
                     {option.price}
                   </p>
 
