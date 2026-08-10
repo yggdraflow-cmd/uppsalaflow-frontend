@@ -6,6 +6,8 @@ import {
   Clock3,
   Compass,
   Search,
+  SlidersHorizontal,
+  X,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -53,12 +55,25 @@ function formatLabel(value?: string | null) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function getBusinessCategory(business: PublicCatalogBusiness) {
+  return (
+    business.category ||
+    formatLabel(business.specialty) ||
+    formatLabel(business.segment) ||
+    "Estabelecimento"
+  );
+}
+
 export function ClientHomePage() {
   const user = getUser();
   const firstName = user?.name?.trim().split(/\s+/)[0] || "cliente";
 
   const [businesses, setBusinesses] = useState<PublicCatalogBusiness[]>([]);
   const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [serviceFilter, setServiceFilter] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -98,14 +113,29 @@ export function ClientHomePage() {
     };
   }, []);
 
+  const categoryOptions = useMemo(() => {
+    return Array.from(
+      new Set(businesses.map((business) => getBusinessCategory(business)))
+    ).sort((a, b) => a.localeCompare(b, "pt-BR"));
+  }, [businesses]);
+
+  const serviceOptions = useMemo(() => {
+    return Array.from(
+      new Set(
+        businesses.flatMap((business) =>
+          business.services.map((service) => service.name)
+        )
+      )
+    ).sort((a, b) => a.localeCompare(b, "pt-BR"));
+  }, [businesses]);
+
   const filteredBusinesses = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
-
-    if (!normalizedSearch) {
-      return businesses;
-    }
+    const maxPriceValue = Number(maxPrice);
 
     return businesses.filter((business) => {
+      const businessCategory = getBusinessCategory(business);
+
       const searchableValues = [
         business.name,
         business.category,
@@ -118,18 +148,63 @@ export function ClientHomePage() {
         ]),
       ];
 
-      return searchableValues.some((value) =>
-        String(value || "")
-          .toLowerCase()
-          .includes(normalizedSearch)
+      const matchesSearch =
+        !normalizedSearch ||
+        searchableValues.some((value) =>
+          String(value || "")
+            .toLowerCase()
+            .includes(normalizedSearch)
+        );
+
+      const matchesCategory =
+        !categoryFilter || businessCategory === categoryFilter;
+
+      const matchesService =
+        !serviceFilter ||
+        business.services.some(
+          (service) => service.name === serviceFilter
+        );
+
+      const matchesPrice =
+        !maxPrice.trim() ||
+        Number.isNaN(maxPriceValue) ||
+        business.services.some(
+          (service) => Number(service.price) <= maxPriceValue
+        );
+
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesService &&
+        matchesPrice
       );
     });
-  }, [businesses, search]);
+  }, [
+    businesses,
+    search,
+    categoryFilter,
+    serviceFilter,
+    maxPrice,
+  ]);
+
+  const hasActiveFilters = Boolean(
+    search.trim() ||
+      categoryFilter ||
+      serviceFilter ||
+      maxPrice.trim()
+  );
+
+  function clearFilters() {
+    setSearch("");
+    setCategoryFilter("");
+    setServiceFilter("");
+    setMaxPrice("");
+  }
 
   return (
     <div className="space-y-6">
       <section className="overflow-hidden rounded-[30px] border border-white/80 bg-white/70 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.08)] backdrop-blur-2xl sm:p-8">
-        <div className="max-w-3xl">
+        <div className="max-w-4xl">
           <span className="inline-flex items-center gap-2 rounded-full bg-[#171717] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-white">
             <Compass size={15} />
             Explorar
@@ -143,7 +218,7 @@ export function ClientHomePage() {
             Descubra estabelecimentos e serviços disponíveis no YggdraFlow.
           </p>
 
-          <div className="relative mt-6 max-w-2xl">
+          <div className="relative mt-6">
             <Search
               size={20}
               className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-[#7b8791]"
@@ -156,6 +231,94 @@ export function ClientHomePage() {
               placeholder="Busque por estabelecimento, categoria ou serviço..."
               className="h-14 w-full rounded-2xl border border-[#dedede] bg-white pl-14 pr-5 text-sm font-semibold text-[#171717] outline-none transition placeholder:text-[#9aa3aa] focus:border-[#171717]"
             />
+          </div>
+
+          <div className="mt-4 rounded-[24px] border border-[#e5e5e5] bg-[#f7f7f7] p-4">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-sm font-black text-[#171717]">
+                <SlidersHorizontal size={17} />
+                Filtros
+              </div>
+
+              {hasActiveFilters ? (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="inline-flex items-center gap-1.5 text-xs font-black text-[#68747d] transition hover:text-[#171717]"
+                >
+                  <X size={14} />
+                  Limpar filtros
+                </button>
+              ) : null}
+            </div>
+
+            <div className="grid gap-3 md:grid-cols-3">
+              <label className="block">
+                <span className="mb-1.5 block text-xs font-black text-[#6e7982]">
+                  Categoria
+                </span>
+
+                <select
+                  value={categoryFilter}
+                  onChange={(event) =>
+                    setCategoryFilter(event.target.value)
+                  }
+                  className="h-12 w-full rounded-xl border border-[#dedede] bg-white px-4 text-sm font-bold text-[#171717] outline-none focus:border-[#171717]"
+                >
+                  <option value="">Todas as categorias</option>
+
+                  {categoryOptions.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="block">
+                <span className="mb-1.5 block text-xs font-black text-[#6e7982]">
+                  Serviço
+                </span>
+
+                <select
+                  value={serviceFilter}
+                  onChange={(event) =>
+                    setServiceFilter(event.target.value)
+                  }
+                  className="h-12 w-full rounded-xl border border-[#dedede] bg-white px-4 text-sm font-bold text-[#171717] outline-none focus:border-[#171717]"
+                >
+                  <option value="">Todos os serviços</option>
+
+                  {serviceOptions.map((service) => (
+                    <option key={service} value={service}>
+                      {service}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="block">
+                <span className="mb-1.5 block text-xs font-black text-[#6e7982]">
+                  Preço máximo
+                </span>
+
+                <div className="relative">
+                  <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-black text-[#79848c]">
+                    R$
+                  </span>
+
+                  <input
+                    type="number"
+                    min="0"
+                    step="10"
+                    value={maxPrice}
+                    onChange={(event) => setMaxPrice(event.target.value)}
+                    placeholder="Sem limite"
+                    className="h-12 w-full rounded-xl border border-[#dedede] bg-white pl-11 pr-4 text-sm font-bold text-[#171717] outline-none placeholder:text-[#a1a9af] focus:border-[#171717]"
+                  />
+                </div>
+              </label>
+            </div>
           </div>
         </div>
       </section>
@@ -194,7 +357,9 @@ export function ClientHomePage() {
           <p className="font-black text-red-700">
             Não foi possível carregar o catálogo.
           </p>
-          <p className="mt-1 text-sm font-semibold text-red-600">{error}</p>
+          <p className="mt-1 text-sm font-semibold text-red-600">
+            {error}
+          </p>
         </div>
       ) : null}
 
@@ -207,22 +372,31 @@ export function ClientHomePage() {
           </h3>
 
           <p className="mt-2 text-sm font-semibold text-[#78848e]">
-            Tente buscar por outro nome, categoria ou serviço.
+            Ajuste sua busca ou remova alguns filtros.
           </p>
+
+          {hasActiveFilters ? (
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#171717] px-5 py-3 text-sm font-black text-white"
+            >
+              <X size={17} />
+              Limpar filtros
+            </button>
+          ) : null}
         </div>
       ) : null}
 
       {!isLoading && !error && filteredBusinesses.length > 0 ? (
         <div className="grid gap-5 lg:grid-cols-2">
           {filteredBusinesses.map((business) => {
-            const coverImageUrl = getApiAssetUrl(business.coverImageUrl);
+            const coverImageUrl = getApiAssetUrl(
+              business.coverImageUrl
+            );
             const logoUrl = getApiAssetUrl(business.logoUrl);
             const startingPrice = business.services[0]?.price;
-            const businessCategory =
-              business.category ||
-              formatLabel(business.specialty) ||
-              formatLabel(business.segment) ||
-              "Estabelecimento";
+            const businessCategory = getBusinessCategory(business);
 
             return (
               <article
@@ -255,7 +429,10 @@ export function ClientHomePage() {
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <Building2 size={28} className="text-[#171717]" />
+                        <Building2
+                          size={28}
+                          className="text-[#171717]"
+                        />
                       )}
                     </div>
 
