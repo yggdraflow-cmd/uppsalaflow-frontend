@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import {
   CalendarDays,
+  Compass,
   LogOut,
   Menu,
   PlusCircle,
@@ -103,14 +104,9 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
   );
 
   const lastPublicBookingPath =
-    storedPublicBookingPath &&
-    storedPublicBookingPath !== "/agendar/salao-da-mayara"
+    storedPublicBookingPath?.startsWith("/agendar/")
       ? storedPublicBookingPath
       : null;
-
-  if (storedPublicBookingPath === "/agendar/salao-da-mayara") {
-    window.localStorage.removeItem("@yggdraflow:last-public-booking");
-  }
 
   function closeMobileMenu(restoreFocus = true) {
     const activeElement = document.activeElement;
@@ -165,7 +161,7 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
         >
           <div className="mb-8 flex items-start justify-between gap-4">
             <Link
-              to="/cliente/agendamentos"
+              to="/cliente"
               onClick={() => closeMobileMenu()}
               className="flex min-w-0 items-center gap-3"
               title="YggdraFlow"
@@ -207,6 +203,23 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
                 <span className="min-w-0 truncate">Agendar horário</span>
               </Link>
             ) : null}
+
+            <NavLink
+              to="/cliente"
+              end
+              onClick={() => closeMobileMenu()}
+              className={({ isActive }) =>
+                [
+                  "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black transition-all duration-200",
+                  isActive
+                    ? "bg-[#171717] text-white shadow-[0_16px_34px_rgba(0,0,0,0.18)]"
+                    : "text-[#555555] hover:bg-white hover:text-[#171717]",
+                ].join(" ")
+              }
+            >
+              <Compass size={20} />
+              <span className="min-w-0 truncate">Explorar</span>
+            </NavLink>
 
             <NavLink
               to="/cliente/agendamentos"
@@ -279,7 +292,7 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
             </button>
 
             <Link
-              to="/cliente/agendamentos"
+              to="/cliente"
               className="hidden h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#171717] text-white shadow-[0_18px_42px_rgba(0,0,0,0.22)] md:flex"
               title="YggdraFlow"
             >
@@ -327,6 +340,21 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
                 Agendar horário
               </Link>
             ) : null}
+
+            <NavLink
+              to="/cliente"
+              end
+              className={({ isActive }) =>
+                [
+                  "rounded-full border px-5 py-3 text-sm font-bold shadow-sm backdrop-blur-xl transition",
+                  isActive
+                    ? "border-[#171717] bg-[#171717] text-white"
+                    : "border-white/80 bg-white/45 text-[#555555] hover:text-[#171717]",
+                ].join(" ")
+              }
+            >
+              Explorar
+            </NavLink>
 
             <NavLink
               to="/cliente/agendamentos"

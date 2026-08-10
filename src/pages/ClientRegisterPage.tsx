@@ -54,7 +54,7 @@ export function ClientRegisterPage() {
       );
 
       saveAuth(response.data.token, response.data.user);
-      navigate(safeRedirectTo || "/cliente/agendamentos");
+      navigate(safeRedirectTo || "/cliente");
     } catch (error: any) {
       setError(
         error?.response?.data?.message ||

@@ -17,7 +17,7 @@ function getRouteForRole(role: UserRole) {
   }
 
   if (role === "CLIENT") {
-    return "/cliente/agendamentos";
+    return "/cliente";
   }
 
   return "/dashboard";

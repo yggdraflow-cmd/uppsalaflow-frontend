@@ -28,6 +28,7 @@ import { SettingsPage } from "../pages/SettingsPage";
 import { ClientLoginPage } from "../pages/ClientLoginPage";
 import { ClientRegisterPage } from "../pages/ClientRegisterPage";
 import { ClientAppointmentsPage } from "../pages/ClientAppointmentsPage";
+import { ClientHomePage } from "../pages/ClientHomePage";
 import { api } from "../services/api";
 import { getToken, getUser } from "../services/authStorage";
 import type { User } from "../types/auth";
@@ -39,7 +40,7 @@ function getHomePath(user: User) {
   }
 
   if (user.role === "CLIENT") {
-    return "/cliente/agendamentos";
+    return "/cliente";
   }
 
   return "/dashboard";
@@ -125,7 +126,7 @@ function CustomerPage({ children }: { children: ReactNode }) {
   }
 
   if (user.role === "CLIENT") {
-    return <Navigate to="/cliente/agendamentos" replace />;
+    return <Navigate to="/cliente" replace />;
   }
 
   return (
@@ -152,7 +153,7 @@ function OnboardingProtectedPage({
   }
 
   if (user.role === "CLIENT") {
-    return <Navigate to="/cliente/agendamentos" replace />;
+    return <Navigate to="/cliente" replace />;
   }
 
   return <>{children}</>;
@@ -260,6 +261,15 @@ export function AppRoutes() {
           <OnboardingProtectedPage>
             <PlanSelectionPage />
           </OnboardingProtectedPage>
+        }
+      />
+
+      <Route
+        path="/cliente"
+        element={
+          <ClientProtectedPage>
+            <ClientHomePage />
+          </ClientProtectedPage>
         }
       />
 
