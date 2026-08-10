@@ -233,91 +233,139 @@ export function ClientHomePage() {
             />
           </div>
 
-          <div className="mt-4 rounded-[24px] border border-[#e5e5e5] bg-[#f7f7f7] p-4">
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-sm font-black text-[#171717]">
-                <SlidersHorizontal size={17} />
-                Filtros
+          <div className="mt-5 rounded-[26px] border border-white/90 bg-white/60 p-4 shadow-[0_12px_35px_rgba(0,0,0,0.05)] backdrop-blur-xl sm:p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#171717] text-white">
+                  <SlidersHorizontal size={16} />
+                </span>
+
+                <div>
+                  <p className="text-sm font-black text-[#171717]">
+                    Filtrar resultados
+                  </p>
+                  <p className="text-xs font-semibold text-[#8b959d]">
+                    Refine por categoria, serviço ou valor.
+                  </p>
+                </div>
               </div>
 
               {hasActiveFilters ? (
                 <button
                   type="button"
                   onClick={clearFilters}
-                  className="inline-flex items-center gap-1.5 text-xs font-black text-[#68747d] transition hover:text-[#171717]"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-[#f1f1f1] px-3 py-2 text-xs font-black text-[#646f77] transition hover:bg-[#171717] hover:text-white"
                 >
                   <X size={14} />
-                  Limpar filtros
+                  Limpar
                 </button>
               ) : null}
             </div>
 
-            <div className="grid gap-3 md:grid-cols-3">
-              <label className="block">
-                <span className="mb-1.5 block text-xs font-black text-[#6e7982]">
-                  Categoria
-                </span>
+            <div className="mt-5">
+              <p className="mb-2 text-xs font-black uppercase tracking-[0.12em] text-[#8b959d]">
+                Categoria
+              </p>
 
-                <select
-                  value={categoryFilter}
-                  onChange={(event) =>
-                    setCategoryFilter(event.target.value)
-                  }
-                  className="h-12 w-full rounded-xl border border-[#dedede] bg-white px-4 text-sm font-bold text-[#171717] outline-none focus:border-[#171717]"
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setCategoryFilter("")}
+                  className={[
+                    "rounded-full border px-4 py-2 text-sm font-black transition",
+                    !categoryFilter
+                      ? "border-[#171717] bg-[#171717] text-white"
+                      : "border-[#dedede] bg-white text-[#606b73] hover:border-[#171717] hover:text-[#171717]",
+                  ].join(" ")}
                 >
-                  <option value="">Todas as categorias</option>
+                  Todas
+                </button>
 
-                  {categoryOptions.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                {categoryOptions.map((category) => (
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() => setCategoryFilter(category)}
+                    className={[
+                      "rounded-full border px-4 py-2 text-sm font-black transition",
+                      categoryFilter === category
+                        ? "border-[#171717] bg-[#171717] text-white"
+                        : "border-[#dedede] bg-white text-[#606b73] hover:border-[#171717] hover:text-[#171717]",
+                    ].join(" ")}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-              <label className="block">
-                <span className="mb-1.5 block text-xs font-black text-[#6e7982]">
+            <div className="mt-5 space-y-5">
+              <div>
+                <p className="mb-2 text-xs font-black uppercase tracking-[0.12em] text-[#8b959d]">
                   Serviço
-                </span>
+                </p>
 
-                <select
-                  value={serviceFilter}
-                  onChange={(event) =>
-                    setServiceFilter(event.target.value)
-                  }
-                  className="h-12 w-full rounded-xl border border-[#dedede] bg-white px-4 text-sm font-bold text-[#171717] outline-none focus:border-[#171717]"
-                >
-                  <option value="">Todos os serviços</option>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setServiceFilter("")}
+                    className={[
+                      "rounded-full border px-4 py-2 text-sm font-black transition",
+                      !serviceFilter
+                        ? "border-[#171717] bg-[#171717] text-white"
+                        : "border-[#dedede] bg-white text-[#606b73] hover:border-[#171717] hover:text-[#171717]",
+                    ].join(" ")}
+                  >
+                    Todos
+                  </button>
 
                   {serviceOptions.map((service) => (
-                    <option key={service} value={service}>
+                    <button
+                      key={service}
+                      type="button"
+                      onClick={() => setServiceFilter(service)}
+                      className={[
+                        "rounded-full border px-4 py-2 text-sm font-black transition",
+                        serviceFilter === service
+                          ? "border-[#171717] bg-[#171717] text-white"
+                          : "border-[#dedede] bg-white text-[#606b73] hover:border-[#171717] hover:text-[#171717]",
+                      ].join(" ")}
+                    >
                       {service}
-                    </option>
+                    </button>
                   ))}
-                </select>
-              </label>
-
-              <label className="block">
-                <span className="mb-1.5 block text-xs font-black text-[#6e7982]">
-                  Preço máximo
-                </span>
-
-                <div className="relative">
-                  <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-black text-[#79848c]">
-                    R$
-                  </span>
-
-                  <input
-                    type="number"
-                    min="0"
-                    step="10"
-                    value={maxPrice}
-                    onChange={(event) => setMaxPrice(event.target.value)}
-                    placeholder="Sem limite"
-                    className="h-12 w-full rounded-xl border border-[#dedede] bg-white pl-11 pr-4 text-sm font-bold text-[#171717] outline-none placeholder:text-[#a1a9af] focus:border-[#171717]"
-                  />
                 </div>
-              </label>
+              </div>
+
+              <div>
+                <p className="mb-2 text-xs font-black uppercase tracking-[0.12em] text-[#8b959d]">
+                  Preço máximo
+                </p>
+
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: "Sem limite", value: "" },
+                    { label: "Até R$ 50", value: "50" },
+                    { label: "Até R$ 100", value: "100" },
+                    { label: "Até R$ 200", value: "200" },
+                    { label: "Até R$ 500", value: "500" },
+                  ].map((option) => (
+                    <button
+                      key={option.label}
+                      type="button"
+                      onClick={() => setMaxPrice(option.value)}
+                      className={[
+                        "rounded-full border px-4 py-2 text-sm font-black transition",
+                        maxPrice === option.value
+                          ? "border-[#171717] bg-[#171717] text-white"
+                          : "border-[#dedede] bg-white text-[#606b73] hover:border-[#171717] hover:text-[#171717]",
+                      ].join(" ")}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
