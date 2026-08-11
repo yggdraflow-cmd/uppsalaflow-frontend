@@ -1,18 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   CalendarDays,
+  Check,
   Clock,
   MapPin,
   MessageCircle,
+  RefreshCw,
   Scissors,
+  Send,
   UserRound,
+  X,
 } from "lucide-react";
 
-import { Button } from "../components/Button";
-import { Card } from "../components/Card";
 import { api } from "../services/api";
 
-type AppointmentProposalStatus = "PENDING" | "ACCEPTED" | "DECLINED" | "CANCELED";
+type AppointmentProposalStatus =
+  | "PENDING"
+  | "ACCEPTED"
+  | "DECLINED"
+  | "CANCELED";
 
 type AppointmentMessageSender = "OWNER" | "CLIENT";
 
@@ -89,7 +95,9 @@ function getDateOnly(date: string) {
 }
 
 function formatDate(date: string) {
-  return new Date(`${getDateOnly(date)}T00:00:00`).toLocaleDateString("pt-BR");
+  return new Date(`${getDateOnly(date)}T00:00:00`).toLocaleDateString(
+    "pt-BR"
+  );
 }
 
 function formatCurrency(value: string | number) {
@@ -116,6 +124,42 @@ function getErrorMessage(error: unknown, fallbackMessage: string) {
   }
 
   return fallbackMessage;
+}
+
+function getStatusClasses(status: string) {
+  if (status === "CONFIRMED") {
+    return "border-emerald-200 bg-emerald-50 text-emerald-700";
+  }
+
+  if (status === "IN_PROGRESS") {
+    return "border-[#12B8D6]/30 bg-[#12B8D6]/10 text-[#087F95]";
+  }
+
+  if (status === "FINISHED") {
+    return "border-[#dfe5e9] bg-[#F7F7F5] text-[#475569]";
+  }
+
+  if (status === "CANCELED" || status === "NO_SHOW") {
+    return "border-red-200 bg-red-50 text-red-700";
+  }
+
+  if (status === "PENDING_UPDATE") {
+    return "border-amber-200 bg-amber-50 text-amber-800";
+  }
+
+  return "border-[#12B8D6]/25 bg-[#12B8D6]/8 text-[#087F95]";
+}
+
+function getProposalClasses(status: AppointmentProposalStatus) {
+  if (status === "ACCEPTED") {
+    return "border-emerald-200 bg-emerald-50 text-emerald-700";
+  }
+
+  if (status === "DECLINED" || status === "CANCELED") {
+    return "border-red-200 bg-red-50 text-red-700";
+  }
+
+  return "border-[#12B8D6]/30 bg-[#12B8D6]/10 text-[#087F95]";
 }
 
 export function ClientAppointmentsPage() {
@@ -154,7 +198,9 @@ export function ClientAppointmentsPage() {
   function updateAppointment(updatedAppointment: ClientAppointment) {
     setAppointments((currentAppointments) =>
       currentAppointments.map((appointment) =>
-        appointment.id === updatedAppointment.id ? updatedAppointment : appointment
+        appointment.id === updatedAppointment.id
+          ? updatedAppointment
+          : appointment
       )
     );
   }
@@ -191,7 +237,10 @@ export function ClientAppointmentsPage() {
       );
     } catch (error) {
       setErrorMessage(
-        getErrorMessage(error, "Não foi possível responder essa sugestão.")
+        getErrorMessage(
+          error,
+          "Não foi possível responder essa sugestão."
+        )
       );
     } finally {
       setIsResponding(false);
@@ -229,76 +278,140 @@ export function ClientAppointmentsPage() {
         `Mensagem enviada para ${appointment.business.name}.`
       );
     } catch (error) {
-      setErrorMessage(getErrorMessage(error, "Não foi possível enviar a mensagem."));
+      setErrorMessage(
+        getErrorMessage(error, "Não foi possível enviar a mensagem.")
+      );
     } finally {
       setIsResponding(false);
     }
   }
 
+  const pendingProposalCount = useMemo(
+    () =>
+      appointments.reduce(
+        (total, appointment) =>
+          total +
+          (appointment.proposals ?? []).filter(
+            (proposal) => proposal.status === "PENDING"
+          ).length,
+        0
+      ),
+    [appointments]
+  );
+
+  const activeCount = useMemo(
+    () =>
+      appointments.filter((appointment) => {
+        const status = appointment.displayStatus ?? appointment.status;
+
+        return ["SCHEDULED", "CONFIRMED", "IN_PROGRESS"].includes(status);
+      }).length,
+    [appointments]
+  );
+
   return (
-    <div>
-      <div className="mb-8">
-        <p className="text-sm font-medium text-[#171717]">
-          Portal do cliente
-        </p>
+    <div className="space-y-7">
+      <section className="grid gap-px overflow-hidden border border-[#dfe5e9] bg-[#dfe5e9] sm:grid-cols-3">
+        <div className="bg-white p-5 sm:p-6">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#94A3B8]">
+            Total
+          </p>
 
-        <h1 className="text-3xl font-bold text-zinc-950">
-          Meus agendamentos
-        </h1>
+          <p className="mt-2 text-3xl font-black tracking-tight text-[#081120]">
+            {appointments.length}
+          </p>
 
-        <p className="mt-2 max-w-3xl text-zinc-600">
-          Veja seus horários marcados, serviços escolhidos, status dos
-          atendimentos e mensagens das empresas.
-        </p>
-      </div>
+          <p className="mt-1 text-xs font-bold text-[#64748B]">
+            Agendamentos registrados
+          </p>
+        </div>
+
+        <div className="bg-white p-5 sm:p-6">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#087F95]">
+            Ativos
+          </p>
+
+          <p className="mt-2 text-3xl font-black tracking-tight text-[#081120]">
+            {activeCount}
+          </p>
+
+          <p className="mt-1 text-xs font-bold text-[#64748B]">
+            Próximos ou em andamento
+          </p>
+        </div>
+
+        <div className="bg-[#081120] p-5 text-white sm:p-6">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#5BD7EB]">
+            Aguardando você
+          </p>
+
+          <p className="mt-2 text-3xl font-black tracking-tight">
+            {pendingProposalCount}
+          </p>
+
+          <p className="mt-1 text-xs font-bold text-white/45">
+            Sugestões de horário pendentes
+          </p>
+        </div>
+      </section>
 
       {successMessage ? (
-        <p className="mb-5 rounded-3xl border border-emerald-200 bg-emerald-50/80 px-5 py-4 text-sm font-bold text-emerald-700">
-          {successMessage}
-        </p>
+        <div className="flex items-start gap-3 border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-bold text-emerald-700">
+          <Check size={19} className="mt-0.5 shrink-0" />
+          <p>{successMessage}</p>
+        </div>
       ) : null}
 
       {errorMessage ? (
-        <p className="mb-5 rounded-3xl border border-red-200 bg-red-50/80 px-5 py-4 text-sm font-bold text-red-700">
-          {errorMessage}
-        </p>
+        <div className="flex items-start gap-3 border border-red-200 bg-red-50 px-5 py-4 text-sm font-bold text-red-700">
+          <X size={19} className="mt-0.5 shrink-0" />
+          <p>{errorMessage}</p>
+        </div>
       ) : null}
 
       {isLoading ? (
-        <Card>
-          <p className="text-sm font-bold text-[#667789]">
-            Carregando seus agendamentos...
-          </p>
-        </Card>
+        <div className="border border-[#dfe5e9] bg-white p-8">
+          <div className="flex items-center gap-3">
+            <RefreshCw
+              size={20}
+              className="animate-spin text-[#087F95]"
+            />
+
+            <p className="text-sm font-bold text-[#64748B]">
+              Carregando seus agendamentos...
+            </p>
+          </div>
+        </div>
       ) : null}
 
       {!isLoading && !errorMessage && appointments.length === 0 ? (
-        <Card>
-          <div className="text-center">
-            <CalendarDays className="mx-auto text-[#171717]" size={34} />
+        <div className="border border-[#dfe5e9] bg-white p-8 text-center shadow-[0_16px_45px_rgba(8,17,32,0.04)]">
+          <span className="mx-auto flex h-14 w-14 items-center justify-center border border-[#12B8D6]/25 bg-[#12B8D6]/8 text-[#087F95]">
+            <CalendarDays size={27} />
+          </span>
 
-            <h2 className="mt-4 text-2xl font-black text-[#101828]">
-              Nenhum agendamento encontrado
-            </h2>
+          <h2 className="mt-5 text-2xl font-black tracking-tight text-[#081120]">
+            Nenhum agendamento encontrado
+          </h2>
 
-            <p className="mt-3 text-sm leading-6 text-[#667789]">
-              Quando você marcar um horário em uma página pública de
-              agendamento, ele aparecerá aqui.
-            </p>
+          <p className="mx-auto mt-3 max-w-xl text-sm font-semibold leading-6 text-[#64748B]">
+            Quando você marcar um horário em uma página pública de
+            agendamento, ele aparecerá aqui.
+          </p>
 
-            <p className="mt-6 rounded-2xl bg-white/70 px-5 py-4 text-sm font-bold leading-6 text-[#667789] ring-1 ring-white/80">
-              Para marcar um horário, acesse o link público enviado pela clínica,
-              estúdio, barbearia ou profissional.
-            </p>
+          <div className="mx-auto mt-6 max-w-2xl border border-[#dfe5e9] bg-[#F7F7F5] px-5 py-4 text-sm font-bold leading-6 text-[#64748B]">
+            Para marcar um horário, acesse o link público enviado pela
+            clínica, estúdio, barbearia ou profissional.
           </div>
-        </Card>
+        </div>
       ) : null}
 
       {!isLoading && appointments.length > 0 ? (
-        <div className="grid gap-5">
+        <div className="space-y-6">
           {appointments.map((appointment) => {
             const proposals = appointment.proposals ?? [];
             const messages = appointment.messages ?? [];
+
             const pendingProposal = proposals.find(
               (proposal) => proposal.status === "PENDING"
             );
@@ -306,137 +419,234 @@ export function ClientAppointmentsPage() {
             const displayStatus =
               appointment.displayStatus ?? appointment.status;
 
-            const isPendingUpdate =
-              displayStatus === "PENDING_UPDATE";
+            const isPendingUpdate = displayStatus === "PENDING_UPDATE";
 
             return (
-              <Card key={appointment.id}>
-                <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-3">
+              <article
+                key={appointment.id}
+                className="overflow-hidden border border-[#dfe5e9] bg-white shadow-[0_18px_50px_rgba(8,17,32,0.05)]"
+              >
+                <div className="flex flex-col gap-4 border-b border-[#dfe5e9] bg-[#F7F7F5] px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span
                         className={[
-                          "rounded-full px-3 py-1 text-xs font-black",
-                          isPendingUpdate
-                            ? "bg-amber-100 text-amber-800"
-                            : "bg-[#f3f3f3] text-[#171717]",
+                          "border px-3 py-1.5 text-xs font-black",
+                          getStatusClasses(displayStatus),
                         ].join(" ")}
                       >
                         {statusLabels[displayStatus] ?? displayStatus}
                       </span>
 
-                      <span className="rounded-full bg-white/60 px-3 py-1 text-xs font-black text-[#555555]">
-                        {formatCurrency(appointment.price)}
-                      </span>
-
                       {pendingProposal ? (
-                        <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
-                          Nova sugestão de {appointment.business.name}
+                        <span className="border border-[#12B8D6]/30 bg-[#12B8D6]/10 px-3 py-1.5 text-xs font-black text-[#087F95]">
+                          Nova sugestão de horário
                         </span>
                       ) : null}
                     </div>
 
-                    {isPendingUpdate ? (
-                      <p className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold leading-6 text-amber-800">
-                        Este atendimento já terminou e aguarda atualização da
-                        empresa.
-                      </p>
-                    ) : null}
-
-                    <h2 className="mt-4 text-2xl font-black text-[#101828]">
+                    <h2 className="mt-3 truncate text-xl font-black tracking-tight text-[#081120] sm:text-2xl">
                       {appointment.business.name}
                     </h2>
+                  </div>
 
-                    <div className="mt-4 grid gap-3 text-sm font-bold text-[#555555]">
-                      <div className="flex items-center gap-2">
-                        <CalendarDays size={18} className="text-[#171717]" />
-                        <span>
-                          {formatDate(appointment.date)} às{" "}
-                          {appointment.startTime}
-                        </span>
+                  <div className="shrink-0 sm:text-right">
+                    <p className="text-xs font-black uppercase tracking-[0.16em] text-[#94A3B8]">
+                      Valor
+                    </p>
+
+                    <p className="mt-1 text-xl font-black text-[#081120]">
+                      {formatCurrency(appointment.price)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid min-w-0 xl:grid-cols-[minmax(0,0.85fr)_minmax(380px,1.15fr)]">
+                  <div className="min-w-0 border-b border-[#dfe5e9] p-5 sm:p-6 xl:border-b-0 xl:border-r">
+                    <p className="text-xs font-black uppercase tracking-[0.2em] text-[#087F95]">
+                      Atendimento
+                    </p>
+
+                    <div className="mt-5 divide-y divide-[#e2e8f0] border-y border-[#e2e8f0]">
+                      <div className="flex items-start gap-3 py-4">
+                        <CalendarDays
+                          size={19}
+                          className="mt-0.5 shrink-0 text-[#087F95]"
+                        />
+
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#94A3B8]">
+                            Data
+                          </p>
+
+                          <p className="mt-1 text-sm font-black text-[#081120]">
+                            {formatDate(appointment.date)} às{" "}
+                            {appointment.startTime}
+                          </p>
+                        </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <Clock size={18} className="text-[#171717]" />
-                        <span>
-                          {appointment.startTime} até {appointment.endTime}
-                        </span>
+                      <div className="flex items-start gap-3 py-4">
+                        <Clock
+                          size={19}
+                          className="mt-0.5 shrink-0 text-[#087F95]"
+                        />
+
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#94A3B8]">
+                            Horário
+                          </p>
+
+                          <p className="mt-1 text-sm font-black text-[#081120]">
+                            {appointment.startTime} até {appointment.endTime}
+                          </p>
+                        </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <Scissors size={18} className="text-[#171717]" />
-                        <span>
-                          {appointment.service.name} ·{" "}
-                          {appointment.service.durationMinutes} min
-                        </span>
+                      <div className="flex items-start gap-3 py-4">
+                        <Scissors
+                          size={19}
+                          className="mt-0.5 shrink-0 text-[#087F95]"
+                        />
+
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#94A3B8]">
+                            Serviço
+                          </p>
+
+                          <p className="mt-1 text-sm font-black text-[#081120]">
+                            {appointment.service.name}
+                          </p>
+
+                          <p className="mt-1 text-xs font-bold text-[#64748B]">
+                            {appointment.service.durationMinutes} min
+                          </p>
+                        </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <UserRound size={18} className="text-[#171717]" />
-                        <span>{appointment.professional.name}</span>
+                      <div className="flex items-start gap-3 py-4">
+                        <UserRound
+                          size={19}
+                          className="mt-0.5 shrink-0 text-[#087F95]"
+                        />
+
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#94A3B8]">
+                            Profissional
+                          </p>
+
+                          <p className="mt-1 text-sm font-black text-[#081120]">
+                            {appointment.professional.name}
+                          </p>
+                        </div>
                       </div>
 
                       {appointment.business.address ? (
-                        <div className="flex items-center gap-2">
-                          <MapPin size={18} className="text-[#171717]" />
-                          <span>{appointment.business.address}</span>
+                        <div className="flex items-start gap-3 py-4">
+                          <MapPin
+                            size={19}
+                            className="mt-0.5 shrink-0 text-[#087F95]"
+                          />
+
+                          <div>
+                            <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#94A3B8]">
+                              Local
+                            </p>
+
+                            <p className="mt-1 text-sm font-black leading-6 text-[#081120]">
+                              {appointment.business.address}
+                            </p>
+                          </div>
                         </div>
                       ) : null}
                     </div>
 
-                    {appointment.notes ? (
-                      <p className="mt-5 rounded-2xl border border-white/80 bg-white/45 p-4 text-sm font-semibold text-[#667789]">
-                        {appointment.notes}
-                      </p>
+                    {isPendingUpdate ? (
+                      <div className="mt-5 border border-amber-200 bg-amber-50 p-4 text-sm font-bold leading-6 text-amber-800">
+                        Este atendimento já terminou e aguarda atualização da
+                        empresa.
+                      </div>
                     ) : null}
 
+                    {appointment.notes ? (
+                      <div className="mt-5 border border-[#dfe5e9] bg-[#F7F7F5] p-4">
+                        <p className="text-xs font-black uppercase tracking-[0.14em] text-[#94A3B8]">
+                          Observações
+                        </p>
+
+                        <p className="mt-2 text-sm font-semibold leading-6 text-[#64748B]">
+                          {appointment.notes}
+                        </p>
+                      </div>
+                    ) : null}
+                  </div>
+
+                  <div className="min-w-0 bg-[#fbfcfc] p-5 sm:p-6">
                     {proposals.length > 0 ? (
-                      <div className="mt-5 rounded-3xl border border-blue-100 bg-blue-50/80 p-5">
-                        <h3 className="text-lg font-black text-blue-950">
-                          Sugestões de horário
-                        </h3>
+                      <section className="mb-6 border border-[#12B8D6]/20 bg-white">
+                        <div className="border-b border-[#dfe5e9] px-5 py-4">
+                          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#087F95]">
+                            Ajuste de horário
+                          </p>
 
-                        <div className="mt-4 space-y-4">
+                          <h3 className="mt-1 text-lg font-black text-[#081120]">
+                            Sugestões da empresa
+                          </h3>
+                        </div>
+
+                        <div className="divide-y divide-[#e2e8f0]">
                           {proposals.map((proposal) => (
-                            <div
-                              key={proposal.id}
-                              className="rounded-2xl bg-white/80 p-4 text-sm text-blue-950 ring-1 ring-blue-100"
-                            >
-                              <div className="flex flex-wrap items-center justify-between gap-3">
-                                <strong>
-                                  {formatDate(proposal.suggestedDate)} ·{" "}
-                                  {proposal.suggestedStartTime} até{" "}
-                                  {proposal.suggestedEndTime}
-                                </strong>
+                            <div key={proposal.id} className="p-5">
+                              <div className="flex flex-wrap items-start justify-between gap-3">
+                                <div>
+                                  <p className="text-sm font-black text-[#081120]">
+                                    {formatDate(proposal.suggestedDate)}
+                                  </p>
 
-                                <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-black text-blue-700">
+                                  <p className="mt-1 text-sm font-bold text-[#64748B]">
+                                    {proposal.suggestedStartTime} até{" "}
+                                    {proposal.suggestedEndTime}
+                                  </p>
+                                </div>
+
+                                <span
+                                  className={[
+                                    "border px-3 py-1.5 text-xs font-black",
+                                    getProposalClasses(proposal.status),
+                                  ].join(" ")}
+                                >
                                   {proposalStatusLabels[proposal.status]}
                                 </span>
                               </div>
 
                               {proposal.message ? (
-                                <p className="mt-3 leading-6 text-blue-800">
+                                <p className="mt-4 border-l-2 border-[#12B8D6] pl-4 text-sm font-semibold leading-6 text-[#64748B]">
                                   {proposal.message}
                                 </p>
                               ) : null}
 
                               {proposal.status === "PENDING" ? (
-                                <div className="mt-4">
+                                <div className="mt-5">
                                   <textarea
-                                    value={responseDrafts[proposal.id] ?? ""}
+                                    value={
+                                      responseDrafts[proposal.id] ?? ""
+                                    }
                                     onChange={(event) =>
-                                      setResponseDrafts((currentDrafts) => ({
-                                        ...currentDrafts,
-                                        [proposal.id]: event.target.value,
-                                      }))
+                                      setResponseDrafts(
+                                        (currentDrafts) => ({
+                                          ...currentDrafts,
+                                          [proposal.id]:
+                                            event.target.value,
+                                        })
+                                      )
                                     }
                                     rows={3}
-                                    placeholder="Responder com uma observação opcional..."
-                                    className="w-full resize-none rounded-xl border border-blue-100 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#dedede]"
+                                    placeholder="Observação opcional para sua resposta..."
+                                    className="w-full resize-none border border-[#dfe5e9] bg-[#F7F7F5] px-4 py-3 text-sm font-semibold text-[#081120] outline-none transition placeholder:text-[#94A3B8] focus:border-[#12B8D6] focus:bg-white focus:shadow-[0_0_0_3px_rgba(18,184,214,0.08)]"
                                   />
 
-                                  <div className="mt-3 flex flex-wrap gap-3">
-                                    <Button
+                                  <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                                    <button
                                       type="button"
                                       disabled={isResponding}
                                       onClick={() =>
@@ -446,13 +656,14 @@ export function ClientAppointmentsPage() {
                                           "ACCEPTED"
                                         )
                                       }
+                                      className="inline-flex items-center justify-center gap-2 border border-[#12B8D6] bg-[#12B8D6] px-4 py-3 text-sm font-black text-[#081120] transition hover:bg-[#5BD7EB] disabled:cursor-not-allowed disabled:opacity-50"
                                     >
+                                      <Check size={17} />
                                       Aceitar sugestão
-                                    </Button>
+                                    </button>
 
-                                    <Button
+                                    <button
                                       type="button"
-                                      variant="secondary"
                                       disabled={isResponding}
                                       onClick={() =>
                                         handleRespondProposal(
@@ -461,79 +672,99 @@ export function ClientAppointmentsPage() {
                                           "DECLINED"
                                         )
                                       }
+                                      className="inline-flex items-center justify-center gap-2 border border-[#dfe5e9] bg-white px-4 py-3 text-sm font-black text-[#64748B] transition hover:border-red-200 hover:bg-red-50 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
+                                      <X size={17} />
                                       Recusar
-                                    </Button>
+                                    </button>
                                   </div>
                                 </div>
                               ) : null}
                             </div>
                           ))}
                         </div>
-                      </div>
+                      </section>
                     ) : null}
 
-                    <div className="mt-5 rounded-3xl border border-zinc-200 bg-white/70 p-5">
-                      <div className="flex items-center gap-2">
-                        <MessageCircle size={20} className="text-[#171717]" />
-                        <h3 className="text-lg font-black text-[#101828]">
-                          Conversa com {appointment.business.name}
-                        </h3>
+                    <section className="border border-[#dfe5e9] bg-white">
+                      <div className="flex items-start gap-3 border-b border-[#dfe5e9] px-5 py-4">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-[#12B8D6]/25 bg-[#12B8D6]/8 text-[#087F95]">
+                          <MessageCircle size={19} />
+                        </span>
+
+                        <div className="min-w-0">
+                          <p className="text-xs font-black uppercase tracking-[0.16em] text-[#087F95]">
+                            Mensagens
+                          </p>
+
+                          <h3 className="mt-1 truncate text-base font-black text-[#081120]">
+                            Conversa com {appointment.business.name}
+                          </h3>
+                        </div>
                       </div>
 
-                      {messages.length === 0 ? (
-                        <p className="mt-3 text-sm font-semibold text-[#667789]">
-                          Nenhuma mensagem ainda.
-                        </p>
-                      ) : (
-                        <div className="mt-4 space-y-3">
-                          {messages.map((appointmentMessage) => (
-                            <div
-                              key={appointmentMessage.id}
-                              className={[
-                                "rounded-2xl px-4 py-3 text-sm ring-1",
-                                appointmentMessage.sender === "CLIENT"
-                                  ? "bg-[#f3f3f3] text-[#171717] ring-[#dedede]"
-                                  : "bg-zinc-50 text-zinc-700 ring-zinc-200",
-                              ].join(" ")}
-                            >
-                              <strong className="block text-xs uppercase tracking-wide">
-                                {appointmentMessage.sender === "CLIENT"
-                                  ? "Você"
-                                  : appointment.business.name}
-                              </strong>
+                      <div className="p-5">
+                        {messages.length === 0 ? (
+                          <div className="border border-dashed border-[#dfe5e9] bg-[#F7F7F5] px-4 py-5 text-center">
+                            <p className="text-sm font-semibold text-[#64748B]">
+                              Nenhuma mensagem ainda.
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="max-h-72 space-y-3 overflow-y-auto pr-1">
+                            {messages.map((appointmentMessage) => (
+                              <div
+                                key={appointmentMessage.id}
+                                className={[
+                                  "max-w-[90%] border px-4 py-3 text-sm",
+                                  appointmentMessage.sender === "CLIENT"
+                                    ? "ml-auto border-[#12B8D6]/25 bg-[#12B8D6]/8 text-[#081120]"
+                                    : "mr-auto border-[#dfe5e9] bg-[#F7F7F5] text-[#475569]",
+                                ].join(" ")}
+                              >
+                                <strong className="mb-1 block text-[10px] uppercase tracking-[0.14em] text-[#087F95]">
+                                  {appointmentMessage.sender === "CLIENT"
+                                    ? "Você"
+                                    : appointment.business.name}
+                                </strong>
 
-                              <span>{appointmentMessage.message}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                                <span className="font-semibold leading-6">
+                                  {appointmentMessage.message}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
 
-                      <textarea
-                        value={messageDrafts[appointment.id] ?? ""}
-                        onChange={(event) =>
-                          setMessageDrafts((currentDrafts) => ({
-                            ...currentDrafts,
-                            [appointment.id]: event.target.value,
-                          }))
-                        }
-                        rows={3}
-                        placeholder={`Digite uma mensagem para ${appointment.business.name}...`}
-                        className="mt-4 w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#dedede]"
-                      />
+                        <textarea
+                          value={messageDrafts[appointment.id] ?? ""}
+                          onChange={(event) =>
+                            setMessageDrafts((currentDrafts) => ({
+                              ...currentDrafts,
+                              [appointment.id]: event.target.value,
+                            }))
+                          }
+                          rows={3}
+                          placeholder={`Digite uma mensagem para ${appointment.business.name}...`}
+                          className="mt-4 w-full resize-none border border-[#dfe5e9] bg-[#F7F7F5] px-4 py-3 text-sm font-semibold text-[#081120] outline-none transition placeholder:text-[#94A3B8] focus:border-[#12B8D6] focus:bg-white focus:shadow-[0_0_0_3px_rgba(18,184,214,0.08)]"
+                        />
 
-                      <Button
-                        type="button"
-                        className="mt-3"
-                        disabled={isResponding}
-                        onClick={() => handleSendMessage(appointment)}
-                      >
-                        Enviar mensagem
-                      </Button>
-                    </div>
+                        <button
+                          type="button"
+                          disabled={isResponding}
+                          onClick={() =>
+                            handleSendMessage(appointment)
+                          }
+                          className="mt-3 inline-flex items-center justify-center gap-2 border border-[#081120] bg-[#081120] px-5 py-3 text-sm font-black text-white transition hover:border-[#087F95] hover:bg-[#087F95] disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <Send size={17} />
+                          Enviar mensagem
+                        </button>
+                      </div>
+                    </section>
                   </div>
                 </div>
-              </Card>
+              </article>
             );
           })}
         </div>
