@@ -7,6 +7,7 @@ import {
   Clock3,
   Search,
   Sparkles,
+  Star,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
@@ -35,6 +36,8 @@ type PublicCatalogBusiness = {
   slug: string;
   segment?: string | null;
   specialty?: string | null;
+  averageRating?: number | null;
+  ratingCount?: number;
   services: PublicCatalogService[];
 };
 
@@ -559,6 +562,10 @@ export function PublicBusinessesPage() {
 
                   const logoUrl = getApiAssetUrl(business.logoUrl);
                   const category = getBusinessCategory(business);
+                  const averageRating = business.averageRating ?? null;
+                  const ratingCount = business.ratingCount ?? 0;
+                  const roundedRating =
+                    averageRating === null ? 0 : Math.round(averageRating);
 
                   const prices = business.services
                     .map((service) => Number(service.price))
@@ -617,6 +624,45 @@ export function PublicBusinessesPage() {
                         <h3 className="text-2xl font-black tracking-[-0.03em] text-[#081120]">
                           {business.name}
                         </h3>
+
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                          <div
+                            className="flex items-center gap-0.5"
+                            aria-label={
+                              averageRating === null
+                                ? "Ainda sem avaliações"
+                                : `Avaliação ${averageRating.toFixed(1)} de 5`
+                            }
+                          >
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star
+                                key={star}
+                                size={16}
+                                className={
+                                  star <= roundedRating
+                                    ? "fill-[#12B8D6] text-[#12B8D6]"
+                                    : "text-[#cbd5e1]"
+                                }
+                              />
+                            ))}
+                          </div>
+
+                          {averageRating !== null && ratingCount > 0 ? (
+                            <span className="text-sm font-black text-[#081120]">
+                              {averageRating.toFixed(1)}
+                              <span className="ml-1 font-bold text-[#64748b]">
+                                ({ratingCount}{" "}
+                                {ratingCount === 1
+                                  ? "avaliação"
+                                  : "avaliações"})
+                              </span>
+                            </span>
+                          ) : (
+                            <span className="text-sm font-bold text-[#94a3b8]">
+                              Ainda sem avaliações
+                            </span>
+                          )}
+                        </div>
 
                         {business.address ? (
                           <p className="mt-2 text-sm font-semibold leading-6 text-[#64748b]">
