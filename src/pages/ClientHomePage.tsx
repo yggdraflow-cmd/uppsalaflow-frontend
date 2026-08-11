@@ -12,6 +12,7 @@ import {
 import { Link } from "react-router-dom";
 
 import { api, getApiAssetUrl } from "../services/api";
+import type { BusinessSegment } from "../types/business";
 import { getUser } from "../services/authStorage";
 
 type PublicCatalogService = {
@@ -32,7 +33,7 @@ type PublicCatalogBusiness = {
   logoUrl?: string | null;
   coverImageUrl?: string | null;
   slug: string;
-  segment?: string | null;
+  segment?: BusinessSegment | null;
   specialty?: string | null;
   services: PublicCatalogService[];
 };
@@ -55,6 +56,18 @@ function formatLabel(value?: string | null) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+const officialSegmentOptions: Array<{
+  segment: BusinessSegment;
+  label: string;
+}> = [
+  { segment: "BARBERSHOP", label: "Barbearia" },
+  { segment: "BEAUTY", label: "Estética feminina" },
+  { segment: "ODONTOLOGY", label: "Odonto" },
+  { segment: "VETERINARY", label: "Veterinária" },
+  { segment: "WELLNESS", label: "Bem-estar" },
+  { segment: "OTHER", label: "Outro ramo" },
+];
+
 function getBusinessCategory(business: PublicCatalogBusiness) {
   return (
     business.category ||
@@ -70,7 +83,8 @@ export function ClientHomePage() {
 
   const [businesses, setBusinesses] = useState<PublicCatalogBusiness[]>([]);
   const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] =
+    useState<BusinessSegment | "">("");
   const [serviceFilter, setServiceFilter] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
@@ -113,12 +127,6 @@ export function ClientHomePage() {
     };
   }, []);
 
-  const categoryOptions = useMemo(() => {
-    return Array.from(
-      new Set(businesses.map((business) => getBusinessCategory(business)))
-    ).sort((a, b) => a.localeCompare(b, "pt-BR"));
-  }, [businesses]);
-
   const serviceOptions = useMemo(() => {
     return Array.from(
       new Set(
@@ -134,8 +142,6 @@ export function ClientHomePage() {
     const maxPriceValue = Number(maxPrice);
 
     return businesses.filter((business) => {
-      const businessCategory = getBusinessCategory(business);
-
       const searchableValues = [
         business.name,
         business.category,
@@ -157,7 +163,7 @@ export function ClientHomePage() {
         );
 
       const matchesCategory =
-        !categoryFilter || businessCategory === categoryFilter;
+        !categoryFilter || business.segment === categoryFilter;
 
       const matchesService =
         !serviceFilter ||
@@ -327,16 +333,16 @@ export function ClientHomePage() {
                       Todas
                     </button>
 
-                    {categoryOptions.map((category) => (
+                    {officialSegmentOptions.map((option) => (
                       <button
-                        key={category}
+                        key={option.segment}
                         type="button"
-                        onClick={() => setCategoryFilter(category)}
+                        onClick={() => setCategoryFilter(option.segment)}
                         className={filterButtonClass(
-                          categoryFilter === category
+                          categoryFilter === option.segment
                         )}
                       >
-                        {category}
+                        {option.label}
                       </button>
                     ))}
                   </div>
