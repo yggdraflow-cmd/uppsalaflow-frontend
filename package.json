@@ -10,6 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@paper-design/shaders-react": "^0.0.80",
     "axios": "latest",
     "lucide-react": "latest",
     "react": "latest",
@@ -18,9 +19,11 @@
   },
   "devDependencies": {
     "@eslint/js": "latest",
+    "@tailwindcss/postcss": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "@vitejs/plugin-react": "latest",
     "eslint": "latest",
     "eslint-plugin-react-hooks": "latest",
     "eslint-plugin-react-refresh": "latest",
@@ -29,8 +32,6 @@
     "tailwindcss": "latest",
     "typescript": "latest",
     "typescript-eslint": "latest",
-    "vite": "latest",
-    "@vitejs/plugin-react": "latest",
-    "@tailwindcss/postcss": "latest"
+    "vite": "latest"
   }
 }
