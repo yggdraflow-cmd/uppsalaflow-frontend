@@ -503,7 +503,7 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
           </p>
         </div>
 
-        <div className="pointer-events-none absolute -right-16 top-1/2 h-[300px] w-[300px] -translate-y-1/2 opacity-35 sm:right-0 sm:h-[360px] sm:w-[360px] md:right-8 md:h-[430px] md:w-[430px] lg:right-16">
+        <div className="pointer-events-none absolute right-2 top-1/2 h-[240px] w-[240px] -translate-y-1/2 opacity-35 sm:right-6 sm:h-[260px] sm:w-[260px] md:right-10 md:h-[280px] md:w-[280px] lg:right-16 lg:h-[290px] lg:w-[290px]">
           <TextSphere
             word="YggdraFlow"
             color="#5BD7EB"
