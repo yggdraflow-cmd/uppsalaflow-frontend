@@ -134,8 +134,8 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#e9e9e9] p-0 text-[#171717] sm:p-4">
-      <div className="mx-auto min-h-screen w-full max-w-[1200px] overflow-hidden border border-white/80 bg-white/32 shadow-[0_30px_100px_rgba(0,0,0,0.18)] backdrop-blur-3xl sm:min-h-[calc(100vh-32px)] sm:rounded-[34px]">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#f7f7f5] text-[#081120]">
+      <div className="min-h-screen w-full overflow-hidden bg-[#f7f7f5]">
         <button
           type="button"
           aria-label="Fechar menu"
@@ -276,7 +276,7 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
           </nav>
         </aside>
 
-        <header className="flex min-h-[72px] items-center justify-between gap-3 border-b border-white/70 px-3 py-3 sm:px-5 md:min-h-0 md:flex-row md:px-8 md:py-6">
+        <header className="flex min-h-[72px] w-full items-center justify-between gap-3 border-b border-[#e2e8f0] bg-white/90 px-4 py-3 backdrop-blur-xl sm:px-6 md:min-h-0 md:flex-row md:px-8 md:py-5 xl:px-10 2xl:px-12">
           <div className="flex min-w-0 items-center gap-3 md:gap-4">
             <button
               ref={mobileMenuButtonRef}
@@ -405,7 +405,7 @@ export function ClientPortalLayout({ children }: ClientPortalLayoutProps) {
           </div>
         </header>
 
-        <main className="min-w-0 overflow-x-hidden px-3 py-5 sm:px-5 sm:py-6 md:px-8 md:py-8">
+        <main className="min-w-0 w-full overflow-x-hidden px-4 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8 xl:px-10 2xl:px-12">
           {children ?? <Outlet />}
         </main>
       </div>
