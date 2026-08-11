@@ -6,7 +6,9 @@ import {
   LayoutDashboard,
   ListChecks,
   LogOut,
+  Moon,
   ShieldCheck,
+  Sun,
   UserRound,
 } from "lucide-react";
 
@@ -19,6 +21,10 @@ import { getUser } from "../services/authStorage";
 type AdminLayoutProps = {
   children: ReactNode;
 };
+
+type AdminTheme = "dark" | "light";
+
+const ADMIN_THEME_STORAGE_KEY = "@yggdraflow:admin-theme";
 
 const navigationItems = [
   {
@@ -47,11 +53,22 @@ const navigationItems = [
   },
 ];
 
+function getStoredAdminTheme(): AdminTheme {
+  const storedTheme = localStorage.getItem(
+    ADMIN_THEME_STORAGE_KEY
+  );
+
+  return storedTheme === "light" ? "light" : "dark";
+}
+
 export function AdminLayout({ children }: AdminLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [user, setUser] = useState(() => getUser());
+  const [theme, setTheme] = useState<AdminTheme>(
+    getStoredAdminTheme
+  );
 
   const currentView =
     new URLSearchParams(location.search).get("view") || "overview";
@@ -80,13 +97,26 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     };
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem(ADMIN_THEME_STORAGE_KEY, theme);
+  }, [theme]);
+
+  function handleThemeToggle() {
+    setTheme((currentTheme) =>
+      currentTheme === "dark" ? "light" : "dark"
+    );
+  }
+
   function handleLogout() {
     clearAuthStorage();
     navigate("/admin/login", { replace: true });
   }
 
   return (
-    <div className="admin-dashboard-shell">
+    <div
+      className="admin-dashboard-shell"
+      data-admin-theme={theme}
+    >
       <div className="admin-dashboard-window">
         <header className="admin-dashboard-navbar">
           <Link
@@ -125,6 +155,28 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </nav>
 
           <div className="admin-dashboard-actions">
+            <button
+              type="button"
+              onClick={handleThemeToggle}
+              className="admin-dashboard-theme-toggle"
+              title={
+                theme === "dark"
+                  ? "Usar tema claro"
+                  : "Usar tema escuro"
+              }
+              aria-label={
+                theme === "dark"
+                  ? "Ativar tema claro"
+                  : "Ativar tema escuro"
+              }
+            >
+              {theme === "dark" ? (
+                <Sun size={18} />
+              ) : (
+                <Moon size={18} />
+              )}
+            </button>
+
             <Link
               to="/admin/account"
               className="admin-dashboard-profile"
