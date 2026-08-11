@@ -7,6 +7,7 @@ import {
   Compass,
   Search,
   SlidersHorizontal,
+  Star,
   X,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -35,6 +36,8 @@ type PublicCatalogBusiness = {
   slug: string;
   segment?: BusinessSegment | null;
   specialty?: string | null;
+  averageRating?: number | null;
+  ratingCount?: number;
   services: PublicCatalogService[];
 };
 
@@ -490,6 +493,10 @@ export function ClientHomePage() {
             const logoUrl = getApiAssetUrl(business.logoUrl);
             const startingPrice = business.services[0]?.price;
             const businessCategory = getBusinessCategory(business);
+            const averageRating = business.averageRating ?? null;
+            const ratingCount = business.ratingCount ?? 0;
+            const roundedRating =
+              averageRating === null ? 0 : Math.round(averageRating);
 
             return (
               <article
@@ -546,6 +553,45 @@ export function ClientHomePage() {
                       <h3 className="mt-2 truncate text-xl font-black tracking-tight text-white sm:text-2xl">
                         {business.name}
                       </h3>
+
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        <div
+                          className="flex items-center gap-0.5"
+                          aria-label={
+                            averageRating === null
+                              ? "Ainda sem avaliações"
+                              : `Avaliação ${averageRating.toFixed(1)} de 5`
+                          }
+                        >
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              size={14}
+                              className={
+                                star <= roundedRating
+                                  ? "fill-[#5BD7EB] text-[#5BD7EB]"
+                                  : "text-white/30"
+                              }
+                            />
+                          ))}
+                        </div>
+
+                        {averageRating !== null && ratingCount > 0 ? (
+                          <span className="text-xs font-black text-white">
+                            {averageRating.toFixed(1)}
+                            <span className="ml-1 font-bold text-white/50">
+                              ({ratingCount}{" "}
+                              {ratingCount === 1
+                                ? "avaliação"
+                                : "avaliações"})
+                            </span>
+                          </span>
+                        ) : (
+                          <span className="text-xs font-bold text-white/50">
+                            Ainda sem avaliações
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
