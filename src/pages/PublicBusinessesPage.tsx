@@ -41,6 +41,15 @@ type PublicCatalogBusiness = {
   services: PublicCatalogService[];
 };
 
+const officialSegmentOptions = [
+  { segment: "BARBERSHOP", label: "Barbearia" },
+  { segment: "BEAUTY", label: "Estética feminina" },
+  { segment: "ODONTOLOGY", label: "Odonto" },
+  { segment: "VETERINARY", label: "Veterinária" },
+  { segment: "WELLNESS", label: "Bem-estar" },
+  { segment: "OTHER", label: "Outro ramo" },
+] as const;
+
 function formatCurrency(value: string | number) {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -129,18 +138,10 @@ export function PublicBusinessesPage() {
     };
   }, []);
 
-  const categoryOptions = useMemo(() => {
-    return Array.from(
-      new Set(businesses.map((business) => getBusinessCategory(business)))
-    ).sort((a, b) => a.localeCompare(b, "pt-BR"));
-  }, [businesses]);
-
   const filteredBusinesses = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
 
     return businesses.filter((business) => {
-      const category = getBusinessCategory(business);
-
       const searchableValues = [
         business.name,
         business.category,
@@ -163,7 +164,7 @@ export function PublicBusinessesPage() {
         );
 
       const matchesCategory =
-        !categoryFilter || category === categoryFilter;
+        !categoryFilter || business.segment === categoryFilter;
 
       return matchesSearch && matchesCategory;
     });
@@ -473,19 +474,19 @@ export function PublicBusinessesPage() {
                   Todas
                 </button>
 
-                {categoryOptions.map((category) => (
+                {officialSegmentOptions.map((option) => (
                   <button
-                    key={category}
+                    key={option.segment}
                     type="button"
-                    onClick={() => setCategoryFilter(category)}
+                    onClick={() => setCategoryFilter(option.segment)}
                     className={[
                       "rounded-full border px-4 py-2.5 text-sm font-black transition",
-                      categoryFilter === category
+                      categoryFilter === option.segment
                         ? "border-[#081120] bg-[#081120] text-white"
                         : "border-[#e2e8f0] bg-white text-[#64748b] hover:border-[#12b8d6] hover:text-[#087f95]",
                     ].join(" ")}
                   >
-                    {category}
+                    {option.label}
                   </button>
                 ))}
               </div>
