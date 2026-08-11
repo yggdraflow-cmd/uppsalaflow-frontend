@@ -56,7 +56,11 @@ export function LoginPage() {
   }
 
   return (
-    <AuthLayout variant="plain" registerTheme="business">
+    <AuthLayout
+      variant="plain"
+      registerTheme="business"
+      showSiteBackButton
+    >
       <RegisterPanel
         accountType="business"
         theme="business"

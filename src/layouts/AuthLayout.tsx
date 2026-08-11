@@ -1,3 +1,4 @@
+import { ArrowLeft } from "lucide-react";
 import type { ReactNode } from "react";
 
 type RegisterTheme = "business" | "client";
@@ -6,12 +7,14 @@ type AuthLayoutProps = {
   children: ReactNode;
   variant?: "framed" | "plain";
   registerTheme?: RegisterTheme;
+  showSiteBackButton?: boolean;
 };
 
 export function AuthLayout({
   children,
   variant = "framed",
   registerTheme = "business",
+  showSiteBackButton = false,
 }: AuthLayoutProps) {
   const isRegisterPage = variant === "plain";
   const isClientRegister = registerTheme === "client";
@@ -20,6 +23,9 @@ export function AuthLayout({
     ? "/register-client-bg.png"
     : "/register-background.webp";
 
+  const siteUrl =
+    import.meta.env.VITE_SITE_URL || "http://localhost:3000";
+
   return (
     <main
       className={[
@@ -27,6 +33,22 @@ export function AuthLayout({
         "bg-white px-3 py-3 sm:px-4 sm:py-4",
       ].join(" ")}
     >
+      {showSiteBackButton ? (
+        <a
+          href={siteUrl}
+          className={[
+            "fixed left-4 top-4 z-40 inline-flex items-center gap-2 rounded-full border px-4 py-2.5",
+            "text-xs font-black shadow-lg backdrop-blur-xl transition sm:left-5 sm:top-5",
+            isClientRegister
+              ? "border-[#d5b65f]/55 bg-white/85 text-[#8c6914] hover:bg-white"
+              : "border-white/20 bg-black/45 text-white hover:border-[#12B8D6]/60 hover:text-[#5BD7EB]",
+          ].join(" ")}
+        >
+          <ArrowLeft size={16} />
+          Voltar para o site
+        </a>
+      ) : null}
+
       {isRegisterPage ? (
         <div className="pointer-events-none fixed inset-0">
           <img
