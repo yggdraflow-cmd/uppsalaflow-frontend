@@ -21,6 +21,7 @@ import { ServicesPage } from "../pages/ServicesPage";
 import { ProfessionalsPage } from "../pages/ProfessionalsPage";
 import { AppointmentsPage } from "../pages/AppointmentsPage";
 import { PublicBookingPage } from "../pages/PublicBookingPage";
+import { PublicBusinessesPage } from "../pages/PublicBusinessesPage";
 import { AdminPage } from "../pages/AdminPage";
 import { AdminLoginPage } from "../pages/AdminLoginPage";
 import { AccountPage } from "../pages/AccountPage";
@@ -227,6 +228,11 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<HomeRedirect />} />
+
+      <Route
+        path="/empresas"
+        element={<PublicBusinessesPage />}
+      />
 
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
