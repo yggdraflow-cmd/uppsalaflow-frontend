@@ -8,6 +8,7 @@ import {
   RefreshCw,
   Scissors,
   Send,
+  Star,
   UserRound,
   X,
 } from "lucide-react";
@@ -40,6 +41,15 @@ type AppointmentMessage = {
   createdAt: string;
 };
 
+type AppointmentReview = {
+  id: string;
+  rating: number;
+  comment?: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+
 type ClientAppointment = {
   id: string;
   date: string;
@@ -51,6 +61,7 @@ type ClientAppointment = {
   notes?: string | null;
   proposals?: AppointmentProposal[];
   messages?: AppointmentMessage[];
+  review?: AppointmentReview | null;
   business: {
     id: string;
     name: string;
@@ -175,6 +186,13 @@ export function ClientAppointmentsPage() {
     {}
   );
 
+  const [reviewDrafts, setReviewDrafts] = useState<
+    Record<string, { rating: number; comment: string }>
+  >({});
+
+  const [reviewingAppointmentId, setReviewingAppointmentId] =
+    useState<string | null>(null);
+
   async function loadAppointments() {
     try {
       setErrorMessage("");
@@ -283,6 +301,59 @@ export function ClientAppointmentsPage() {
       );
     } finally {
       setIsResponding(false);
+    }
+  }
+
+  async function handleSubmitReview(appointment: ClientAppointment) {
+    const draft = reviewDrafts[appointment.id] ?? {
+      rating: 0,
+      comment: "",
+    };
+
+    if (draft.rating < 1 || draft.rating > 5) {
+      setErrorMessage("Escolha uma nota de 1 a 5 estrelas.");
+      return;
+    }
+
+    try {
+      setReviewingAppointmentId(appointment.id);
+      setErrorMessage("");
+      setSuccessMessage("");
+
+      const response = await api.post<AppointmentReview>(
+        `/client/appointments/${appointment.id}/review`,
+        {
+          rating: draft.rating,
+          comment: draft.comment.trim() || undefined,
+        }
+      );
+
+      setAppointments((currentAppointments) =>
+        currentAppointments.map((currentAppointment) =>
+          currentAppointment.id === appointment.id
+            ? {
+                ...currentAppointment,
+                review: response.data,
+              }
+            : currentAppointment
+        )
+      );
+
+      setReviewDrafts((currentDrafts) => {
+        const nextDrafts = { ...currentDrafts };
+        delete nextDrafts[appointment.id];
+        return nextDrafts;
+      });
+
+      setSuccessMessage(
+        `Sua avaliação de ${appointment.business.name} foi registrada.`
+      );
+    } catch (error) {
+      setErrorMessage(
+        getErrorMessage(error, "Não foi possível registrar sua avaliação.")
+      );
+    } finally {
+      setReviewingAppointmentId(null);
     }
   }
 
@@ -578,6 +649,149 @@ export function ClientAppointmentsPage() {
                           {appointment.notes}
                         </p>
                       </div>
+                    ) : null}
+
+                    {displayStatus === "FINISHED" ? (
+                      <section className="mt-5 border border-[#dfe5e9] bg-white">
+                        <div className="border-b border-[#dfe5e9] bg-[#F7F7F5] p-4">
+                          <p className="text-xs font-black uppercase tracking-[0.16em] text-[#087F95]">
+                            Avaliação
+                          </p>
+
+                          <h3 className="mt-1 text-lg font-black text-[#081120]">
+                            {appointment.review
+                              ? "Sua avaliação"
+                              : "Avalie seu atendimento"}
+                          </h3>
+                        </div>
+
+                        {appointment.review ? (
+                          <div className="p-4">
+                            <div
+                              className="flex items-center gap-1"
+                              aria-label={`Avaliação ${appointment.review.rating} de 5`}
+                            >
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <Star
+                                  key={star}
+                                  size={22}
+                                  className={
+                                    star <= appointment.review!.rating
+                                      ? "fill-[#12B8D6] text-[#12B8D6]"
+                                      : "text-[#cbd5e1]"
+                                  }
+                                />
+                              ))}
+                            </div>
+
+                            <p className="mt-3 text-sm font-black text-[#081120]">
+                              {appointment.review.rating} de 5 estrelas
+                            </p>
+
+                            {appointment.review.comment ? (
+                              <p className="mt-3 border-l-2 border-[#12B8D6] pl-4 text-sm font-semibold leading-6 text-[#64748B]">
+                                {appointment.review.comment}
+                              </p>
+                            ) : (
+                              <p className="mt-2 text-xs font-bold text-[#94A3B8]">
+                                Avaliação enviada sem comentário.
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="p-4">
+                            <p className="text-sm font-semibold leading-6 text-[#64748B]">
+                              Como foi seu atendimento em{" "}
+                              <strong className="text-[#081120]">
+                                {appointment.business.name}
+                              </strong>
+                              ?
+                            </p>
+
+                            <div className="mt-4 flex items-center gap-1">
+                              {[1, 2, 3, 4, 5].map((star) => {
+                                const selectedRating =
+                                  reviewDrafts[appointment.id]?.rating ?? 0;
+
+                                return (
+                                  <button
+                                    key={star}
+                                    type="button"
+                                    onClick={() =>
+                                      setReviewDrafts((currentDrafts) => ({
+                                        ...currentDrafts,
+                                        [appointment.id]: {
+                                          rating: star,
+                                          comment:
+                                            currentDrafts[appointment.id]
+                                              ?.comment ?? "",
+                                        },
+                                      }))
+                                    }
+                                    className="p-1 transition hover:scale-110"
+                                    aria-label={`${star} ${
+                                      star === 1 ? "estrela" : "estrelas"
+                                    }`}
+                                  >
+                                    <Star
+                                      size={28}
+                                      className={
+                                        star <= selectedRating
+                                          ? "fill-[#12B8D6] text-[#12B8D6]"
+                                          : "text-[#cbd5e1] transition hover:text-[#5BD7EB]"
+                                      }
+                                    />
+                                  </button>
+                                );
+                              })}
+                            </div>
+
+                            <p className="mt-2 text-xs font-bold text-[#64748B]">
+                              {reviewDrafts[appointment.id]?.rating
+                                ? `${reviewDrafts[appointment.id].rating} de 5 estrelas`
+                                : "Selecione de 1 a 5 estrelas"}
+                            </p>
+
+                            <textarea
+                              value={
+                                reviewDrafts[appointment.id]?.comment ?? ""
+                              }
+                              onChange={(event) =>
+                                setReviewDrafts((currentDrafts) => ({
+                                  ...currentDrafts,
+                                  [appointment.id]: {
+                                    rating:
+                                      currentDrafts[appointment.id]?.rating ??
+                                      0,
+                                    comment: event.target.value,
+                                  },
+                                }))
+                              }
+                              rows={3}
+                              maxLength={1000}
+                              placeholder="Conte como foi sua experiência. Comentário opcional."
+                              className="mt-4 w-full resize-none border border-[#dfe5e9] bg-[#F7F7F5] px-4 py-3 text-sm font-semibold text-[#081120] outline-none transition placeholder:text-[#94A3B8] focus:border-[#12B8D6] focus:bg-white focus:shadow-[0_0_0_3px_rgba(18,184,214,0.08)]"
+                            />
+
+                            <button
+                              type="button"
+                              disabled={
+                                reviewingAppointmentId === appointment.id ||
+                                !reviewDrafts[appointment.id]?.rating
+                              }
+                              onClick={() =>
+                                handleSubmitReview(appointment)
+                              }
+                              className="mt-3 inline-flex min-h-11 items-center justify-center gap-2 border border-[#12B8D6] bg-[#12B8D6] px-5 py-3 text-sm font-black text-[#081120] transition hover:bg-[#5BD7EB] disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              <Star size={17} />
+                              {reviewingAppointmentId === appointment.id
+                                ? "Enviando..."
+                                : "Enviar avaliação"}
+                            </button>
+                          </div>
+                        )}
+                      </section>
                     ) : null}
                   </div>
 
