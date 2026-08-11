@@ -25,6 +25,7 @@ import { PublicBusinessesPage } from "../pages/PublicBusinessesPage";
 import { AdminPage } from "../pages/AdminPage";
 import { AdminLoginPage } from "../pages/AdminLoginPage";
 import { AccountPage } from "../pages/AccountPage";
+import { ClientAccountPage } from "../pages/ClientAccountPage";
 import { SettingsPage } from "../pages/SettingsPage";
 import { ClientLoginPage } from "../pages/ClientLoginPage";
 import { ClientRegisterPage } from "../pages/ClientRegisterPage";
@@ -292,7 +293,7 @@ export function AppRoutes() {
         path="/cliente/conta"
         element={
           <ClientProtectedPage>
-            <AccountPage />
+            <ClientAccountPage />
           </ClientProtectedPage>
         }
       />
