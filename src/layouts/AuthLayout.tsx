@@ -88,13 +88,13 @@ export function AuthLayout({
         ].join(" ")}
       >
         {isPlainPage ? (
-          <div className="mb-4 flex w-full flex-col gap-3 md:relative md:min-h-[44px] md:block">
+          <div className="mb-4 flex w-full flex-col gap-3 md:mb-0 md:block">
             {showSiteBackButton ? (
               <a
                 href={siteUrl}
                 className={[
                   backButtonClassName,
-                  "self-start md:absolute md:left-0 md:top-0",
+                  "self-start md:fixed md:left-5 md:top-5 md:z-40",
                 ].join(" ")}
               >
                 <ArrowLeft size={16} />
@@ -102,7 +102,7 @@ export function AuthLayout({
               </a>
             ) : null}
 
-            <div className="self-center md:absolute md:left-1/2 md:top-0 md:-translate-x-1/2">
+            <div className="self-center md:fixed md:left-1/2 md:top-5 md:z-30 md:-translate-x-1/2">
               <p className={brandClassName}>YggdraFlow</p>
             </div>
           </div>
