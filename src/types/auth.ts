@@ -1,4 +1,8 @@
-export type UserRole = "ADMIN" | "OWNER" | "PROFESSIONAL" | "CLIENT";
+export type UserRole =
+  | "ADMIN"
+  | "OWNER"
+  | "PROFESSIONAL"
+  | "CLIENT";
 
 export type User = {
   id: string;
@@ -13,3 +17,15 @@ export type AuthResponse = {
   user: User;
   token: string;
 };
+
+export type AdminLoginResponse =
+  | {
+      requiresTwoFactor: true;
+      challengeToken: string;
+      user: User;
+    }
+  | {
+      requiresTwoFactor: false;
+      token: string;
+      user: User;
+    };

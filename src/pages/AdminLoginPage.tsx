@@ -1,4 +1,8 @@
-import { type FormEvent, useEffect, useState } from "react";
+import {
+  type FormEvent,
+  useEffect,
+  useState,
+} from "react";
 import { GrainGradient } from "@paper-design/shaders-react";
 import {
   ArrowLeft,
@@ -15,16 +19,27 @@ import {
   getUser,
   saveAuth,
 } from "../services/authStorage";
-import type { AuthResponse } from "../types/auth";
+import type {
+  AdminLoginResponse,
+  AuthResponse,
+} from "../types/auth";
 
 export function AdminLoginPage() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [twoFactorCode, setTwoFactorCode] =
+    useState("");
+  const [challengeToken, setChallengeToken] =
+    useState("");
+  const [isPasswordVisible, setIsPasswordVisible] =
+    useState(false);
   const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] =
+    useState(false);
+
+  const isTwoFactorStep = Boolean(challengeToken);
 
   useEffect(() => {
     const token = getToken();
@@ -35,36 +50,95 @@ export function AdminLoginPage() {
     }
   }, [navigate]);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault();
 
     try {
       setIsSubmitting(true);
       setError("");
 
-      const response = await api.post<AuthResponse>(
-        "/auth/admin/login",
-        {
-          email: email.trim(),
-          password,
+      if (isTwoFactorStep) {
+        if (!/^\d{6}$/.test(twoFactorCode)) {
+          setError(
+            "Informe o código de 6 dígitos do Authenticator."
+          );
+          return;
         }
-      );
 
-      if (response.data.user.role !== "ADMIN") {
-        setError("Esta conta não possui acesso administrativo.");
+        const response = await api.post<AuthResponse>(
+          "/auth/admin/2fa/verify",
+          {
+            challengeToken,
+            code: twoFactorCode,
+          }
+        );
+
+        if (response.data.user.role !== "ADMIN") {
+          setError(
+            "Esta conta não possui acesso administrativo."
+          );
+          return;
+        }
+
+        saveAuth(
+          response.data.token,
+          response.data.user
+        );
+
+        navigate("/admin", { replace: true });
         return;
       }
 
-      saveAuth(response.data.token, response.data.user);
+      const response =
+        await api.post<AdminLoginResponse>(
+          "/auth/admin/login",
+          {
+            email: email.trim(),
+            password,
+          }
+        );
+
+      if (response.data.user.role !== "ADMIN") {
+        setError(
+          "Esta conta não possui acesso administrativo."
+        );
+        return;
+      }
+
+      if (response.data.requiresTwoFactor) {
+        setChallengeToken(
+          response.data.challengeToken
+        );
+        setPassword("");
+        setTwoFactorCode("");
+        return;
+      }
+
+      saveAuth(
+        response.data.token,
+        response.data.user
+      );
+
       navigate("/admin", { replace: true });
     } catch (requestError: any) {
       setError(
         requestError?.response?.data?.message ||
-          "Não foi possível acessar o Super Admin."
+          (isTwoFactorStep
+            ? "Não foi possível validar o código de autenticação."
+            : "Não foi possível acessar o Super Admin.")
       );
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  function resetTwoFactorStep() {
+    setChallengeToken("");
+    setTwoFactorCode("");
+    setPassword("");
+    setError("");
   }
 
   return (
@@ -84,7 +158,10 @@ export function AdminLoginPage() {
 
             <div className="mb-10">
               <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-[#e2e8f0] bg-white px-4 py-2 shadow-sm">
-                <ShieldCheck size={18} className="text-[#12b8d6]" />
+                <ShieldCheck
+                  size={18}
+                  className="text-[#12b8d6]"
+                />
 
                 <span className="text-xs font-black uppercase tracking-[0.22em] text-[#475569]">
                   Administração da plataforma
@@ -96,70 +173,120 @@ export function AdminLoginPage() {
               </p>
 
               <h1 className="mt-4 text-4xl font-medium tracking-[-0.04em] text-[#081120] sm:text-5xl">
-                Super Admin
+                {isTwoFactorStep
+                  ? "Verificação em duas etapas"
+                  : "Super Admin"}
               </h1>
 
               <p className="mt-4 max-w-lg text-lg leading-7 text-[#64748b]">
-                Acesse o ambiente administrativo para gerenciar empresas,
-                aprovações, assinaturas e operações da plataforma.
+                {isTwoFactorStep
+                  ? "Digite o código de 6 dígitos exibido no seu aplicativo Authenticator para concluir o acesso."
+                  : "Acesse o ambiente administrativo para gerenciar empresas, aprovações, assinaturas e operações da plataforma."}
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <label className="block">
-                <span className="mb-2 block text-sm font-bold text-[#475569]">
-                  E-mail administrativo
-                </span>
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-5"
+            >
+              {!isTwoFactorStep ? (
+                <>
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-bold text-[#475569]">
+                      E-mail administrativo
+                    </span>
 
-                <div className="flex min-h-16 items-center rounded-[14px] border border-[#dfe5e9] bg-white px-5 shadow-sm transition focus-within:border-[#12b8d6] focus-within:ring-4 focus-within:ring-[#12b8d6]/10">
-                  <input
-                    type="email"
-                    autoComplete="email"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    placeholder="admin@yggdratech.com"
-                    required
-                    className="w-full bg-transparent text-base font-semibold text-[#081120] outline-none placeholder:text-[#94a3b8]"
-                  />
-                </div>
-              </label>
+                    <div className="flex min-h-16 items-center rounded-[14px] border border-[#dfe5e9] bg-white px-5 shadow-sm transition focus-within:border-[#12b8d6] focus-within:ring-4 focus-within:ring-[#12b8d6]/10">
+                      <input
+                        type="email"
+                        autoComplete="email"
+                        value={email}
+                        onChange={(event) =>
+                          setEmail(event.target.value)
+                        }
+                        placeholder="admin@yggdratech.com"
+                        required
+                        className="w-full bg-transparent text-base font-semibold text-[#081120] outline-none placeholder:text-[#94a3b8]"
+                      />
+                    </div>
+                  </label>
 
-              <label className="block">
-                <span className="mb-2 block text-sm font-bold text-[#475569]">
-                  Senha
-                </span>
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-bold text-[#475569]">
+                      Senha
+                    </span>
 
-                <div className="relative flex min-h-16 items-center rounded-[14px] border border-[#dfe5e9] bg-white px-5 shadow-sm transition focus-within:border-[#12b8d6] focus-within:ring-4 focus-within:ring-[#12b8d6]/10">
-                  <input
-                    type={isPasswordVisible ? "text" : "password"}
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    placeholder="Digite sua senha"
-                    required
-                    className="w-full bg-transparent pr-12 text-base font-semibold text-[#081120] outline-none placeholder:text-[#94a3b8]"
-                  />
+                    <div className="relative flex min-h-16 items-center rounded-[14px] border border-[#dfe5e9] bg-white px-5 shadow-sm transition focus-within:border-[#12b8d6] focus-within:ring-4 focus-within:ring-[#12b8d6]/10">
+                      <input
+                        type={
+                          isPasswordVisible
+                            ? "text"
+                            : "password"
+                        }
+                        autoComplete="current-password"
+                        value={password}
+                        onChange={(event) =>
+                          setPassword(
+                            event.target.value
+                          )
+                        }
+                        placeholder="Digite sua senha"
+                        required
+                        className="w-full bg-transparent pr-12 text-base font-semibold text-[#081120] outline-none placeholder:text-[#94a3b8]"
+                      />
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setIsPasswordVisible((currentValue) => !currentValue)
-                    }
-                    className="absolute right-5 top-1/2 -translate-y-1/2 text-[#94a3b8] transition hover:text-[#081120]"
-                    aria-label={
-                      isPasswordVisible
-                        ? "Ocultar senha"
-                        : "Mostrar senha"
-                    }
-                  >
-                    {isPasswordVisible ? (
-                      <EyeOff size={21} />
-                    ) : (
-                      <Eye size={21} />
-                    )}
-                  </button>
-                </div>
-              </label>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setIsPasswordVisible(
+                            (currentValue) =>
+                              !currentValue
+                          )
+                        }
+                        className="absolute right-5 top-1/2 -translate-y-1/2 text-[#94a3b8] transition hover:text-[#081120]"
+                        aria-label={
+                          isPasswordVisible
+                            ? "Ocultar senha"
+                            : "Mostrar senha"
+                        }
+                      >
+                        {isPasswordVisible ? (
+                          <EyeOff size={21} />
+                        ) : (
+                          <Eye size={21} />
+                        )}
+                      </button>
+                    </div>
+                  </label>
+                </>
+              ) : (
+                <label className="block">
+                  <span className="mb-2 block text-sm font-bold text-[#475569]">
+                    Código do Authenticator
+                  </span>
+
+                  <div className="flex min-h-16 items-center rounded-[14px] border border-[#dfe5e9] bg-white px-5 shadow-sm transition focus-within:border-[#12b8d6] focus-within:ring-4 focus-within:ring-[#12b8d6]/10">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      maxLength={6}
+                      value={twoFactorCode}
+                      onChange={(event) =>
+                        setTwoFactorCode(
+                          event.target.value
+                            .replace(/\D/g, "")
+                            .slice(0, 6)
+                        )
+                      }
+                      placeholder="000000"
+                      autoFocus
+                      required
+                      className="w-full bg-transparent text-center text-2xl font-black tracking-[0.35em] text-[#081120] outline-none placeholder:text-[#cbd5e1]"
+                    />
+                  </div>
+                </label>
+              )}
 
               {error ? (
                 <div className="rounded-[14px] border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
@@ -173,9 +300,24 @@ export function AdminLoginPage() {
                 className="mt-4 flex min-h-14 w-full items-center justify-center rounded-[14px] bg-[#12b8d6] px-6 text-base font-black text-white shadow-[0_12px_30px_rgba(18,184,214,0.22)] transition hover:bg-[#087f95] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmitting
-                  ? "Validando acesso..."
-                  : "Entrar no Super Admin"}
+                  ? isTwoFactorStep
+                    ? "Validando código..."
+                    : "Validando acesso..."
+                  : isTwoFactorStep
+                    ? "Confirmar código"
+                    : "Entrar no Super Admin"}
               </button>
+
+              {isTwoFactorStep ? (
+                <button
+                  type="button"
+                  onClick={resetTwoFactorStep}
+                  disabled={isSubmitting}
+                  className="flex min-h-12 w-full items-center justify-center text-sm font-black text-[#64748b] transition hover:text-[#081120] disabled:opacity-60"
+                >
+                  Voltar para e-mail e senha
+                </button>
+              ) : null}
             </form>
 
             <div className="mt-8 flex items-start gap-3 rounded-[16px] border border-[#e2e8f0] bg-white px-4 py-4 shadow-sm">
@@ -185,8 +327,9 @@ export function AdminLoginPage() {
               />
 
               <p className="text-sm leading-6 text-[#64748b]">
-                Área exclusiva para administradores autorizados. Não existe
-                cadastro público para acesso ao Super Admin.
+                {isTwoFactorStep
+                  ? "O acesso administrativo só será liberado após a validação do segundo fator."
+                  : "Área exclusiva para administradores autorizados. Não existe cadastro público para acesso ao Super Admin."}
               </p>
             </div>
           </div>
@@ -243,8 +386,8 @@ export function AdminLoginPage() {
               </p>
 
               <p className="mt-2 text-sm leading-6 text-white/70">
-                Ambiente restrito da plataforma, preparado para controle,
-                acompanhamento e decisões administrativas.
+                Ambiente restrito da plataforma, protegido
+                por autenticação em dois fatores.
               </p>
             </div>
           </div>
