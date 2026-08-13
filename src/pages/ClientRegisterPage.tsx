@@ -66,7 +66,11 @@ export function ClientRegisterPage() {
   }
 
   return (
-    <AuthLayout variant="plain" registerTheme="client">
+    <AuthLayout
+      variant="plain"
+      registerTheme="client"
+      showSiteBackButton
+    >
       <RegisterPanel
         accountType="client"
         theme="client"
