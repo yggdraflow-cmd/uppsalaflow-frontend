@@ -238,8 +238,8 @@ export function PlanSelectionPage() {
             <div className="absolute h-[760px] w-[760px] rounded-full bg-[#00bfff]/15 blur-[90px]" />
 
             <img
-              src="/yggdraflow-brand-mark.png"
-              alt="YggdraFlow"
+              src="/yggdra-tech-logo.png"
+              alt="Yggdra Tech"
               className="relative z-10 translate-x-12 max-h-[96vh] max-w-[125%] object-contain drop-shadow-[0_24px_45px_rgba(0,0,0,0.35)]"
             />
           </div>
