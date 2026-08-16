@@ -22,6 +22,7 @@ import {
 
 import { Card } from "../components/Card";
 import { AdminPaymentSettings } from "../components/AdminPaymentSettings";
+import { AdminYggdraTechAbout } from "../components/AdminYggdraTechAbout";
 import { api } from "../services/api";
 
 type CompanyStatus =
@@ -41,7 +42,12 @@ type PaymentStatus =
   | "CANCELED"
   | "REFUNDED";
 
-type AdminView = "overview" | "businesses" | "approvals" | "payments";
+type AdminView =
+  | "overview"
+  | "businesses"
+  | "approvals"
+  | "payments"
+  | "yggdratech";
 type BusinessAction =
   | "approve"
   | "reject"
@@ -139,6 +145,7 @@ const validViews: AdminView[] = [
   "businesses",
   "approvals",
   "payments",
+  "yggdratech",
 ];
 
 const actionMeta: Record<
@@ -867,22 +874,29 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
             {currentView === "businesses" && "Empresas"}
             {currentView === "approvals" && "Liberações pendentes"}
             {currentView === "payments" && "Pagamentos"}
+            {currentView === "yggdratech" && "Site YggdraTech"}
           </h1>
           <p className="admin-dashboard-description mt-2 max-w-3xl text-sm leading-6">
-            Controle central de empresas, cobranças, assinaturas e acesso ao
-            YggdraFlow.
+            {currentView === "yggdratech"
+              ? "Gerencie o conteúdo institucional exibido no site público da YggdraTech."
+              : "Controle central de empresas, cobranças, assinaturas e acesso ao YggdraFlow."}
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => loadData(true)}
-          disabled={isRefreshing}
-          className="admin-dashboard-refresh inline-flex h-11 items-center justify-center gap-2 rounded-xl px-5 text-sm font-black transition disabled:opacity-60"
-        >
-          <RefreshCw className={isRefreshing ? "animate-spin" : ""} size={18} />
-          Atualizar dados
-        </button>
+        {currentView !== "yggdratech" ? (
+          <button
+            type="button"
+            onClick={() => loadData(true)}
+            disabled={isRefreshing}
+            className="admin-dashboard-refresh inline-flex h-11 items-center justify-center gap-2 rounded-xl px-5 text-sm font-black transition disabled:opacity-60"
+          >
+            <RefreshCw
+              className={isRefreshing ? "animate-spin" : ""}
+              size={18}
+            />
+            Atualizar dados
+          </button>
+        ) : null}
       </div>
 
       {error ? (
@@ -1625,6 +1639,10 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
             </div>
           )}
         </Card>
+      ) : null}
+
+      {currentView === "yggdratech" ? (
+        <AdminYggdraTechAbout />
       ) : null}
 
       {currentView === "payments" ? (

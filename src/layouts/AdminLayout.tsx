@@ -5,6 +5,7 @@ import {
   CircleDollarSign,
   LayoutDashboard,
   ListChecks,
+  Globe2,
   LogOut,
   Moon,
   ShieldCheck,
@@ -50,6 +51,12 @@ const navigationItems = [
     to: "/admin?view=payments",
     view: "payments",
     icon: CircleDollarSign,
+  },
+  {
+    label: "Site YggdraTech",
+    to: "/admin?view=yggdratech",
+    view: "yggdratech",
+    icon: Globe2,
   },
 ];
 
