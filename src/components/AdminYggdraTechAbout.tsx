@@ -2,13 +2,14 @@ import { useCallback, useEffect, useState } from "react";
 import {
   AlertTriangle,
   CheckCircle2,
+  Camera,
   LoaderCircle,
   Plus,
   Save,
   Trash2,
 } from "lucide-react";
 
-import { api } from "../services/api";
+import { api, getApiAssetUrl } from "../services/api";
 import { Card } from "./Card";
 
 type AboutMember = {
@@ -88,6 +89,8 @@ export function AdminYggdraTechAbout() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [uploadingMemberIndex, setUploadingMemberIndex] =
+    useState<number | null>(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -157,6 +160,52 @@ export function AdminYggdraTechAbout() {
           order: memberIndex,
         })),
     }));
+  }
+
+  async function handleMemberImageUpload(
+    index: number,
+    file: File
+  ) {
+    try {
+      setUploadingMemberIndex(index);
+      setError("");
+      setSuccess("");
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const response = await api.post<{
+        imageUrl: string;
+      }>(
+        "/admin/yggdratech/about/member-image",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      setContent((current) => ({
+        ...current,
+        members: current.members.map((member, memberIndex) =>
+          memberIndex === index
+            ? {
+                ...member,
+                imageUrl: response.data.imageUrl,
+              }
+            : member
+        ),
+      }));
+
+      setSuccess(
+        "Imagem enviada. Salve as alterações para vincular a foto ao integrante."
+      );
+    } catch (requestError) {
+      setError(getErrorMessage(requestError));
+    } finally {
+      setUploadingMemberIndex(null);
+    }
   }
 
   async function handleSave() {
@@ -320,6 +369,99 @@ export function AdminYggdraTechAbout() {
                 >
                   <Trash2 size={17} />
                 </button>
+              </div>
+
+              <div className="mb-5 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center">
+                <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-slate-100">
+                  {member.imageUrl ? (
+                    <img
+                      src={getApiAssetUrl(member.imageUrl)}
+                      alt={
+                        member.name
+                          ? `Foto de ${member.name}`
+                          : "Foto do integrante"
+                      }
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <Camera
+                      size={30}
+                      className="text-slate-400"
+                    />
+                  )}
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <strong className="block text-sm font-black text-slate-900">
+                    Foto do integrante
+                  </strong>
+
+                  <p className="mt-1 text-xs font-semibold leading-5 text-slate-500">
+                    JPG, PNG ou WEBP. Limite máximo de 5 MB.
+                  </p>
+
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#102b3a] px-4 py-2.5 text-sm font-black text-white hover:bg-[#173d50]">
+                      {uploadingMemberIndex === index ? (
+                        <LoaderCircle
+                          className="animate-spin"
+                          size={17}
+                        />
+                      ) : (
+                        <Camera size={17} />
+                      )}
+
+                      {uploadingMemberIndex === index
+                        ? "Enviando..."
+                        : member.imageUrl
+                          ? "Trocar foto"
+                          : "Adicionar foto"}
+
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        className="hidden"
+                        disabled={uploadingMemberIndex !== null}
+                        onChange={(event) => {
+                          const file = event.target.files?.[0];
+
+                          if (file) {
+                            void handleMemberImageUpload(
+                              index,
+                              file
+                            );
+                          }
+
+                          event.target.value = "";
+                        }}
+                      />
+                    </label>
+
+                    {member.imageUrl ? (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setContent((current) => ({
+                            ...current,
+                            members: current.members.map(
+                              (currentMember, memberIndex) =>
+                                memberIndex === index
+                                  ? {
+                                      ...currentMember,
+                                      imageUrl: null,
+                                    }
+                                  : currentMember
+                            ),
+                          }))
+                        }
+                        className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-black text-slate-700 hover:bg-slate-50"
+                      >
+                        <Trash2 size={16} />
+                        Remover foto
+                      </button>
+                    ) : null}
+                  </div>
+                </div>
               </div>
 
               <div className="grid gap-4 lg:grid-cols-2">
