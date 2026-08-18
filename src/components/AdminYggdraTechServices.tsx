@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   AlertTriangle,
-  CheckCircle2,
   Camera,
+  CheckCircle2,
+  ExternalLink,
   LoaderCircle,
   Plus,
   Save,
@@ -12,26 +13,25 @@ import {
 import { api, getApiAssetUrl } from "../services/api";
 import { Card } from "./Card";
 
-type AboutMember = {
+type ServiceItem = {
   id?: string;
-  name: string;
-  role: string;
-  shortBio: string;
-  biography: string;
+  title: string;
+  description: string;
+  offer: string;
   imageUrl?: string | null;
+  link?: string | null;
   order: number;
 };
 
-type AboutContent = {
-  title: string;
-  description: string;
-  members: AboutMember[];
+type ServicesContent = {
+  pageMessage: string;
+  services: ServiceItem[];
 };
 
-type AdminAboutResponse = {
+type AdminServicesResponse = {
   id: string | null;
-  key: "ABOUT";
-  content: AboutContent;
+  key: "SERVICES";
+  content: ServicesContent;
   published: boolean;
   createdAt: string | null;
   updatedAt: string | null;
@@ -42,12 +42,12 @@ type AdminAboutResponse = {
   } | null;
 };
 
-const emptyMember = (): AboutMember => ({
-  name: "",
-  role: "",
-  shortBio: "",
-  biography: "",
+const emptyService = (): ServiceItem => ({
+  title: "",
+  description: "",
+  offer: "",
   imageUrl: null,
+  link: null,
   order: 0,
 });
 
@@ -75,22 +75,24 @@ function getErrorMessage(error: unknown) {
   return "Não foi possível concluir a operação.";
 }
 
-export function AdminYggdraTechAbout() {
-  const [content, setContent] = useState<AboutContent>({
-    title: "",
-    description: "",
-    members: [],
+export function AdminYggdraTechServices() {
+  const [content, setContent] = useState<ServicesContent>({
+    pageMessage: "",
+    services: [],
   });
 
   const [published, setPublished] = useState(false);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
   const [updatedBy, setUpdatedBy] =
-    useState<AdminAboutResponse["updatedBy"]>(null);
+    useState<AdminServicesResponse["updatedBy"]>(null);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [uploadingMemberIndex, setUploadingMemberIndex] =
+  const [isEditingPageMessage, setIsEditingPageMessage] =
+    useState(false);
+  const [editingServiceIndex, setEditingServiceIndex] =
+    useState<number | null>(null);
+  const [uploadingServiceIndex, setUploadingServiceIndex] =
     useState<number | null>(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -101,12 +103,13 @@ export function AdminYggdraTechAbout() {
       setError("");
 
       const response =
-        await api.get<AdminAboutResponse>(
-          "/admin/yggdratech/about"
+        await api.get<AdminServicesResponse>(
+          "/admin/yggdratech/services"
         );
 
       setContent(response.data.content);
-      setIsEditing(false);
+      setIsEditingPageMessage(false);
+      setEditingServiceIndex(null);
       setPublished(response.data.published);
       setUpdatedAt(response.data.updatedAt);
       setUpdatedBy(response.data.updatedBy);
@@ -121,55 +124,61 @@ export function AdminYggdraTechAbout() {
     void loadContent();
   }, [loadContent]);
 
-  function updateMember(
+  function updateService(
     index: number,
-    field: keyof AboutMember,
-    value: string | number
+    field: keyof ServiceItem,
+    value: string | number | null
   ) {
     setContent((current) => ({
       ...current,
-      members: current.members.map((member, memberIndex) =>
-        memberIndex === index
+      services: current.services.map((service, serviceIndex) =>
+        serviceIndex === index
           ? {
-              ...member,
+              ...service,
               [field]: value,
             }
-          : member
+          : service
       ),
     }));
   }
 
-  function addMember() {
+  function addService() {
+    const newServiceIndex = content.services.length;
+
     setContent((current) => ({
       ...current,
-      members: [
-        ...current.members,
+      services: [
+        ...current.services,
         {
-          ...emptyMember(),
-          order: current.members.length,
+          ...emptyService(),
+          order: current.services.length,
         },
       ],
     }));
+
+    setEditingServiceIndex(newServiceIndex);
   }
 
-  function removeMember(index: number) {
+  function removeService(index: number) {
     setContent((current) => ({
       ...current,
-      members: current.members
-        .filter((_, memberIndex) => memberIndex !== index)
-        .map((member, memberIndex) => ({
-          ...member,
-          order: memberIndex,
+      services: current.services
+        .filter((_, serviceIndex) => serviceIndex !== index)
+        .map((service, serviceIndex) => ({
+          ...service,
+          order: serviceIndex,
         })),
     }));
+
+    setEditingServiceIndex(null);
   }
 
-  async function handleMemberImageUpload(
+  async function handleServiceImageUpload(
     index: number,
     file: File
   ) {
     try {
-      setUploadingMemberIndex(index);
+      setUploadingServiceIndex(index);
       setError("");
       setSuccess("");
 
@@ -179,7 +188,7 @@ export function AdminYggdraTechAbout() {
       const response = await api.post<{
         imageUrl: string;
       }>(
-        "/admin/yggdratech/about/member-image",
+        "/admin/yggdratech/services/image",
         formData,
         {
           headers: {
@@ -188,25 +197,19 @@ export function AdminYggdraTechAbout() {
         }
       );
 
-      setContent((current) => ({
-        ...current,
-        members: current.members.map((member, memberIndex) =>
-          memberIndex === index
-            ? {
-                ...member,
-                imageUrl: response.data.imageUrl,
-              }
-            : member
-        ),
-      }));
+      updateService(
+        index,
+        "imageUrl",
+        response.data.imageUrl
+      );
 
       setSuccess(
-        "Imagem enviada. Salve as alterações para vincular a foto ao integrante."
+        "Imagem enviada. Salve as alterações para vinculá-la ao serviço."
       );
     } catch (requestError) {
       setError(getErrorMessage(requestError));
     } finally {
-      setUploadingMemberIndex(null);
+      setUploadingServiceIndex(null);
     }
   }
 
@@ -217,15 +220,14 @@ export function AdminYggdraTechAbout() {
       setSuccess("");
 
       const payload = {
-        title: content.title,
-        description: content.description,
-        members: content.members.map((member, index) => ({
-          ...(member.id ? { id: member.id } : {}),
-          name: member.name,
-          role: member.role,
-          shortBio: member.shortBio,
-          biography: member.biography,
-          imageUrl: member.imageUrl || null,
+        pageMessage: content.pageMessage,
+        services: content.services.map((service, index) => ({
+          ...(service.id ? { id: service.id } : {}),
+          title: service.title,
+          description: service.description,
+          offer: service.offer,
+          imageUrl: service.imageUrl || null,
+          link: service.link?.trim() || null,
           order: index,
         })),
         published,
@@ -233,11 +235,12 @@ export function AdminYggdraTechAbout() {
 
       const response = await api.put<{
         message: string;
-        content: AdminAboutResponse;
-      }>("/admin/yggdratech/about", payload);
+        content: AdminServicesResponse;
+      }>("/admin/yggdratech/services", payload);
 
       setContent(response.data.content.content);
-      setIsEditing(false);
+      setIsEditingPageMessage(false);
+      setEditingServiceIndex(null);
       setPublished(response.data.content.published);
       setUpdatedAt(response.data.content.updatedAt);
       setUpdatedBy(response.data.content.updatedBy);
@@ -254,88 +257,9 @@ export function AdminYggdraTechAbout() {
       <Card className="admin-dashboard-card">
         <div className="flex min-h-56 items-center justify-center gap-3 text-sm font-bold text-slate-500">
           <LoaderCircle className="animate-spin" size={22} />
-          Carregando conteúdo da YggdraTech...
+          Carregando serviços da YggdraTech...
         </div>
       </Card>
-    );
-  }
-
-  if (!isEditing) {
-    return (
-      <div className="space-y-6">
-        {error ? (
-          <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
-            <AlertTriangle className="mt-0.5 shrink-0" size={19} />
-            {error}
-          </div>
-        ) : null}
-
-        {success ? (
-          <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">
-            <CheckCircle2 className="mt-0.5 shrink-0" size={19} />
-            {success}
-          </div>
-        ) : null}
-
-        <Card
-          className="admin-dashboard-card"
-          title="Quem Somos"
-        >
-          <button
-            type="button"
-            onClick={() => {
-              setSuccess("");
-              setError("");
-              setIsEditing(true);
-            }}
-            className="w-full rounded-[24px] border border-slate-200 bg-slate-50 p-5 text-left transition hover:border-slate-300 hover:bg-white"
-          >
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
-                  Conteúdo institucional
-                </p>
-
-                <h3 className="mt-2 text-lg font-black text-slate-950">
-                  {content.title || "Quem Somos"}
-                </h3>
-
-                <p className="mt-2 line-clamp-2 text-sm font-semibold leading-6 text-slate-500">
-                  {content.description ||
-                    "Nenhuma descrição cadastrada."}
-                </p>
-
-                <div className="mt-4 flex flex-wrap gap-3 text-xs font-bold text-slate-400">
-                  <span>
-                    {content.members.length}{" "}
-                    {content.members.length === 1
-                      ? "integrante"
-                      : "integrantes"}
-                  </span>
-
-                  <span>•</span>
-
-                  <span>
-                    {published ? "Publicado" : "Não publicado"}
-                  </span>
-                </div>
-
-                {updatedAt ? (
-                  <p className="mt-3 text-xs font-semibold text-slate-400">
-                    Última alteração:{" "}
-                    {new Date(updatedAt).toLocaleString("pt-BR")}
-                    {updatedBy ? ` por ${updatedBy.name}` : ""}
-                  </p>
-                ) : null}
-              </div>
-
-              <span className="shrink-0 text-sm font-black text-slate-500">
-                Clique para editar
-              </span>
-            </div>
-          </button>
-        </Card>
-      </div>
     );
   }
 
@@ -357,13 +281,13 @@ export function AdminYggdraTechAbout() {
 
       <Card
         className="admin-dashboard-card"
-        title="Quem Somos"
+        title="Serviços"
       >
         <div className="space-y-6">
           <div>
             <p className="text-sm font-semibold leading-6 text-slate-500">
-              Este conteúdo será exibido publicamente no site
-              institucional da YggdraTech quando estiver publicado.
+              Gerencie a mensagem exibida na página pública de
+              Serviços da YggdraTech.
             </p>
 
             {updatedAt ? (
@@ -375,99 +299,102 @@ export function AdminYggdraTechAbout() {
             ) : null}
           </div>
 
-          <div className="grid gap-5">
+          {isEditingPageMessage ? (
             <label className="grid gap-2">
               <span className="text-sm font-black text-slate-800">
-                Título
+                Mensagem da página
               </span>
-              <input
-                type="text"
-                value={content.title}
-                onChange={(event) =>
-                  setContent((current) => ({
-                    ...current,
-                    title: event.target.value,
-                  }))
-                }
-                placeholder="Ex.: Duas visões. Uma direção."
-                className="h-12 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 outline-none focus:border-[#102b3a]"
-              />
-            </label>
 
-            <label className="grid gap-2">
-              <span className="text-sm font-black text-slate-800">
-                Descrição
-              </span>
               <textarea
-                value={content.description}
+                value={content.pageMessage}
                 onChange={(event) =>
                   setContent((current) => ({
                     ...current,
-                    description: event.target.value,
+                    pageMessage: event.target.value,
                   }))
                 }
-                placeholder="Apresentação institucional da YggdraTech."
-                rows={5}
+                placeholder="Ex.: Tecnologia criada para resolver necessidades reais."
+                rows={4}
                 className="resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold leading-6 text-slate-900 outline-none focus:border-[#102b3a]"
               />
             </label>
-          </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsEditingPageMessage(true)}
+              className="w-full rounded-[22px] border border-slate-200 bg-slate-50 p-5 text-left transition hover:border-slate-300 hover:bg-white"
+            >
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
+                Mensagem da página
+              </p>
+
+              <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">
+                {content.pageMessage || "Nenhuma mensagem cadastrada."}
+              </p>
+
+              <span className="mt-3 block text-xs font-black text-slate-400">
+                Clique para editar
+              </span>
+            </button>
+          )}
         </div>
       </Card>
 
       <Card
         className="admin-dashboard-card"
-        title={`Integrantes (${content.members.length})`}
+        title={`Serviços cadastrados (${content.services.length})`}
       >
         <div className="space-y-5">
-          {content.members.length === 0 ? (
+          {content.services.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-center">
               <p className="text-sm font-bold text-slate-600">
-                Nenhum integrante cadastrado.
+                Nenhum serviço cadastrado.
               </p>
             </div>
           ) : null}
 
-          {content.members.map((member, index) => (
+          {content.services.map((service, index) =>
+            editingServiceIndex === index ? (
             <article
-              key={member.id || `member-${index}`}
+              key={service.id || `service-${index}`}
               className="rounded-[24px] border border-slate-200 bg-slate-50 p-5"
             >
               <div className="mb-5 flex items-center justify-between gap-4">
                 <div>
                   <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
-                    Integrante {index + 1}
+                    Serviço {index + 1}
                   </p>
+
                   <h3 className="mt-1 font-black text-slate-950">
-                    {member.name || "Novo integrante"}
+                    {service.title || "Novo serviço"}
                   </h3>
                 </div>
 
                 <button
                   type="button"
-                  onClick={() => removeMember(index)}
+                  onClick={() => removeService(index)}
                   className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-200 bg-white text-red-600 hover:bg-red-50"
-                  title="Remover integrante"
+                  title="Remover serviço"
                 >
                   <Trash2 size={17} />
                 </button>
               </div>
 
               <div className="mb-5 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center">
-                <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-slate-100">
-                  {member.imageUrl ? (
+                <div className="flex h-32 w-32 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-slate-100">
+                  {service.imageUrl ? (
                     <img
-                      src={getApiAssetUrl(member.imageUrl)}
+                      src={getApiAssetUrl(service.imageUrl)}
                       alt={
-                        member.name
-                          ? `Foto de ${member.name}`
-                          : "Foto do integrante"
+                        service.title
+                          ? `Imagem de ${service.title}`
+                          : "Imagem do serviço"
                       }
                       className="h-full w-full object-cover"
                     />
                   ) : (
                     <Camera
-                      size={30}
+                      size={32}
                       className="text-slate-400"
                     />
                   )}
@@ -475,7 +402,7 @@ export function AdminYggdraTechAbout() {
 
                 <div className="min-w-0 flex-1">
                   <strong className="block text-sm font-black text-slate-900">
-                    Foto do integrante
+                    Imagem do serviço
                   </strong>
 
                   <p className="mt-1 text-xs font-semibold leading-5 text-slate-500">
@@ -484,7 +411,7 @@ export function AdminYggdraTechAbout() {
 
                   <div className="mt-3 flex flex-wrap gap-2">
                     <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#102b3a] px-4 py-2.5 text-sm font-black text-white hover:bg-[#173d50]">
-                      {uploadingMemberIndex === index ? (
+                      {uploadingServiceIndex === index ? (
                         <LoaderCircle
                           className="animate-spin"
                           size={17}
@@ -493,22 +420,22 @@ export function AdminYggdraTechAbout() {
                         <Camera size={17} />
                       )}
 
-                      {uploadingMemberIndex === index
+                      {uploadingServiceIndex === index
                         ? "Enviando..."
-                        : member.imageUrl
-                          ? "Trocar foto"
-                          : "Adicionar foto"}
+                        : service.imageUrl
+                          ? "Trocar imagem"
+                          : "Adicionar imagem"}
 
                       <input
                         type="file"
                         accept="image/jpeg,image/png,image/webp"
                         className="hidden"
-                        disabled={uploadingMemberIndex !== null}
+                        disabled={uploadingServiceIndex !== null}
                         onChange={(event) => {
                           const file = event.target.files?.[0];
 
                           if (file) {
-                            void handleMemberImageUpload(
+                            void handleServiceImageUpload(
                               index,
                               file
                             );
@@ -519,116 +446,181 @@ export function AdminYggdraTechAbout() {
                       />
                     </label>
 
-                    {member.imageUrl ? (
+                    {service.imageUrl ? (
                       <button
                         type="button"
                         onClick={() =>
-                          setContent((current) => ({
-                            ...current,
-                            members: current.members.map(
-                              (currentMember, memberIndex) =>
-                                memberIndex === index
-                                  ? {
-                                      ...currentMember,
-                                      imageUrl: null,
-                                    }
-                                  : currentMember
-                            ),
-                          }))
+                          updateService(
+                            index,
+                            "imageUrl",
+                            null
+                          )
                         }
                         className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-black text-slate-700 hover:bg-slate-50"
                       >
                         <Trash2 size={16} />
-                        Remover foto
+                        Remover imagem
                       </button>
                     ) : null}
                   </div>
                 </div>
               </div>
 
-              <div className="grid gap-4 lg:grid-cols-2">
+              <div className="grid gap-4">
                 <label className="grid gap-2">
                   <span className="text-sm font-black text-slate-800">
-                    Nome
+                    Título do serviço
                   </span>
+
                   <input
                     type="text"
-                    value={member.name}
+                    value={service.title}
                     onChange={(event) =>
-                      updateMember(
+                      updateService(
                         index,
-                        "name",
+                        "title",
                         event.target.value
                       )
                     }
-                    className="h-12 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold outline-none focus:border-[#102b3a]"
+                    placeholder="Ex.: YggdraFlow"
+                    className="h-12 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 outline-none focus:border-[#102b3a]"
                   />
                 </label>
 
                 <label className="grid gap-2">
                   <span className="text-sm font-black text-slate-800">
-                    Função
+                    Descrição do serviço
                   </span>
-                  <input
-                    type="text"
-                    value={member.role}
+
+                  <textarea
+                    value={service.description}
                     onChange={(event) =>
-                      updateMember(
+                      updateService(
                         index,
-                        "role",
+                        "description",
                         event.target.value
                       )
                     }
-                    className="h-12 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold outline-none focus:border-[#102b3a]"
+                    rows={4}
+                    placeholder="Explique de forma clara o que é este serviço."
+                    className="resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold leading-6 text-slate-900 outline-none focus:border-[#102b3a]"
                   />
                 </label>
 
-                <label className="grid gap-2 lg:col-span-2">
+                <label className="grid gap-2">
                   <span className="text-sm font-black text-slate-800">
-                    Resumo curto
+                    O que esse serviço oferece
                   </span>
-                  <textarea
-                    value={member.shortBio}
-                    onChange={(event) =>
-                      updateMember(
-                        index,
-                        "shortBio",
-                        event.target.value
-                      )
-                    }
-                    rows={3}
-                    className="resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold leading-6 outline-none focus:border-[#102b3a]"
-                  />
-                </label>
 
-                <label className="grid gap-2 lg:col-span-2">
-                  <span className="text-sm font-black text-slate-800">
-                    Biografia
-                  </span>
                   <textarea
-                    value={member.biography}
+                    value={service.offer}
                     onChange={(event) =>
-                      updateMember(
+                      updateService(
                         index,
-                        "biography",
+                        "offer",
                         event.target.value
                       )
                     }
                     rows={6}
-                    className="resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold leading-6 outline-none focus:border-[#102b3a]"
+                    placeholder="Liste ou descreva os principais recursos, benefícios ou entregas."
+                    className="resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold leading-6 text-slate-900 outline-none focus:border-[#102b3a]"
                   />
+                </label>
+
+                <label className="grid gap-2">
+                  <span className="text-sm font-black text-slate-800">
+                    Link
+                  </span>
+
+                  <div className="relative">
+                    <ExternalLink
+                      size={17}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                    />
+
+                    <input
+                      type="text"
+                      value={service.link || ""}
+                      onChange={(event) =>
+                        updateService(
+                          index,
+                          "link",
+                          event.target.value
+                        )
+                      }
+                      placeholder="https://..."
+                      className="h-12 w-full rounded-2xl border border-slate-200 bg-white pl-11 pr-4 text-sm font-semibold text-slate-900 outline-none focus:border-[#102b3a]"
+                    />
+                  </div>
                 </label>
               </div>
             </article>
-          ))}
+            ) : (
+              <button
+                type="button"
+                key={service.id || `service-card-${index}`}
+                onClick={() => setEditingServiceIndex(index)}
+                className="flex w-full flex-col gap-4 rounded-[24px] border border-slate-200 bg-slate-50 p-5 text-left transition hover:border-slate-300 hover:bg-white sm:flex-row sm:items-center"
+              >
+                <div className="flex h-24 w-32 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-slate-100">
+                  {service.imageUrl ? (
+                    <img
+                      src={getApiAssetUrl(service.imageUrl)}
+                      alt={service.title || "Imagem do serviço"}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <Camera
+                      size={28}
+                      className="text-slate-400"
+                    />
+                  )}
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
+                    Serviço {index + 1}
+                  </p>
+
+                  <h3 className="mt-1 text-lg font-black text-slate-950">
+                    {service.title || "Serviço sem título"}
+                  </h3>
+
+                  <p className="mt-2 line-clamp-2 text-sm font-semibold leading-6 text-slate-500">
+                    {service.description || "Sem descrição cadastrada."}
+                  </p>
+
+                  <div className="mt-3 flex flex-wrap gap-3 text-xs font-bold text-slate-400">
+                    <span>
+                      {service.imageUrl
+                        ? "Imagem cadastrada"
+                        : "Sem imagem"}
+                    </span>
+
+                    <span>•</span>
+
+                    <span>
+                      {service.link
+                        ? "Link configurado"
+                        : "Sem link"}
+                    </span>
+                  </div>
+                </div>
+
+                <span className="shrink-0 text-sm font-black text-slate-500">
+                  Clique para editar
+                </span>
+              </button>
+            )
+          )}
 
           <button
             type="button"
-            onClick={addMember}
+            onClick={addService}
             className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 text-sm font-black text-slate-700 hover:bg-slate-50"
           >
             <Plus size={18} />
-            Adicionar integrante
+            Criar serviço
           </button>
         </div>
       </Card>
@@ -647,10 +639,11 @@ export function AdminYggdraTechAbout() {
 
             <span>
               <strong className="block text-sm font-black text-slate-900">
-                Publicar Quem Somos
+                Publicar Serviços
               </strong>
+
               <small className="text-xs font-semibold text-slate-500">
-                Quando ativo, o conteúdo poderá ser exibido no
+                Quando ativo, o conteúdo poderá ser consumido pelo
                 site público da YggdraTech.
               </small>
             </span>

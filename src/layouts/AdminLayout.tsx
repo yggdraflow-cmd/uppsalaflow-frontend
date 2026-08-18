@@ -232,7 +232,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                     ].join(" ")}
                   >
                     <Wrench size={15} />
-                    <span>Soluções</span>
+                    <span>Serviços</span>
                   </Link>
                 </div>
               ) : null}

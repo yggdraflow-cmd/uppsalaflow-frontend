@@ -23,6 +23,7 @@ import {
 import { Card } from "../components/Card";
 import { AdminPaymentSettings } from "../components/AdminPaymentSettings";
 import { AdminYggdraTechAbout } from "../components/AdminYggdraTechAbout";
+import { AdminYggdraTechServices } from "../components/AdminYggdraTechServices";
 import { api } from "../services/api";
 
 type CompanyStatus =
@@ -888,7 +889,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
               "YggdraTech · Quem Somos"}
             {currentView === "yggdratech" &&
               yggdraTechSection === "services" &&
-              "YggdraTech · Soluções"}
+              "YggdraTech · Serviços"}
           </h1>
           <p className="admin-dashboard-description mt-2 max-w-3xl text-sm leading-6">
             {currentView === "yggdratech"
@@ -1674,15 +1675,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
 
       {currentView === "yggdratech" &&
       yggdraTechSection === "services" ? (
-        <Card
-          className="admin-dashboard-card"
-          title="Soluções da YggdraTech"
-        >
-          <p className="text-sm font-semibold leading-6 text-slate-500">
-            Esta será a próxima área administrável, com destaque para o
-            YggdraFlow e as soluções de desenvolvimento da YggdraTech.
-          </p>
-        </Card>
+        <AdminYggdraTechServices />
       ) : null}
 
       {currentView === "payments" ? (
