@@ -23,6 +23,7 @@ import {
 import { Card } from "../components/Card";
 import { AdminPaymentSettings } from "../components/AdminPaymentSettings";
 import { AdminYggdraTechAbout } from "../components/AdminYggdraTechAbout";
+import { AdminYggdraTechHome } from "../components/AdminYggdraTechHome";
 import { AdminYggdraTechServices } from "../components/AdminYggdraTechServices";
 import { api } from "../services/api";
 
@@ -1663,14 +1664,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
 
       {currentView === "yggdratech" &&
       yggdraTechSection === "home" ? (
-        <Card
-          className="admin-dashboard-card"
-          title="Home da YggdraTech"
-        >
-          <p className="text-sm font-semibold leading-6 text-slate-500">
-            A gestão dinâmica da Home será configurada em uma etapa própria.
-          </p>
-        </Card>
+        <AdminYggdraTechHome />
       ) : null}
 
       {currentView === "yggdratech" &&
