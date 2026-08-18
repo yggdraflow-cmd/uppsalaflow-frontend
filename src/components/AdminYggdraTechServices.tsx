@@ -24,6 +24,7 @@ type ServiceItem = {
 };
 
 type ServicesContent = {
+  pageTitle: string;
   pageMessage: string;
   services: ServiceItem[];
 };
@@ -77,6 +78,7 @@ function getErrorMessage(error: unknown) {
 
 export function AdminYggdraTechServices() {
   const [content, setContent] = useState<ServicesContent>({
+    pageTitle: "",
     pageMessage: "",
     services: [],
   });
@@ -220,6 +222,7 @@ export function AdminYggdraTechServices() {
       setSuccess("");
 
       const payload = {
+        pageTitle: content.pageTitle,
         pageMessage: content.pageMessage,
         services: content.services.map((service, index) => ({
           ...(service.id ? { id: service.id } : {}),
@@ -300,24 +303,45 @@ export function AdminYggdraTechServices() {
           </div>
 
           {isEditingPageMessage ? (
-            <label className="grid gap-2">
-              <span className="text-sm font-black text-slate-800">
-                Mensagem da página
-              </span>
+            <div className="grid gap-5">
+              <label className="grid gap-2">
+                <span className="text-sm font-black text-slate-800">
+                  Título da página
+                </span>
 
-              <textarea
-                value={content.pageMessage}
-                onChange={(event) =>
-                  setContent((current) => ({
-                    ...current,
-                    pageMessage: event.target.value,
-                  }))
-                }
-                placeholder="Ex.: Tecnologia criada para resolver necessidades reais."
-                rows={4}
-                className="resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold leading-6 text-slate-900 outline-none focus:border-[#102b3a]"
-              />
-            </label>
+                <input
+                  type="text"
+                  value={content.pageTitle}
+                  onChange={(event) =>
+                    setContent((current) => ({
+                      ...current,
+                      pageTitle: event.target.value,
+                    }))
+                  }
+                  placeholder="Ex.: Tecnologia para o seu negócio."
+                  className="h-12 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 outline-none focus:border-[#102b3a]"
+                />
+              </label>
+
+              <label className="grid gap-2">
+                <span className="text-sm font-black text-slate-800">
+                  Mensagem da página
+                </span>
+
+                <textarea
+                  value={content.pageMessage}
+                  onChange={(event) =>
+                    setContent((current) => ({
+                      ...current,
+                      pageMessage: event.target.value,
+                    }))
+                  }
+                  placeholder="Ex.: Tecnologia criada para resolver necessidades reais."
+                  rows={4}
+                  className="resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold leading-6 text-slate-900 outline-none focus:border-[#102b3a]"
+                />
+              </label>
+            </div>
           ) : (
             <button
               type="button"
@@ -325,8 +349,12 @@ export function AdminYggdraTechServices() {
               className="w-full rounded-[22px] border border-slate-200 bg-slate-50 p-5 text-left transition hover:border-slate-300 hover:bg-white"
             >
               <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
-                Mensagem da página
+                Cabeçalho da página
               </p>
+
+              <h3 className="mt-2 text-base font-black text-slate-950">
+                {content.pageTitle || "Nenhum título cadastrado."}
+              </h3>
 
               <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">
                 {content.pageMessage || "Nenhuma mensagem cadastrada."}
