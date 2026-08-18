@@ -479,11 +479,17 @@ function EmptyState({ title, text }: { title: string; text: string }) {
 
 export function AdminPage() {
   const [searchParams] = useSearchParams();
-  const requestedView = searchParams.get("view") as AdminView | null;
+
+  const requestedView =
+    searchParams.get("view") as AdminView | null;
+
   const currentView =
     requestedView && validViews.includes(requestedView)
       ? requestedView
       : "overview";
+
+  const yggdraTechSection =
+    searchParams.get("section") || "about";
 
   const [overview, setOverview] = useState<Overview | null>(null);
   const [approvals, setApprovals] = useState<Business[]>([]);
@@ -874,7 +880,15 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
             {currentView === "businesses" && "Empresas"}
             {currentView === "approvals" && "Liberações pendentes"}
             {currentView === "payments" && "Pagamentos"}
-            {currentView === "yggdratech" && "Site YggdraTech"}
+            {currentView === "yggdratech" &&
+              yggdraTechSection === "home" &&
+              "YggdraTech · Home"}
+            {currentView === "yggdratech" &&
+              yggdraTechSection === "about" &&
+              "YggdraTech · Quem Somos"}
+            {currentView === "yggdratech" &&
+              yggdraTechSection === "services" &&
+              "YggdraTech · Soluções"}
           </h1>
           <p className="admin-dashboard-description mt-2 max-w-3xl text-sm leading-6">
             {currentView === "yggdratech"
@@ -1641,8 +1655,34 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
         </Card>
       ) : null}
 
-      {currentView === "yggdratech" ? (
+      {currentView === "yggdratech" &&
+      yggdraTechSection === "about" ? (
         <AdminYggdraTechAbout />
+      ) : null}
+
+      {currentView === "yggdratech" &&
+      yggdraTechSection === "home" ? (
+        <Card
+          className="admin-dashboard-card"
+          title="Home da YggdraTech"
+        >
+          <p className="text-sm font-semibold leading-6 text-slate-500">
+            A gestão dinâmica da Home será configurada em uma etapa própria.
+          </p>
+        </Card>
+      ) : null}
+
+      {currentView === "yggdratech" &&
+      yggdraTechSection === "services" ? (
+        <Card
+          className="admin-dashboard-card"
+          title="Soluções da YggdraTech"
+        >
+          <p className="text-sm font-semibold leading-6 text-slate-500">
+            Esta será a próxima área administrável, com destaque para o
+            YggdraFlow e as soluções de desenvolvimento da YggdraTech.
+          </p>
+        </Card>
       ) : null}
 
       {currentView === "payments" ? (
