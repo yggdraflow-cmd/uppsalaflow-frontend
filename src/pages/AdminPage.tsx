@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -835,6 +835,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
       value: overview?.summary.activeBusinesses || 0,
       helper: `${overview?.summary.totalBusinesses || 0} cadastradas`,
       icon: Building2,
+      to: "/admin?view=businesses",
     },
     {
       title: "Aguardando liberação",
@@ -844,18 +845,21 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
         (overview?.summary.underReviewBusinesses || 0),
       helper: "Cadastros em análise",
       icon: Clock3,
+      to: "/admin?view=approvals",
     },
     {
       title: "Pagamentos confirmados",
       value: overview?.summary.paidPayments || 0,
       helper: `${overview?.summary.overduePayments || 0} atrasados`,
       icon: CheckCircle2,
+      to: "/admin?view=payments",
     },
     {
       title: "Receita confirmada",
       value: formatCurrency(overview?.summary.paidRevenue || 0),
       helper: "Pagamentos com status pago",
       icon: CircleDollarSign,
+      to: "/admin?view=payments",
     },
   ];
 
@@ -968,24 +972,30 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
               const Icon = item.icon;
 
               return (
-                <Card className="admin-dashboard-card" key={item.title}>
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-sm font-bold text-slate-500">
-                        {item.title}
-                      </p>
-                      <strong className="mt-2 block text-3xl font-black text-slate-950">
-                        {item.value}
-                      </strong>
-                      <p className="mt-2 text-xs font-semibold text-slate-400">
-                        {item.helper}
-                      </p>
+                <Link
+                  key={item.title}
+                  to={item.to}
+                  className="block rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--admin-accent)]"
+                >
+                  <Card className="admin-dashboard-card h-full cursor-pointer transition hover:-translate-y-0.5">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-sm font-bold text-slate-500">
+                          {item.title}
+                        </p>
+                        <strong className="mt-2 block text-3xl font-black text-slate-950">
+                          {item.value}
+                        </strong>
+                        <p className="mt-2 text-xs font-semibold text-slate-400">
+                          {item.helper}
+                        </p>
+                      </div>
+                      <span className="rounded-2xl bg-[#e9f0f3] p-3 text-[#102b3a]">
+                        <Icon size={22} />
+                      </span>
                     </div>
-                    <span className="rounded-2xl bg-[#e9f0f3] p-3 text-[#102b3a]">
-                      <Icon size={22} />
-                    </span>
-                  </div>
-                </Card>
+                  </Card>
+                </Link>
               );
             })}
           </div>
