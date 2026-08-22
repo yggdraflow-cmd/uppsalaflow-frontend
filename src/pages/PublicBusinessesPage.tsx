@@ -3,17 +3,12 @@ import {
   ArrowLeft,
   ArrowRight,
   Building2,
-  ChevronDown,
   Clock3,
   Search,
-  Sparkles,
   Star,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { AnimatePresence, motion } from "motion/react";
-
 import TextBlockAnimation from "../components/ui/TextBlockAnimation";
-import { TextRotate } from "../components/ui/TextRotate";
 import { api, getApiAssetUrl } from "../services/api";
 
 type PublicCatalogService = {
@@ -78,29 +73,11 @@ function getBusinessCategory(business: PublicCatalogBusiness) {
 }
 
 export function PublicBusinessesPage() {
-  const [showIntro, setShowIntro] = useState(true);
-  const [introWordIndex, setIntroWordIndex] = useState(0);
-
   const [businesses, setBusinesses] = useState<PublicCatalogBusiness[]>([]);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    const wordTimer = window.setTimeout(() => {
-      setIntroWordIndex(1);
-    }, 1100);
-
-    const finishTimer = window.setTimeout(() => {
-      setShowIntro(false);
-    }, 2400);
-
-    return () => {
-      window.clearTimeout(wordTimer);
-      window.clearTimeout(finishTimer);
-    };
-  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -170,35 +147,8 @@ export function PublicBusinessesPage() {
     });
   }, [businesses, search, categoryFilter]);
 
-  function scrollToCatalog() {
-    document
-      .getElementById("catalogo")
-      ?.scrollIntoView({ behavior: "smooth" });
-  }
-
   return (
     <>
-      <AnimatePresence mode="wait">
-        {showIntro ? (
-          <motion.div
-            key="yggdraflow-intro"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.45 }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-white"
-          >
-            <div className="flex items-center gap-3 px-6 text-[42px] font-light tracking-[-0.05em] text-[#081120] sm:gap-4 sm:text-[64px] md:text-[78px]">
-              <span>Yggdra</span>
-
-              <TextRotate
-                texts={["Flow", "All..."]}
-                currentIndex={introWordIndex}
-              />
-            </div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
-
       <main className="min-h-screen bg-[#f7f7f5] text-[#081120]">
         <header className="sticky top-0 z-50 border-b border-[#e2e8f0]/80 bg-[#f7f7f5]/90 backdrop-blur-xl">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8 lg:px-10">
@@ -238,181 +188,7 @@ export function PublicBusinessesPage() {
           </div>
         </header>
 
-        <section className="flex min-h-[calc(100vh-73px)] items-center border-b border-[#e2e8f0]">
-          <div className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
-            <div className="max-w-6xl">
-              <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-[#bcecf4] bg-[#dff8fc] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#087f95]">
-                <Sparkles size={15} />
-                YggdraFlow para você
-              </div>
-
-              <TextBlockAnimation
-                blockColor="#12b8d6"
-                duration={0.95}
-                animateOnScroll={false}
-                className="max-w-6xl"
-              >
-                <h1 className="text-[48px] font-black leading-[0.92] tracking-[-0.065em] text-[#081120] sm:text-[72px] lg:text-[104px]">
-                  Não escolha
-                  <br />
-                  no escuro.
-                </h1>
-              </TextBlockAnimation>
-
-              <div className="mt-5 inline-block rounded-[18px] bg-[#12b8d6] px-5 py-2 sm:px-7 sm:py-3">
-                <p className="text-[38px] font-black leading-none tracking-[-0.055em] text-white sm:text-[58px] lg:text-[78px]">
-                  Encontre o lugar certo.
-                </p>
-              </div>
-
-              <p className="mt-10 max-w-2xl text-base font-semibold leading-7 text-[#64748b] sm:text-lg">
-                Descubra empresas, compare serviços e escolha onde quer ser
-                atendido antes mesmo de fazer o agendamento.
-              </p>
-
-              <button
-                type="button"
-                onClick={() =>
-                  window.scrollTo({
-                    top: window.innerHeight,
-                    behavior: "smooth",
-                  })
-                }
-                className="mt-12 inline-flex items-center gap-3 text-xs font-black uppercase tracking-[0.18em] text-[#94a3b8] transition hover:text-[#081120]"
-              >
-                Continue explorando
-                <ChevronDown size={18} />
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <section className="flex min-h-[90vh] items-center border-b border-[#e2e8f0] bg-white">
-          <div className="mx-auto w-full max-w-7xl px-5 py-24 sm:px-8 lg:px-10">
-            <div className="max-w-5xl">
-              <TextBlockAnimation
-                blockColor="#081120"
-                duration={0.9}
-              >
-                <p className="text-xs font-black uppercase tracking-[0.2em] text-[#12b8d6]">
-                  Escolha com mais clareza
-                </p>
-              </TextBlockAnimation>
-
-              <TextBlockAnimation
-                blockColor="#12b8d6"
-                duration={1}
-                delay={0.08}
-                className="mt-7"
-              >
-                <h2 className="text-5xl font-black leading-[0.98] tracking-[-0.055em] text-[#081120] sm:text-7xl lg:text-[88px]">
-                  Tudo começa
-                  <br />
-                  com uma boa escolha.
-                </h2>
-              </TextBlockAnimation>
-
-              <TextBlockAnimation
-                blockColor="#dff8fc"
-                duration={0.9}
-                delay={0.16}
-                className="mt-10 max-w-4xl"
-              >
-                <p className="text-xl font-medium leading-9 text-[#475569] sm:text-2xl">
-                  Veja quem está disponível, conheça os serviços oferecidos
-                  e compare opções antes de decidir onde será seu próximo
-                  atendimento.
-                </p>
-              </TextBlockAnimation>
-            </div>
-          </div>
-        </section>
-
-        <section className="flex min-h-[90vh] items-center bg-[#081120] text-white">
-          <div className="mx-auto w-full max-w-7xl px-5 py-24 sm:px-8 lg:px-10">
-            <div className="max-w-6xl">
-              <TextBlockAnimation
-                blockColor="#12b8d6"
-                duration={0.9}
-              >
-                <p className="text-xs font-black uppercase tracking-[0.2em] text-[#5bd7eb]">
-                  Tudo antes de agendar
-                </p>
-              </TextBlockAnimation>
-
-              <TextBlockAnimation
-                blockColor="#12b8d6"
-                duration={1}
-                delay={0.08}
-                className="mt-8"
-              >
-                <h2 className="text-5xl font-black leading-[0.95] tracking-[-0.06em] text-white sm:text-7xl lg:text-[92px]">
-                  Serviços.
-                  <br />
-                  Valores.
-                  <br />
-                  Tempo.
-                </h2>
-              </TextBlockAnimation>
-
-              <TextBlockAnimation
-                blockColor="#5bd7eb"
-                duration={0.9}
-                delay={0.16}
-                className="mt-10 max-w-3xl"
-              >
-                <p className="text-xl font-medium leading-9 text-white/65 sm:text-2xl">
-                  Informação para você decidir com calma e ir direto ao que
-                  interessa.
-                </p>
-              </TextBlockAnimation>
-            </div>
-          </div>
-        </section>
-
-        <section className="flex min-h-[90vh] items-center border-b border-[#e2e8f0] bg-[#f7f7f5]">
-          <div className="mx-auto w-full max-w-7xl px-5 py-24 sm:px-8 lg:px-10">
-            <div className="max-w-6xl">
-              <TextBlockAnimation
-                blockColor="#081120"
-                duration={1}
-              >
-                <h2 className="text-5xl font-black leading-[0.98] tracking-[-0.06em] text-[#081120] sm:text-7xl lg:text-[94px]">
-                  Menos conversa.
-                  <br />
-                  Mais clareza.
-                </h2>
-              </TextBlockAnimation>
-
-              <TextBlockAnimation
-                blockColor="#12b8d6"
-                duration={0.9}
-                delay={0.12}
-                className="mt-10 max-w-4xl"
-              >
-                <p className="text-xl font-medium leading-9 text-[#64748b] sm:text-2xl">
-                  Escolha a empresa, conheça os serviços e siga para o
-                  agendamento. Sem depender de uma sequência interminável de
-                  mensagens para descobrir horário, preço ou duração.
-                </p>
-              </TextBlockAnimation>
-
-              <button
-                type="button"
-                onClick={scrollToCatalog}
-                className="mt-12 inline-flex items-center gap-2 rounded-full bg-[#12b8d6] px-6 py-4 text-sm font-black text-white transition hover:bg-[#087f95]"
-              >
-                Ver empresas
-                <ArrowRight size={18} />
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <section
-          id="catalogo"
-          className="scroll-mt-20 bg-[#f7f7f5]"
-        >
+        <section className="bg-[#f7f7f5]">
           <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-10 lg:py-28">
             <div className="max-w-4xl">
               <TextBlockAnimation

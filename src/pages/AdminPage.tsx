@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -22,6 +22,9 @@ import {
 
 import { Card } from "../components/Card";
 import { AdminPaymentSettings } from "../components/AdminPaymentSettings";
+import { AdminYggdraTechAbout } from "../components/AdminYggdraTechAbout";
+import { AdminYggdraTechHome } from "../components/AdminYggdraTechHome";
+import { AdminYggdraTechServices } from "../components/AdminYggdraTechServices";
 import { api } from "../services/api";
 
 type CompanyStatus =
@@ -41,7 +44,12 @@ type PaymentStatus =
   | "CANCELED"
   | "REFUNDED";
 
-type AdminView = "overview" | "businesses" | "approvals" | "payments";
+type AdminView =
+  | "overview"
+  | "businesses"
+  | "approvals"
+  | "payments"
+  | "yggdratech";
 type BusinessAction =
   | "approve"
   | "reject"
@@ -139,6 +147,7 @@ const validViews: AdminView[] = [
   "businesses",
   "approvals",
   "payments",
+  "yggdratech",
 ];
 
 const actionMeta: Record<
@@ -472,11 +481,17 @@ function EmptyState({ title, text }: { title: string; text: string }) {
 
 export function AdminPage() {
   const [searchParams] = useSearchParams();
-  const requestedView = searchParams.get("view") as AdminView | null;
+
+  const requestedView =
+    searchParams.get("view") as AdminView | null;
+
   const currentView =
     requestedView && validViews.includes(requestedView)
       ? requestedView
       : "overview";
+
+  const yggdraTechSection =
+    searchParams.get("section") || "about";
 
   const [overview, setOverview] = useState<Overview | null>(null);
   const [approvals, setApprovals] = useState<Business[]>([]);
@@ -820,6 +835,7 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
       value: overview?.summary.activeBusinesses || 0,
       helper: `${overview?.summary.totalBusinesses || 0} cadastradas`,
       icon: Building2,
+      to: "/admin?view=businesses",
     },
     {
       title: "Aguardando liberação",
@@ -829,18 +845,21 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
         (overview?.summary.underReviewBusinesses || 0),
       helper: "Cadastros em análise",
       icon: Clock3,
+      to: "/admin?view=approvals",
     },
     {
       title: "Pagamentos confirmados",
       value: overview?.summary.paidPayments || 0,
       helper: `${overview?.summary.overduePayments || 0} atrasados`,
       icon: CheckCircle2,
+      to: "/admin?view=payments",
     },
     {
       title: "Receita confirmada",
       value: formatCurrency(overview?.summary.paidRevenue || 0),
       helper: "Pagamentos com status pago",
       icon: CircleDollarSign,
+      to: "/admin?view=payments",
     },
   ];
 
@@ -867,22 +886,37 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
             {currentView === "businesses" && "Empresas"}
             {currentView === "approvals" && "Liberações pendentes"}
             {currentView === "payments" && "Pagamentos"}
+            {currentView === "yggdratech" &&
+              yggdraTechSection === "home" &&
+              "YggdraTech · Home"}
+            {currentView === "yggdratech" &&
+              yggdraTechSection === "about" &&
+              "YggdraTech · Quem Somos"}
+            {currentView === "yggdratech" &&
+              yggdraTechSection === "services" &&
+              "YggdraTech · Serviços"}
           </h1>
           <p className="admin-dashboard-description mt-2 max-w-3xl text-sm leading-6">
-            Controle central de empresas, cobranças, assinaturas e acesso ao
-            YggdraFlow.
+            {currentView === "yggdratech"
+              ? "Gerencie o conteúdo institucional exibido no site público da YggdraTech."
+              : "Controle central de empresas, cobranças, assinaturas e acesso ao YggdraFlow."}
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => loadData(true)}
-          disabled={isRefreshing}
-          className="admin-dashboard-refresh inline-flex h-11 items-center justify-center gap-2 rounded-xl px-5 text-sm font-black transition disabled:opacity-60"
-        >
-          <RefreshCw className={isRefreshing ? "animate-spin" : ""} size={18} />
-          Atualizar dados
-        </button>
+        {currentView !== "yggdratech" ? (
+          <button
+            type="button"
+            onClick={() => loadData(true)}
+            disabled={isRefreshing}
+            className="admin-dashboard-refresh inline-flex h-11 items-center justify-center gap-2 rounded-xl px-5 text-sm font-black transition disabled:opacity-60"
+          >
+            <RefreshCw
+              className={isRefreshing ? "animate-spin" : ""}
+              size={18}
+            />
+            Atualizar dados
+          </button>
+        ) : null}
       </div>
 
       {error ? (
@@ -938,24 +972,30 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
               const Icon = item.icon;
 
               return (
-                <Card className="admin-dashboard-card" key={item.title}>
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-sm font-bold text-slate-500">
-                        {item.title}
-                      </p>
-                      <strong className="mt-2 block text-3xl font-black text-slate-950">
-                        {item.value}
-                      </strong>
-                      <p className="mt-2 text-xs font-semibold text-slate-400">
-                        {item.helper}
-                      </p>
+                <Link
+                  key={item.title}
+                  to={item.to}
+                  className="block rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--admin-accent)]"
+                >
+                  <Card className="admin-dashboard-card h-full cursor-pointer transition hover:-translate-y-0.5">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-sm font-bold text-slate-500">
+                          {item.title}
+                        </p>
+                        <strong className="mt-2 block text-3xl font-black text-slate-950">
+                          {item.value}
+                        </strong>
+                        <p className="mt-2 text-xs font-semibold text-slate-400">
+                          {item.helper}
+                        </p>
+                      </div>
+                      <span className="rounded-2xl bg-[#e9f0f3] p-3 text-[#102b3a]">
+                        <Icon size={22} />
+                      </span>
                     </div>
-                    <span className="rounded-2xl bg-[#e9f0f3] p-3 text-[#102b3a]">
-                      <Icon size={22} />
-                    </span>
-                  </div>
-                </Card>
+                  </Card>
+                </Link>
               );
             })}
           </div>
@@ -1625,6 +1665,21 @@ const [pendingStepIndex, setPendingStepIndex] = useState(0);
             </div>
           )}
         </Card>
+      ) : null}
+
+      {currentView === "yggdratech" &&
+      yggdraTechSection === "about" ? (
+        <AdminYggdraTechAbout />
+      ) : null}
+
+      {currentView === "yggdratech" &&
+      yggdraTechSection === "home" ? (
+        <AdminYggdraTechHome />
+      ) : null}
+
+      {currentView === "yggdratech" &&
+      yggdraTechSection === "services" ? (
+        <AdminYggdraTechServices />
       ) : null}
 
       {currentView === "payments" ? (

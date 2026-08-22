@@ -223,7 +223,7 @@ export function PlanSelectionPage() {
 
   return (
     <main
-      className="relative h-[100dvh] overflow-hidden bg-slate-950 text-[#171717]"
+      className="relative min-h-[100dvh] overflow-x-hidden bg-slate-950 text-[#171717]"
       style={{
         backgroundImage:
           "linear-gradient(90deg, rgba(2,10,20,0.48), rgba(2,10,20,0.30)), url('/plan-selection-bg.png')",
@@ -232,7 +232,7 @@ export function PlanSelectionPage() {
         backgroundSize: "cover",
       }}
     >
-      <div className="grid h-full w-full grid-cols-1 items-center gap-6 px-6 py-5 lg:grid-cols-[1fr_560px] lg:px-12 xl:grid-cols-[1fr_600px] xl:px-16">
+      <div className="grid min-h-[100dvh] w-full grid-cols-1 items-start gap-6 px-6 py-6 lg:grid-cols-[1fr_560px] lg:items-center lg:px-12 xl:grid-cols-[1fr_600px] xl:px-16">
         <section className="relative hidden h-full items-center justify-center lg:flex">
           <div className="relative flex h-full w-full items-center justify-center">
             <div className="absolute h-[760px] w-[760px] rounded-full bg-[#00bfff]/15 blur-[90px]" />
@@ -245,8 +245,8 @@ export function PlanSelectionPage() {
           </div>
         </section>
 
-        <section className="flex h-full min-h-0 items-center justify-center">
-          <div className="w-full max-w-[560px]">
+        <section className="flex min-h-0 items-start justify-center lg:items-center">
+          <div className="w-full max-w-[560px] py-2 lg:py-6">
 
         {canChoosePlan ? (
           <section className="w-full">
