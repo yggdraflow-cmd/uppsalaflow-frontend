@@ -12,6 +12,9 @@ import { AdminLayout } from "../layouts/AdminLayout";
 import { ClientPortalLayout } from "../layouts/ClientPortalLayout";
 import { LoginPage } from "../pages/LoginPage";
 import { RegisterPage } from "../pages/RegisterPage";
+import { ConfirmEmailPage } from "../pages/ConfirmEmailPage";
+import { ForgotPasswordPage } from "../pages/ForgotPasswordPage";
+import { ResetPasswordPage } from "../pages/ResetPasswordPage";
 import { DashboardPage } from "../pages/DashboardPage";
 import { BusinessesPage } from "../pages/BusinessesPage";
 import { BusinessOnboardingPage } from "../pages/BusinessOnboardingPage";
@@ -237,6 +240,9 @@ export function AppRoutes() {
 
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/confirm-email" element={<ConfirmEmailPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
 
       <Route
         path="/admin/login"

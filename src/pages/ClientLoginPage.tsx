@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import {
   FloatingInput,
@@ -26,6 +26,11 @@ function getRouteForRole(role: UserRole) {
 export function ClientLoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const successMessage =
+    typeof location.state?.successMessage === "string"
+      ? location.state.successMessage
+      : "";
 
   const redirectTo = new URLSearchParams(location.search).get("redirect");
   const safeRedirectTo = redirectTo?.startsWith("/") ? redirectTo : "";
@@ -58,11 +63,15 @@ export function ClientLoginPage() {
       saveAuth(response.data.token, response.data.user);
 
       if (response.data.user.role === "CLIENT" && safeRedirectTo) {
-        navigate(safeRedirectTo);
+        navigate(safeRedirectTo, {
+          state: { showLoginTransition: true },
+        });
         return;
       }
 
-      navigate(getRouteForRole(response.data.user.role));
+      navigate(getRouteForRole(response.data.user.role), {
+        state: { showLoginTransition: true },
+      });
     } catch (error: any) {
       setError(
         error?.response?.data?.message || "E-mail ou senha inválidos."
@@ -85,6 +94,7 @@ export function ClientLoginPage() {
         description="Acesse sua conta para agendar horários e acompanhar seus atendimentos."
         onSubmit={handleSubmit}
         error={error}
+        success={successMessage}
         isSaving={isSaving}
         submitLabel="Entrar"
         savingLabel="Entrando..."
@@ -112,6 +122,15 @@ export function ClientLoginPage() {
           onChange={(event) => setPassword(event.target.value)}
           required
         />
+
+        <div className="flex justify-end">
+          <Link
+            to="/forgot-password?mode=client"
+            className="text-xs font-black text-[#a97c12] hover:underline"
+          >
+            Esqueci minha senha
+          </Link>
+        </div>
       </RegisterPanel>
     </AuthLayout>
   );

@@ -18,6 +18,12 @@ export type AuthResponse = {
   token: string;
 };
 
+export type RegisterResponse = {
+  user: User;
+  requiresEmailVerification: true;
+  message: string;
+};
+
 export type AdminLoginResponse =
   | {
       requiresTwoFactor: true;
