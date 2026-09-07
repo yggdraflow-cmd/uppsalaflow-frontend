@@ -7,10 +7,18 @@ import { TextRotate } from "./TextRotate";
 export function PageTransition() {
   const location = useLocation();
 
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [wordIndex, setWordIndex] = useState(0);
 
   useLayoutEffect(() => {
+    const shouldShowTransition =
+      location.state?.showLoginTransition === true;
+
+    if (!shouldShowTransition) {
+      setIsVisible(false);
+      return;
+    }
+
     setIsVisible(true);
     setWordIndex(0);
 
@@ -26,13 +34,13 @@ export function PageTransition() {
       window.clearTimeout(wordTimer);
       window.clearTimeout(finishTimer);
     };
-  }, [location.pathname]);
+  }, [location.key, location.state]);
 
   return (
     <AnimatePresence mode="wait">
       {isVisible ? (
         <motion.div
-          key={`yggdraflow-transition-${location.pathname}`}
+          key={`yggdraflow-transition-${location.key}`}
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

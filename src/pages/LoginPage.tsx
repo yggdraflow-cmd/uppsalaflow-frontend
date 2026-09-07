@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import {
   FloatingInput,
@@ -25,6 +25,12 @@ function getRouteForRole(role: UserRole) {
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const successMessage =
+    typeof location.state?.successMessage === "string"
+      ? location.state.successMessage
+      : "";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -45,7 +51,9 @@ export function LoginPage() {
       });
 
       saveAuth(response.data.token, response.data.user);
-      navigate(getRouteForRole(response.data.user.role));
+      navigate(getRouteForRole(response.data.user.role), {
+        state: { showLoginTransition: true },
+      });
     } catch (error: any) {
       setError(
         error?.response?.data?.message || "E-mail ou senha inválidos."
@@ -68,6 +76,7 @@ export function LoginPage() {
         description="Acesse o painel para gerenciar sua agenda, clientes, serviços e profissionais."
         onSubmit={handleSubmit}
         error={error}
+        success={successMessage}
         isSaving={isSaving}
         submitLabel="Entrar"
         savingLabel="Entrando..."
@@ -95,6 +104,15 @@ export function LoginPage() {
           onChange={(event) => setPassword(event.target.value)}
           required
         />
+
+        <div className="flex justify-end">
+          <Link
+            to="/forgot-password"
+            className="text-xs font-black text-[#00bfff] hover:underline"
+          >
+            Esqueci minha senha
+          </Link>
+        </div>
       </RegisterPanel>
     </AuthLayout>
   );

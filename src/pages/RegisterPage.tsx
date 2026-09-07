@@ -8,8 +8,7 @@ import {
 } from "../components/RegisterPanel";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { api } from "../services/api";
-import { saveAuth } from "../services/authStorage";
-import type { AuthResponse } from "../types/auth";
+import type { RegisterResponse } from "../types/auth";
 
 export function RegisterPage() {
   const navigate = useNavigate();
@@ -34,14 +33,18 @@ export function RegisterPage() {
       setIsSaving(true);
       setError("");
 
-      const response = await api.post<AuthResponse>("/auth/register", {
+      const response = await api.post<RegisterResponse>("/auth/register", {
         name,
         email,
         password,
       });
 
-      saveAuth(response.data.token, response.data.user);
-      navigate("/dashboard");
+      navigate("/login", {
+        replace: true,
+        state: {
+          successMessage: response.data.message,
+        },
+      });
     } catch {
       setError("Não foi possível criar a conta da empresa.");
     } finally {
