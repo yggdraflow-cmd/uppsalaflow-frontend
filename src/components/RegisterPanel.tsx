@@ -21,6 +21,7 @@ type RegisterPanelProps = {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   children: ReactNode;
   error?: string;
+  success?: string;
   isSaving: boolean;
   submitLabel: string;
   savingLabel: string;
@@ -66,6 +67,7 @@ const themes = {
     footer: "text-white/70",
     link: "text-[#00bfff]",
     error: "border-red-400/25 bg-red-950/30 text-red-200",
+    success: "border-emerald-400/25 bg-emerald-950/30 text-emerald-200",
   },
   client: {
     panel:
@@ -88,6 +90,7 @@ const themes = {
     footer: "text-[#666666]",
     link: "text-[#a97c12]",
     error: "border-red-200 bg-red-50 text-red-700",
+    success: "border-emerald-200 bg-emerald-50 text-emerald-700",
   },
 } as const;
 
@@ -238,6 +241,7 @@ export function RegisterPanel({
   onSubmit,
   children,
   error,
+  success,
   isSaving,
   submitLabel,
   savingLabel,
@@ -336,6 +340,18 @@ export function RegisterPanel({
 
         <form className="flex flex-col gap-2" onSubmit={onSubmit}>
           {children}
+
+          {success ? (
+            <p
+              className={[
+                "rounded-xl border px-3 py-2 text-xs leading-5",
+                currentTheme.success,
+              ].join(" ")}
+              role="status"
+            >
+              {success}
+            </p>
+          ) : null}
 
           {error ? (
             <p

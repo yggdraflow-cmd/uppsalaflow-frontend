@@ -8,8 +8,7 @@ import {
 } from "../components/RegisterPanel";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { api } from "../services/api";
-import { saveAuth } from "../services/authStorage";
-import type { AuthResponse } from "../types/auth";
+import type { RegisterResponse } from "../types/auth";
 
 export function ClientRegisterPage() {
   const navigate = useNavigate();
@@ -43,7 +42,7 @@ export function ClientRegisterPage() {
       setIsSaving(true);
       setError("");
 
-      const response = await api.post<AuthResponse>(
+      const response = await api.post<RegisterResponse>(
         "/auth/client/register",
         {
           name,
@@ -53,8 +52,12 @@ export function ClientRegisterPage() {
         }
       );
 
-      saveAuth(response.data.token, response.data.user);
-      navigate(safeRedirectTo || "/cliente");
+      navigate(`/cliente/login${redirectQuery}`, {
+        replace: true,
+        state: {
+          successMessage: response.data.message,
+        },
+      });
     } catch (error: any) {
       setError(
         error?.response?.data?.message ||
