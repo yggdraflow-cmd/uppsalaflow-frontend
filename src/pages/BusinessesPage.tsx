@@ -205,7 +205,6 @@ export function BusinessesPage() {
 
       const payload = {
         name,
-        slug,
         category: category || undefined,
         phone: phone || undefined,
         email: email || undefined,
@@ -215,7 +214,10 @@ export function BusinessesPage() {
       if (editingBusinessId) {
         const response = await api.put<Business>(
           `/businesses/${editingBusinessId}`,
-          payload
+          {
+            ...payload,
+            slug,
+          }
         );
 
         setBusinesses((currentBusinesses) =>
@@ -240,7 +242,7 @@ export function BusinessesPage() {
       resetForm();
     } catch {
       setError(
-        "Não foi possível salvar. Verifique se o slug já está em uso."
+        "Não foi possível salvar as informações do negócio. Tente novamente."
       );
     } finally {
       setIsSaving(false);
@@ -278,13 +280,15 @@ export function BusinessesPage() {
               required
             />
 
-            <Input
-              label="Slug público"
-              value={slug}
-              onChange={(event) => setSlug(event.target.value)}
-              placeholder={copy.slugPlaceholder}
-              required
-            />
+            {editingBusinessId ? (
+              <Input
+                label="Slug público"
+                value={slug}
+                onChange={(event) => setSlug(event.target.value)}
+                placeholder={copy.slugPlaceholder}
+                required
+              />
+            ) : null}
 
             <Input
               label="Categoria pública"
