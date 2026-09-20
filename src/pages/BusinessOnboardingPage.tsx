@@ -139,15 +139,7 @@ const beautySpecialtyOptions: SpecialtyOption[] = [
   },
 ];
 
-function makeSlug(value: string) {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "")
-    .slice(0, 60);
-}
+
 
 export function BusinessOnboardingPage() {
   const [step, setStep] =
@@ -165,8 +157,7 @@ export function BusinessOnboardingPage() {
   const [businessName, setBusinessName] =
     useState("");
 
-  const [businessSlug, setBusinessSlug] =
-    useState("");
+
 
   const [phone, setPhone] =
     useState("");
@@ -228,17 +219,11 @@ export function BusinessOnboardingPage() {
     loadBusinesses();
   }, []);
 
-  function handleBusinessNameChange(
-    value: string
-  ) {
-    setBusinessName(value);
-
-    if (!businessSlug) {
-      setBusinessSlug(
-        makeSlug(value)
-      );
-    }
-  }
+function handleBusinessNameChange(
+  value: string
+) {
+  setBusinessName(value);
+}
 
   function chooseSegment(
     segment: BusinessSegment
@@ -321,24 +306,16 @@ export function BusinessOnboardingPage() {
       return null;
     }
 
-    if (!businessSlug.trim()) {
-      setError(
-        "Informe o slug público."
-      );
-      return null;
-    }
 
     const response =
       await api.post<Business>(
         "/businesses",
-        {
-          name: businessName.trim(),
-          slug: makeSlug(
-            businessSlug
-          ),
-          phone:
-            phone.trim() ||
-            undefined,
+
+         {
+  name: businessName.trim(),
+  phone:
+    phone.trim() ||
+    undefined,
           category:
             selectedTheme.segmentLabel,
           segment: selectedSegment,
@@ -395,9 +372,9 @@ export function BusinessOnboardingPage() {
       window.location.href =
         `/business-plans?businessId=${business.id}`;
     } catch {
-      setError(
-        "Não foi possível concluir a configuração. Verifique o slug e tente novamente."
-      );
+  setError(
+    "Não foi possível concluir a configuração. Tente novamente."
+  );
     } finally {
       setIsSaving(false);
     }
@@ -758,25 +735,7 @@ export function BusinessOnboardingPage() {
                             required
                           />
 
-                          <Input
-                            label="Slug público"
-                            value={
-                              businessSlug
-                            }
-                            onChange={(
-                              event
-                            ) =>
-                              setBusinessSlug(
-                                makeSlug(
-                                  event
-                                    .target
-                                    .value
-                                )
-                              )
-                            }
-                            placeholder="clinica-vet-aurora"
-                            required
-                          />
+
 
                           <Input
                             label="Telefone"
