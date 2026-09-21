@@ -64,10 +64,19 @@ function BusinessOnboardingGate({ children }: { children: ReactNode }) {
         setIsChecking(true);
 
         const response = await api.get<Business[]>("/businesses");
-        const primaryBusiness = response.data[0];
+
+        const activeBusiness = response.data.find(
+          (business) =>
+            business.status === "ACTIVE" &&
+            business.subscription?.status === "ACTIVE"
+        );
+
+        const primaryBusiness =
+          activeBusiness || response.data[0];
+
         const needsOnboarding =
           response.data.length === 0 ||
-          !primaryBusiness?.segment;
+          (!activeBusiness && !primaryBusiness?.segment);
 
         if (!isMounted) {
           return;
@@ -78,11 +87,7 @@ function BusinessOnboardingGate({ children }: { children: ReactNode }) {
           return;
         }
 
-        const hasPlatformAccess =
-          primaryBusiness.status === "ACTIVE" &&
-          primaryBusiness.subscription?.status === "ACTIVE";
-
-        if (!hasPlatformAccess) {
+        if (!activeBusiness) {
           navigate(
             `/business-plans?businessId=${primaryBusiness.id}`,
             { replace: true }
